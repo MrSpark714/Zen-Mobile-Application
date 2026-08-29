@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">ZEN</string>
+    <string name="nav_notes">Notes</string>
+    <string name="nav_tasks">Tasks</string>
+    <string name="nav_attendance">Classes</string>
+    <string name="title_notes">ZEN Notes</string>
+    <string name="title_tasks">ZEN Tasks</string>
+    <string name="title_attendance">ZEN Attendance</string>
+    <string name="search_notes_hint">Search notes…</string>
+    <string name="search_tasks_hint">Search tasks…</string>
+    <string name="search_classes_hint">Search classes…</string>
+    <string name="empty_weekend_classes">No classes this weekend</string>
+    <string name="delete_class_confirm">Delete this class from weekly schedule?</string>
+    <string name="new_note_title_hint">Title</string>
+    <string name="new_note_body_hint">Start writing…</string>
+    <string name="add_task_hint">Add a new task…</string>
+    <string name="empty_notes_title">Quiet Mind</string>
+    <string name="empty_notes_desc">Capture your thoughts, ideas, and reflections.</string>
+    <string name="empty_tasks_title">Clear Space</string>
+    <string name="empty_tasks_desc">Nothing pending. Enjoy the present moment.</string>
+    <string name="delete_note_confirm">Delete this note?</string>
+    <string name="delete_task_confirm">Delete this task?</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+</resources>
+

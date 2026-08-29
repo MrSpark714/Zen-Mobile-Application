@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ZEN Elegant Dark Palette -->
+    <color name="zen_background">#121212</color>
+    <color name="zen_surface">#1E1E1E</color>
+    <color name="zen_surface_variant">#242426</color>
+    <color name="zen_surface_highlight">#2D2D30</color>
+    <color name="zen_border">#27272A</color>
+    
+    <!-- Accent Colors (Elegant Mint) -->
+    <color name="zen_accent">#B9F6CA</color>
+    <color name="zen_accent_light">#E0E0E0</color>
+    <color name="zen_accent_container">#1A2E22</color>
+    <color name="zen_on_accent">#121212</color>
+    
+    <!-- Text and Icon Colors -->
+    <color name="zen_text_primary">#E0E0E0</color>
+    <color name="zen_text_secondary">#71717A</color>
+    <color name="zen_text_tertiary">#52525B</color>
+    <color name="zen_text_completed">#52525B</color>
+    
+    <!-- Functional / Status Colors -->
+    <color name="zen_divider">#27272A</color>
+    <color name="zen_danger">#FF5252</color>
+    <color name="zen_chip_bg">#1E1E1E</color>
+    <color name="zen_nav_inactive">#71717A</color>
+
+    <!-- Attendance Tracker Specific Colors -->
+    <color name="status_present">#B9F6CA</color>
+    <color name="status_present_bg">#1A3322</color>
+    <color name="status_absent">#FF5252</color>
+    <color name="status_absent_bg">#361C1C</color>
+    <color name="status_holiday">#FFE082</color>
+    <color name="status_holiday_bg">#36301A</color>
+
+    <color name="type_theory_text">#80D8FF</color>
+    <color name="type_theory_bg">#162736</color>
+    <color name="type_lab_text">#EA80FC</color>
+    <color name="type_lab_bg">#2E1838</color>
+    
+    <!-- Standard compatibility colors -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="transparent">#00000000</color>
+</resources>
+

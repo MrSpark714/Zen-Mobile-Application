@@ -1,0 +1,7 @@
+{
+  "name": "ZEN",
+  "description": "A minimalist, offline-first productivity tool with dark mode notes and to-do lists.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

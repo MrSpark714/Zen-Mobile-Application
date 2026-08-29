@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/zen_background"
+    android:fitsSystemWindows="true">
+
+    <!-- Top Action Bar -->
+    <LinearLayout
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back"
+            android:padding="8dp"
+            android:src="@drawable/ic_back"
+            app:tint="@color/zen_text_primary" />
+
+        <TextView
+            android:id="@+id/tv_editor_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif-light"
+            android:letterSpacing="0.15"
+            android:text="ZEN NOTE"
+            android:textColor="@color/zen_text_primary"
+            android:textSize="17sp" />
+
+        <!-- Important / Star Tag Button -->
+        <ImageButton
+            android:id="@+id/btn_toggle_important"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="2dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Mark Important"
+            android:padding="8dp"
+            android:src="@drawable/ic_star_outline"
+            app:tint="@color/zen_text_secondary" />
+
+        <!-- Share Note Button -->
+        <ImageButton
+            android:id="@+id/btn_share_note"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="2dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Share Note"
+            android:padding="8dp"
+            android:src="@drawable/ic_share"
+            app:tint="@color/zen_text_secondary" />
+
+        <ImageButton
+            android:id="@+id/btn_delete_editor_note"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="6dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/delete"
+            android:padding="8dp"
+            android:src="@drawable/ic_delete"
+            android:visibility="gone"
+            app:tint="@color/zen_danger"
+            tools:visibility="visible" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save_note"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:backgroundTint="@color/zen_accent"
+            android:fontFamily="sans-serif-medium"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="@string/save"
+            android:textColor="@color/zen_on_accent"
+            android:textSize="13sp"
+            app:cornerRadius="14dp" />
+    </LinearLayout>
+
+    <!-- Rich Text Formatting Bar -->
+    <LinearLayout
+        android:id="@+id/formatting_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="@color/zen_surface"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        app:layout_constraintTop_toBottomOf="@id/top_bar">
+
+        <!-- Bold Tool -->
+        <LinearLayout
+            android:id="@+id/btn_format_bold"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_format_btn"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:contentDescription="Bold"
+                android:src="@drawable/ic_bold"
+                app:tint="@color/zen_text_primary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:fontFamily="sans-serif-bold"
+                android:text="Bold"
+                android:textColor="@color/zen_text_primary"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- Color Palette Tool -->
+        <LinearLayout
+            android:id="@+id/btn_format_color"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_format_btn"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:contentDescription="Color"
+                android:src="@drawable/ic_palette"
+                app:tint="@color/zen_accent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Color"
+                android:textColor="@color/zen_text_primary"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- Date Insert Tool -->
+        <LinearLayout
+            android:id="@+id/btn_insert_date"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_format_btn"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:contentDescription="Add Date"
+                android:src="@drawable/ic_calendar"
+                app:tint="@color/zen_accent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Add Date"
+                android:textColor="@color/zen_text_primary"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Horizontal Color Picker Strip (Toggleable) -->
+    <LinearLayout
+        android:id="@+id/color_picker_strip"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="@color/zen_surface_variant"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/formatting_toolbar"
+        tools:visibility="visible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="Pick Color:"
+            android:textColor="@color/zen_text_secondary"
+            android:textSize="12sp" />
+
+        <!-- Color Circle Chips -->
+        <View
+            android:id="@+id/color_mint"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_color_item"
+            android:backgroundTint="#B9F6CA"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <View
+            android:id="@+id/color_gold"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_color_item"
+            android:backgroundTint="#FFE082"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <View
+            android:id="@+id/color_coral"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_color_item"
+            android:backgroundTint="#FF8A80"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <View
+            android:id="@+id/color_blue"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_color_item"
+            android:backgroundTint="#80D8FF"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <View
+            android:id="@+id/color_lavender"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_color_item"
+            android:backgroundTint="#EA80FC"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <View
+            android:id="@+id/color_white"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@drawable/bg_color_item"
+            android:backgroundTint="#F5F5F5"
+            android:clickable="true"
+            android:focusable="true" />
+    </LinearLayout>
+
+    <!-- Target Date Chip (if set) -->
+    <LinearLayout
+        android:id="@+id/layout_target_date_badge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_badge"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="4dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/color_picker_strip"
+        tools:visibility="visible">
+
+        <ImageView
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:contentDescription="Date"
+            android:src="@drawable/ic_calendar"
+            app:tint="@color/zen_accent" />
+
+        <TextView
+            android:id="@+id/tv_attached_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/zen_accent"
+            android:textSize="11.5sp"
+            tools:text="📅 Aug 25, 2026" />
+
+        <ImageView
+            android:id="@+id/btn_remove_date"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="6dp"
+            android:contentDescription="Remove Date"
+            android:src="@drawable/ic_close"
+            app:tint="@color/zen_text_secondary" />
+    </LinearLayout>
+
+    <!-- Scrollable Editor Area -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@id/bottom_status_bar"
+        app:layout_constraintTop_toBottomOf="@id/layout_target_date_badge">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="24dp">
+
+            <!-- Seamless Borderless Title EditText -->
+            <EditText
+                android:id="@+id/et_note_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:fontFamily="sans-serif-medium"
+                android:hint="@string/new_note_title_hint"
+                android:inputType="textCapSentences"
+                android:textColor="@color/zen_text_primary"
+                android:textColorHint="@color/zen_text_tertiary"
+                android:textSize="22sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="14dp"
+                android:layout_marginBottom="14dp"
+                android:background="@color/zen_divider" />
+
+            <!-- Seamless Borderless Body EditText (Rich text capable) -->
+            <EditText
+                android:id="@+id/et_note_body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:fontFamily="sans-serif"
+                android:gravity="top|start"
+                android:hint="@string/new_note_body_hint"
+                android:inputType="textMultiLine|textCapSentences"
+                android:lineSpacingExtra="6dp"
+                android:minLines="12"
+                android:textColor="@color/zen_text_primary"
+                android:textColorHint="@color/zen_text_tertiary"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Status Bar -->
+    <LinearLayout
+        android:id="@+id/bottom_status_bar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/zen_surface"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/tv_editor_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/zen_text_secondary"
+            android:textSize="12sp"
+            tools:text="Last edited: Today at 10:45 AM" />
+
+        <TextView
+            android:id="@+id/tv_word_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/zen_text_secondary"
+            android:textSize="12sp"
+            tools:text="0 words • 0 chars" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
