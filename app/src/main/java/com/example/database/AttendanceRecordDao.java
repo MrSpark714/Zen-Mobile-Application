@@ -26,6 +26,9 @@ public interface AttendanceRecordDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertOrUpdate(AttendanceRecord record);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<AttendanceRecord> records);
+
     @Update
     void update(AttendanceRecord record);
 
@@ -43,6 +46,9 @@ public interface AttendanceRecordDao {
 
     @Query("SELECT * FROM attendance_records WHERE date = :date")
     List<AttendanceRecord> getRecordsForDateSync(long date);
+
+    @Query("SELECT * FROM attendance_records ORDER BY date DESC")
+    List<AttendanceRecord> getAllRecordsSync();
 
     @Query("SELECT * FROM attendance_records WHERE subject_name = :subjectName ORDER BY date DESC")
     LiveData<List<AttendanceRecord>> getHistoryForSubject(String subjectName);

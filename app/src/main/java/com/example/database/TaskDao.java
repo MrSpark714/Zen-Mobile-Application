@@ -28,6 +28,9 @@ public interface TaskDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insert(Task task);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<Task> tasks);
+
     /**
      * Update an existing task (e.g. toggle completion state or update text).
      * @param task The Task entity to update.
@@ -59,6 +62,9 @@ public interface TaskDao {
      */
     @Query("SELECT * FROM tasks ORDER BY is_completed ASC, timestamp DESC")
     LiveData<List<Task>> getAllTasks();
+
+    @Query("SELECT * FROM tasks ORDER BY is_completed ASC, timestamp DESC")
+    List<Task> getAllTasksSync();
 
     /**
      * Search tasks matching a query string in the description.

@@ -21,6 +21,9 @@ public interface ClassScheduleDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insert(ClassSchedule schedule);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<ClassSchedule> schedules);
+
     @Update
     void update(ClassSchedule schedule);
 

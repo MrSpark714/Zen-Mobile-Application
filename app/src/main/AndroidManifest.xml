@@ -36,6 +36,49 @@
             android:theme="@style/Theme.MyApplication"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- Backup, Restore, and Cohort Sharing Activity -->
+        <activity
+            android:name=".BackupActivity"
+            android:exported="true"
+            android:label="Backup &amp; Restore"
+            android:theme="@style/Theme.MyApplication"
+            android:windowSoftInputMode="adjustResize">
+            
+            <!-- Intent filter to open .json or .zen files shared via WhatsApp, Email, or File Manager -->
+            <intent-filter tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="content" />
+                <data android:scheme="file" />
+                <data android:mimeType="application/json" />
+                <data android:mimeType="application/octet-stream" />
+                <data android:mimeType="text/plain" />
+                <data android:pathPattern=".*\\.json" />
+                <data android:pathPattern=".*\\.zen" />
+            </intent-filter>
+
+            <!-- Intent filter to receive shared .json or .zen backup files directly -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/json" />
+                <data android:mimeType="application/octet-stream" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
+        <!-- FileProvider for secure Cohort Timetable sharing -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
         <!-- BroadcastReceiver for scheduled task completion alarms -->
         <receiver
             android:name=".receiver.TaskReminderReceiver"

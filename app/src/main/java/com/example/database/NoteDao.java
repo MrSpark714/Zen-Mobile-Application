@@ -30,6 +30,9 @@ public interface NoteDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insert(Note note);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<Note> notes);
+
     /**
      * Update an existing note in the database matching its primary key.
      * @param note The Note entity with updated values.
@@ -65,6 +68,9 @@ public interface NoteDao {
      */
     @Query("SELECT * FROM notes ORDER BY is_important DESC, timestamp DESC")
     LiveData<List<Note>> getAllNotes();
+
+    @Query("SELECT * FROM notes ORDER BY is_important DESC, timestamp DESC")
+    List<Note> getAllNotesSync();
 
     /**
      * Search notes where the title or content contains the search term.

@@ -207,6 +207,14 @@ public class MainActivity extends AppCompatActivity implements
         btnNavTasks = findViewById(R.id.btn_nav_tasks);
         btnNavAttendance = findViewById(R.id.btn_nav_attendance);
         fabAdd = findViewById(R.id.fab_add);
+
+        View btnBackup = findViewById(R.id.btn_header_backup);
+        if (btnBackup != null) {
+            btnBackup.setOnClickListener(v -> {
+                Intent backupIntent = new Intent(MainActivity.this, BackupActivity.class);
+                startActivity(backupIntent);
+            });
+        }
     }
 
     private void setupAdapters() {
