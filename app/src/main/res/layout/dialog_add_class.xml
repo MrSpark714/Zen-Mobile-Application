@@ -15,33 +15,53 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Top Drag Pill -->
-        <View
-            android:layout_width="36dp"
-            android:layout_height="4dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/bg_pill" />
-
-        <!-- Title -->
-        <TextView
-            android:id="@+id/tv_dialog_class_title"
-            android:layout_width="wrap_content"
+        <!-- Header Row with Title, Subtitle, and Close Button -->
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-bold"
-            android:letterSpacing="0.06"
-            android:text="SCHEDULE NEW CLASS"
-            android:textColor="@color/zen_text_primary"
-            android:textSize="16sp" />
+            android:layout_marginBottom="8dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:fontFamily="sans-serif"
-            android:text="Monday to Friday repeating schedule"
-            android:textColor="@color/zen_text_secondary"
-            android:textSize="12.5sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/btn_close_class"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_dialog_class_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-bold"
+                    android:letterSpacing="0.06"
+                    android:text="SCHEDULE NEW CLASS"
+                    android:textColor="@color/zen_text_primary"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="sans-serif"
+                    android:text="Monday to Friday repeating schedule"
+                    android:textColor="@color/zen_text_secondary"
+                    android:textSize="12.5sp" />
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btn_close_class"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Close Dialog"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_close"
+                app:tint="@color/zen_text_secondary" />
+        </RelativeLayout>
 
         <!-- Subject Name Input -->
         <com.google.android.material.textfield.TextInputLayout

@@ -7,10 +7,10 @@
     <color name="zen_surface_highlight">#2D2D30</color>
     <color name="zen_border">#27272A</color>
     
-    <!-- Accent Colors (Elegant Mint) -->
-    <color name="zen_accent">#B9F6CA</color>
+    <!-- Accent Colors (Vibrant Neon Mint/Lime) -->
+    <color name="zen_accent">#a7ff67</color>
     <color name="zen_accent_light">#E0E0E0</color>
-    <color name="zen_accent_container">#1A2E22</color>
+    <color name="zen_accent_container">#1F331A</color>
     <color name="zen_on_accent">#121212</color>
     
     <!-- Text and Icon Colors -->

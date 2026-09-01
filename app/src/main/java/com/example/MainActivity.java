@@ -23,6 +23,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -52,9 +53,11 @@ import com.example.model.Note;
 import com.example.model.SubjectStats;
 import com.example.model.Task;
 import com.example.util.NotificationHelper;
+import com.example.util.ThemeHelper;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.timepicker.MaterialTimePicker;
@@ -162,6 +165,9 @@ public class MainActivity extends AppCompatActivity implements
         setupSearch();
         setupFab();
 
+        int storedAccent = ThemeHelper.getAccentColor(this);
+        applyThemeAccent(storedAccent);
+
         handleIntent(getIntent());
 
         observeDatabase("");
@@ -194,6 +200,12 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    // Easter Egg Watermark: 7-tap detection within 3 seconds
+    private int easterEggTapCount = 0;
+    private long easterEggFirstTapTime = 0;
+    private static final int REQUIRED_EASTER_EGG_TAPS = 7;
+    private static final long EASTER_EGG_TIME_WINDOW_MS = 3000L;
+
     private void bindViews() {
         tvHeaderTitle = findViewById(R.id.tv_header_title);
         tvHeaderSubtitle = findViewById(R.id.tv_header_subtitle);
@@ -208,13 +220,55 @@ public class MainActivity extends AppCompatActivity implements
         btnNavAttendance = findViewById(R.id.btn_nav_attendance);
         fabAdd = findViewById(R.id.fab_add);
 
-        View btnBackup = findViewById(R.id.btn_header_backup);
-        if (btnBackup != null) {
-            btnBackup.setOnClickListener(v -> {
-                Intent backupIntent = new Intent(MainActivity.this, BackupActivity.class);
-                startActivity(backupIntent);
+        // Attach Easter Egg 7-tap listener on Header Title & Subtitle
+        if (tvHeaderTitle != null) {
+            tvHeaderTitle.setOnClickListener(v -> handleEasterEggTap());
+        }
+        if (tvHeaderSubtitle != null) {
+            tvHeaderSubtitle.setOnClickListener(v -> handleEasterEggTap());
+        }
+
+        View btnSettings = findViewById(R.id.btn_header_settings);
+        if (btnSettings != null) {
+            btnSettings.setOnClickListener(v -> {
+                Intent intent = new Intent(MainActivity.this, BackupActivity.class);
+                startActivity(intent);
             });
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        int storedAccent = ThemeHelper.getAccentColor(this);
+        applyThemeAccent(storedAccent);
+    }
+
+    private void handleEasterEggTap() {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - easterEggFirstTapTime > EASTER_EGG_TIME_WINDOW_MS) {
+            easterEggTapCount = 1;
+            easterEggFirstTapTime = currentTime;
+        } else {
+            easterEggTapCount++;
+            if (easterEggTapCount >= REQUIRED_EASTER_EGG_TAPS) {
+                easterEggTapCount = 0;
+                easterEggFirstTapTime = 0;
+                showEasterEggWatermark();
+            }
+        }
+    }
+
+    private void showEasterEggWatermark() {
+        String watermark = "ZEN v0.9.2 — Architected and Built by Muhammad Sohaib";
+        Toast.makeText(this, watermark, Toast.LENGTH_LONG).show();
+
+        new MaterialAlertDialogBuilder(this, R.style.Theme_ZEN)
+                .setTitle("ZEN Architect")
+                .setMessage(watermark)
+                .setIcon(R.drawable.ic_star_filled)
+                .setPositiveButton("Close", null)
+                .show();
     }
 
     private void setupAdapters() {
@@ -249,6 +303,9 @@ public class MainActivity extends AppCompatActivity implements
         currentTab = tab;
         String query = etSearch.getText().toString().trim();
 
+        int accentColor = ThemeHelper.getAccentColor(this);
+        int onAccentColor = ThemeHelper.getOnAccentColor(accentColor);
+
         // Reset bottom navigation styles
         btnNavNotes.setBackgroundResource(R.drawable.bg_nav_tab_inactive);
         btnNavNotes.setTextColor(ContextCompat.getColor(this, R.color.zen_text_secondary));
@@ -258,8 +315,8 @@ public class MainActivity extends AppCompatActivity implements
         btnNavAttendance.setTextColor(ContextCompat.getColor(this, R.color.zen_text_secondary));
 
         if (tab == TAB_NOTES) {
-            btnNavNotes.setBackgroundResource(R.drawable.bg_nav_tab_active);
-            btnNavNotes.setTextColor(ContextCompat.getColor(this, R.color.zen_on_accent));
+            btnNavNotes.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
+            btnNavNotes.setTextColor(onAccentColor);
 
             tvHeaderTitle.setText("ZEN");
             tvHeaderSubtitle.setText("RECENT NOTES");
@@ -269,8 +326,8 @@ public class MainActivity extends AppCompatActivity implements
             fabAdd.setContentDescription("Add Note");
             updateNotesBadge();
         } else if (tab == TAB_TASKS) {
-            btnNavTasks.setBackgroundResource(R.drawable.bg_nav_tab_active);
-            btnNavTasks.setTextColor(ContextCompat.getColor(this, R.color.zen_on_accent));
+            btnNavTasks.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
+            btnNavTasks.setTextColor(onAccentColor);
 
             tvHeaderTitle.setText("ZEN");
             tvHeaderSubtitle.setText("ACTIVE TASKS");
@@ -280,8 +337,8 @@ public class MainActivity extends AppCompatActivity implements
             fabAdd.setContentDescription("Add Task");
             updateTasksBadge();
         } else {
-            btnNavAttendance.setBackgroundResource(R.drawable.bg_nav_tab_active);
-            btnNavAttendance.setTextColor(ContextCompat.getColor(this, R.color.zen_on_accent));
+            btnNavAttendance.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
+            btnNavAttendance.setTextColor(onAccentColor);
 
             tvHeaderTitle.setText("ZEN");
             tvHeaderSubtitle.setText("ATTENDANCE TRACKER");
@@ -290,7 +347,34 @@ public class MainActivity extends AppCompatActivity implements
             updateAttendanceBadge();
         }
 
+        ThemeHelper.applyAccentToFab(fabAdd, accentColor);
+        ThemeHelper.applyAccentToBadge(tvItemCountBadge, accentColor);
+
         observeDatabase(query);
+    }
+
+    /**
+     * Dynamically applies the chosen accent color across the app UI elements.
+     */
+    public void applyThemeAccent(int accentColor) {
+        ThemeHelper.applyAccentToFab(fabAdd, accentColor);
+        ThemeHelper.applyAccentToBadge(tvItemCountBadge, accentColor);
+
+        int onAccentColor = ThemeHelper.getOnAccentColor(accentColor);
+        if (currentTab == TAB_NOTES && btnNavNotes != null) {
+            btnNavNotes.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
+            btnNavNotes.setTextColor(onAccentColor);
+        } else if (currentTab == TAB_TASKS && btnNavTasks != null) {
+            btnNavTasks.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
+            btnNavTasks.setTextColor(onAccentColor);
+        } else if (currentTab == TAB_ATTENDANCE && btnNavAttendance != null) {
+            btnNavAttendance.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
+            btnNavAttendance.setTextColor(onAccentColor);
+        }
+
+        if (attendanceViewHolder != null) {
+            attendanceViewHolder.refreshThemeAccent(accentColor);
+        }
     }
 
     private void setupSearch() {
@@ -668,9 +752,19 @@ public class MainActivity extends AppCompatActivity implements
             // Schedule Day Filters (Strictly Monday-Friday)
             setupDayFilters();
 
-            // FAB Action
-            fabAddClass.setOnClickListener(v -> showAddClassBottomSheet(null));
+            // FAB Action & Theme Styling
+            if (fabAddClass != null) {
+                ThemeHelper.applyAccentToFab(fabAddClass, ThemeHelper.getAccentColor(MainActivity.this));
+                fabAddClass.setOnClickListener(v -> showAddClassBottomSheet(null));
+            }
 
+            switchSubTab(currentAttendanceSubTab);
+        }
+
+        void refreshThemeAccent(int accentColor) {
+            if (fabAddClass != null) {
+                ThemeHelper.applyAccentToFab(fabAddClass, accentColor);
+            }
             switchSubTab(currentAttendanceSubTab);
         }
 
@@ -699,6 +793,9 @@ public class MainActivity extends AppCompatActivity implements
         void switchSubTab(int subTab) {
             currentAttendanceSubTab = subTab;
 
+            int accentColor = ThemeHelper.getAccentColor(MainActivity.this);
+            int onAccentColor = ThemeHelper.getOnAccentColor(accentColor);
+
             // Reset Sub-Tab header buttons
             tabToday.setBackgroundResource(R.drawable.bg_nav_tab_inactive);
             tabToday.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_text_secondary));
@@ -712,18 +809,18 @@ public class MainActivity extends AppCompatActivity implements
             viewAnalytics.setVisibility(View.GONE);
 
             if (subTab == SUB_TAB_TODAY) {
-                tabToday.setBackgroundResource(R.drawable.bg_nav_tab_active);
-                tabToday.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_on_accent));
+                tabToday.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
+                tabToday.setTextColor(onAccentColor);
                 viewTodayClasses.setVisibility(View.VISIBLE);
                 refreshTodayClassesView();
             } else if (subTab == SUB_TAB_TIMETABLE) {
-                tabTimetable.setBackgroundResource(R.drawable.bg_nav_tab_active);
-                tabTimetable.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_on_accent));
+                tabTimetable.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
+                tabTimetable.setTextColor(onAccentColor);
                 viewWeeklySchedule.setVisibility(View.VISIBLE);
                 refreshWeeklyScheduleView();
             } else {
-                tabAnalytics.setBackgroundResource(R.drawable.bg_nav_tab_active);
-                tabAnalytics.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_on_accent));
+                tabAnalytics.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
+                tabAnalytics.setTextColor(onAccentColor);
                 viewAnalytics.setVisibility(View.VISIBLE);
                 updateAnalyticsView(currentSubjectStats);
             }
@@ -889,6 +986,11 @@ public class MainActivity extends AppCompatActivity implements
         TextInputEditText etSubject = dialogView.findViewById(R.id.et_class_subject);
         TextInputEditText etRoom = dialogView.findViewById(R.id.et_class_room);
 
+        ImageButton btnClose = dialogView.findViewById(R.id.btn_close_class);
+        if (btnClose != null) {
+            btnClose.setOnClickListener(v -> dialog.dismiss());
+        }
+
         TextView chipMon = dialogView.findViewById(R.id.chip_day_mon);
         TextView chipTue = dialogView.findViewById(R.id.chip_day_tue);
         TextView chipWed = dialogView.findViewById(R.id.chip_day_wed);
@@ -952,32 +1054,7 @@ public class MainActivity extends AppCompatActivity implements
             });
         }
 
-        // Type Selection (Theory vs Lab)
-        Runnable updateTypeChips = () -> {
-            if ("Lab".equalsIgnoreCase(selectedType[0])) {
-                chipLab.setBackgroundResource(R.drawable.bg_chip_selected);
-                chipLab.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_accent));
-                chipTheory.setBackgroundResource(R.drawable.bg_chip_unselected);
-                chipTheory.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_text_secondary));
-            } else {
-                chipTheory.setBackgroundResource(R.drawable.bg_chip_selected);
-                chipTheory.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_accent));
-                chipLab.setBackgroundResource(R.drawable.bg_chip_unselected);
-                chipLab.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_text_secondary));
-            }
-        };
-        updateTypeChips.run();
-
-        chipTheory.setOnClickListener(v -> {
-            selectedType[0] = "Theory";
-            updateTypeChips.run();
-        });
-        chipLab.setOnClickListener(v -> {
-            selectedType[0] = "Lab";
-            updateTypeChips.run();
-        });
-
-        // Credit Hours Selection
+        // Credit Hours Selection Runnable (Defined early so chipLab can trigger smart default)
         TextView[] creditChips = {chipCr1, chipCr2, chipCr3, chipCr4};
         int[] creditValues = {1, 2, 3, 4};
 
@@ -1001,6 +1078,37 @@ public class MainActivity extends AppCompatActivity implements
                 updateCreditChips.run();
             });
         }
+
+        // Type Selection (Theory vs Lab)
+        Runnable updateTypeChips = () -> {
+            if ("Lab".equalsIgnoreCase(selectedType[0])) {
+                chipLab.setBackgroundResource(R.drawable.bg_chip_selected);
+                chipLab.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_accent));
+                chipTheory.setBackgroundResource(R.drawable.bg_chip_unselected);
+                chipTheory.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_text_secondary));
+            } else {
+                chipTheory.setBackgroundResource(R.drawable.bg_chip_selected);
+                chipTheory.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_accent));
+                chipLab.setBackgroundResource(R.drawable.bg_chip_unselected);
+                chipLab.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_text_secondary));
+            }
+        };
+        updateTypeChips.run();
+
+        chipTheory.setOnClickListener(v -> {
+            selectedType[0] = "Theory";
+            updateTypeChips.run();
+        });
+
+        // Issue 1: Smart Lab Default - Sets selectedCredits to 1 and refreshes credit chips UI
+        chipLab.setOnClickListener(v -> {
+            selectedType[0] = "Lab";
+            updateTypeChips.run();
+
+            // Auto-default to 1 credit hour when selecting Lab (can still be manually adjusted afterward)
+            selectedCredits[0] = 1;
+            updateCreditChips.run();
+        });
 
         // Start Time Picker (Material 3 Time Picker)
         btnStartTime.setOnClickListener(v -> {
@@ -1055,6 +1163,24 @@ public class MainActivity extends AppCompatActivity implements
             if (TextUtils.isEmpty(subject)) {
                 etSubject.setError("Please enter a subject name");
                 return;
+            }
+
+            // Issue 1: Time Validation - Block saving if End Time <= Start Time
+            if (!isValidClassTimeWindow(selectedStartTimeStr[0], selectedEndTimeStr[0])) {
+                Toast.makeText(
+                        MainActivity.this,
+                        "End time must be after start time. Please select a valid class time window.",
+                        Toast.LENGTH_LONG
+                ).show();
+                return;
+            }
+
+            // Issue 2: Lab Grouping Bug (Auto-Suffix)
+            // If class type is Lab and subject name does not already end with "Lab", append " Lab"
+            if ("Lab".equalsIgnoreCase(selectedType[0])) {
+                if (!subject.toLowerCase(Locale.ROOT).endsWith("lab")) {
+                    subject = subject + " Lab";
+                }
             }
 
             if (TextUtils.isEmpty(room)) {
@@ -1462,6 +1588,21 @@ public class MainActivity extends AppCompatActivity implements
             case Calendar.SUNDAY: return "Sunday";
             default: return "Monday";
         }
+    }
+
+    /**
+     * Validates whether the class end time occurs strictly after the start time.
+     *
+     * @param startTimeStr Start time formatted string (e.g. "09:00 AM")
+     * @param endTimeStr   End time formatted string (e.g. "10:30 AM")
+     * @return true if end time is strictly greater than start time within a 24-hour cycle
+     */
+    private boolean isValidClassTimeWindow(String startTimeStr, String endTimeStr) {
+        int[] startHM = NotificationHelper.parseHourAndMinute(startTimeStr);
+        int[] endHM = NotificationHelper.parseHourAndMinute(endTimeStr);
+        int startMinutes = startHM[0] * 60 + startHM[1];
+        int endMinutes = endHM[0] * 60 + endHM[1];
+        return endMinutes > startMinutes;
     }
 
     private void hideKeyboard(View view) {

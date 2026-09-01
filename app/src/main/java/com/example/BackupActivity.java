@@ -1,11 +1,15 @@
 package com.example;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -25,7 +29,9 @@ import com.example.model.Note;
 import com.example.model.Task;
 import com.example.model.ZenBackupPayload;
 import com.example.util.BackupHelper;
+import com.example.util.ThemeHelper;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
@@ -36,10 +42,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
- * BackupActivity manages offline JSON export, restore, and cohort timetable sharing
- * using Android's Storage Access Framework (SAF) and FileProvider.
+ * BackupActivity manages offline JSON export, restore, cohort timetable sharing,
+ * and dynamic accent theme customization in one unified Settings & Data screen.
  */
 public class BackupActivity extends AppCompatActivity {
 
@@ -51,6 +58,8 @@ public class BackupActivity extends AppCompatActivity {
     private TextView tvCountTasks;
     private TextView tvCountClasses;
     private TextView tvCountAttendance;
+    private TextView tvDbStatsHeader;
+    private TextView tvThemeAppliedHint;
     private RadioGroup rgBackupOptions;
     private RadioButton rbFullBackup;
     private RadioButton rbNotesAttendance;
@@ -58,6 +67,13 @@ public class BackupActivity extends AppCompatActivity {
     private MaterialButton btnExportBackup;
     private MaterialButton btnImportBackup;
     private MaterialButton btnShareTimetable;
+    private MaterialCardView cardCohortSharing;
+    private ImageView ivCohortIcon;
+
+    // Theme selector components
+    private FrameLayout frameMint, frameTeal, frameCyan, frameSage, frameLime;
+    private View ringMint, ringTeal, ringCyan, ringSage, ringLime;
+    private ImageView checkMint, checkTeal, checkCyan, checkSage, checkLime;
 
     // In-memory cache of serialized backup payload awaiting SAF write callback
     private String pendingExportJson = null;
@@ -77,8 +93,12 @@ public class BackupActivity extends AppCompatActivity {
 
         database = AppDatabase.getInstance(this);
         initViews();
+        setupThemeSelector();
         setupListeners();
         loadLocalDatabaseStats();
+
+        // Apply saved accent theme
+        applyDynamicTheme(ThemeHelper.getAccentColor(this));
 
         // Handle incoming shared file (from WhatsApp, Email, File Manager, etc.)
         handleIncomingIntent(getIntent());
@@ -98,6 +118,8 @@ public class BackupActivity extends AppCompatActivity {
         tvCountTasks = findViewById(R.id.tv_count_tasks);
         tvCountClasses = findViewById(R.id.tv_count_classes);
         tvCountAttendance = findViewById(R.id.tv_count_attendance);
+        tvDbStatsHeader = findViewById(R.id.tv_db_stats_header);
+        tvThemeAppliedHint = findViewById(R.id.tv_theme_applied_hint);
         rgBackupOptions = findViewById(R.id.rg_backup_options);
         rbFullBackup = findViewById(R.id.rb_full_backup);
         rbNotesAttendance = findViewById(R.id.rb_notes_attendance);
@@ -105,12 +127,156 @@ public class BackupActivity extends AppCompatActivity {
         btnExportBackup = findViewById(R.id.btn_export_backup);
         btnImportBackup = findViewById(R.id.btn_import_backup);
         btnShareTimetable = findViewById(R.id.btn_share_timetable);
+        cardCohortSharing = findViewById(R.id.card_cohort_sharing);
+        ivCohortIcon = findViewById(R.id.iv_cohort_icon);
+
+        frameMint = findViewById(R.id.frame_color_mint);
+        frameTeal = findViewById(R.id.frame_color_teal);
+        frameCyan = findViewById(R.id.frame_color_cyan);
+        frameSage = findViewById(R.id.frame_color_sage);
+        frameLime = findViewById(R.id.frame_color_lime);
+
+        ringMint = findViewById(R.id.ring_color_mint);
+        ringTeal = findViewById(R.id.ring_color_teal);
+        ringCyan = findViewById(R.id.ring_color_cyan);
+        ringSage = findViewById(R.id.ring_color_sage);
+        ringLime = findViewById(R.id.ring_color_lime);
+
+        checkMint = findViewById(R.id.check_color_mint);
+        checkTeal = findViewById(R.id.check_color_teal);
+        checkCyan = findViewById(R.id.check_color_cyan);
+        checkSage = findViewById(R.id.check_color_sage);
+        checkLime = findViewById(R.id.check_color_lime);
+    }
+
+    private void setupThemeSelector() {
+        updateThemeSelectionIndicators(ThemeHelper.getAccentColorHex(this));
+
+        if (frameMint != null) {
+            frameMint.setOnClickListener(v -> selectThemeColor(ThemeHelper.COLOR_MINT_DEFAULT));
+        }
+        if (frameTeal != null) {
+            frameTeal.setOnClickListener(v -> selectThemeColor(ThemeHelper.COLOR_NEON_TEAL));
+        }
+        if (frameCyan != null) {
+            frameCyan.setOnClickListener(v -> selectThemeColor(ThemeHelper.COLOR_CYAN_BLUE));
+        }
+        if (frameSage != null) {
+            frameSage.setOnClickListener(v -> selectThemeColor(ThemeHelper.COLOR_SAGE_GREEN));
+        }
+        if (frameLime != null) {
+            frameLime.setOnClickListener(v -> selectThemeColor(ThemeHelper.COLOR_ELECTRIC_LIME));
+        }
+    }
+
+    private void selectThemeColor(String hexColor) {
+        ThemeHelper.setAccentColor(this, hexColor);
+        int newColor = ThemeHelper.getAccentColor(this);
+        updateThemeSelectionIndicators(hexColor);
+        applyDynamicTheme(newColor);
+        Toast.makeText(this, "Theme accent updated", Toast.LENGTH_SHORT).show();
+    }
+
+    private void updateThemeSelectionIndicators(String selectedHex) {
+        String hex = (selectedHex != null) ? selectedHex.toLowerCase(Locale.ROOT) : ThemeHelper.COLOR_MINT_DEFAULT;
+        boolean isMint = hex.equalsIgnoreCase(ThemeHelper.COLOR_MINT_DEFAULT);
+        boolean isTeal = hex.equalsIgnoreCase(ThemeHelper.COLOR_NEON_TEAL);
+        boolean isCyan = hex.equalsIgnoreCase(ThemeHelper.COLOR_CYAN_BLUE);
+        boolean isSage = hex.equalsIgnoreCase(ThemeHelper.COLOR_SAGE_GREEN);
+        boolean isLime = hex.equalsIgnoreCase(ThemeHelper.COLOR_ELECTRIC_LIME);
+
+        if (ringMint != null) ringMint.setVisibility(isMint ? View.VISIBLE : View.GONE);
+        if (checkMint != null) checkMint.setVisibility(isMint ? View.VISIBLE : View.GONE);
+
+        if (ringTeal != null) ringTeal.setVisibility(isTeal ? View.VISIBLE : View.GONE);
+        if (checkTeal != null) checkTeal.setVisibility(isTeal ? View.VISIBLE : View.GONE);
+
+        if (ringCyan != null) ringCyan.setVisibility(isCyan ? View.VISIBLE : View.GONE);
+        if (checkCyan != null) checkCyan.setVisibility(isCyan ? View.VISIBLE : View.GONE);
+
+        if (ringSage != null) ringSage.setVisibility(isSage ? View.VISIBLE : View.GONE);
+        if (checkSage != null) checkSage.setVisibility(isSage ? View.VISIBLE : View.GONE);
+
+        if (ringLime != null) ringLime.setVisibility(isLime ? View.VISIBLE : View.GONE);
+        if (checkLime != null) checkLime.setVisibility(isLime ? View.VISIBLE : View.GONE);
+    }
+
+    /**
+     * Applies dynamic accent theme across the Backup & Cohort sharing screen components.
+     */
+    private void applyDynamicTheme(int accentColor) {
+        if (progressIndicator != null) {
+            progressIndicator.setIndicatorColor(accentColor);
+        }
+        if (tvDbStatsHeader != null) {
+            tvDbStatsHeader.setTextColor(accentColor);
+        }
+        if (rbFullBackup != null) {
+            ThemeHelper.applyAccentToRadioButton(rbFullBackup, accentColor);
+        }
+        if (rbNotesAttendance != null) {
+            ThemeHelper.applyAccentToRadioButton(rbNotesAttendance, accentColor);
+        }
+        if (rbAttendanceOnly != null) {
+            ThemeHelper.applyAccentToRadioButton(rbAttendanceOnly, accentColor);
+        }
+        if (btnExportBackup != null) {
+            ThemeHelper.applyAccentToPrimaryButton(btnExportBackup, accentColor);
+        }
+        if (btnShareTimetable != null) {
+            ThemeHelper.applyAccentToPrimaryButton(btnShareTimetable, accentColor);
+        }
+        if (cardCohortSharing != null) {
+            cardCohortSharing.setStrokeColor(accentColor);
+            cardCohortSharing.setCardBackgroundColor(ThemeHelper.getAccentContainerColor(accentColor));
+        }
+        if (ivCohortIcon != null) {
+            ivCohortIcon.setColorFilter(accentColor);
+        }
     }
 
     private void setupListeners() {
         btnExportBackup.setOnClickListener(v -> startExportFlow());
         btnImportBackup.setOnClickListener(v -> startImportFlow());
         btnShareTimetable.setOnClickListener(v -> startCohortShareFlow());
+
+        View statusInfo = findViewById(R.id.tv_status_info);
+        if (statusInfo != null) {
+            statusInfo.setOnClickListener(v -> handleEasterEggTap());
+        }
+    }
+
+    // Easter Egg Watermark: 7-tap detection within 3 seconds
+    private int easterEggTapCount = 0;
+    private long easterEggFirstTapTime = 0;
+    private static final int REQUIRED_EASTER_EGG_TAPS = 7;
+    private static final long EASTER_EGG_TIME_WINDOW_MS = 3000L;
+
+    private void handleEasterEggTap() {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - easterEggFirstTapTime > EASTER_EGG_TIME_WINDOW_MS) {
+            easterEggTapCount = 1;
+            easterEggFirstTapTime = currentTime;
+        } else {
+            easterEggTapCount++;
+            if (easterEggTapCount >= REQUIRED_EASTER_EGG_TAPS) {
+                easterEggTapCount = 0;
+                easterEggFirstTapTime = 0;
+                showEasterEggWatermark();
+            }
+        }
+    }
+
+    private void showEasterEggWatermark() {
+        String watermark = "ZEN v0.9.2 — Architected and Built by Muhammad Sohaib";
+        Toast.makeText(this, watermark, Toast.LENGTH_LONG).show();
+
+        new MaterialAlertDialogBuilder(this, R.style.Theme_ZEN)
+                .setTitle("ZEN Architect")
+                .setMessage(watermark)
+                .setIcon(R.drawable.ic_star_filled)
+                .setPositiveButton("Close", null)
+                .show();
     }
 
     /**
@@ -375,6 +541,22 @@ public class BackupActivity extends AppCompatActivity {
 
     private void handleIncomingIntent(Intent intent) {
         if (intent == null) return;
+
+        String actionMode = intent.getStringExtra("ACTION_MODE");
+        if (actionMode != null) {
+            intent.removeExtra("ACTION_MODE");
+            mainHandler.postDelayed(() -> {
+                if ("EXPORT_FULL".equals(actionMode)) {
+                    if (rbFullBackup != null) rbFullBackup.setChecked(true);
+                    startExportFlow();
+                } else if ("IMPORT".equals(actionMode)) {
+                    startImportFlow();
+                } else if ("SHARE_TIMETABLE".equals(actionMode)) {
+                    startCohortShareFlow();
+                }
+            }, 300);
+            return;
+        }
 
         Uri targetUri = null;
         String action = intent.getAction();

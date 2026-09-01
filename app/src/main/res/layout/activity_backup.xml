@@ -50,8 +50,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-medium"
-                        android:letterSpacing="0.1"
-                        android:text="BACKUP &amp; RESTORE"
+                        android:letterSpacing="0.08"
+                        android:text="SETTINGS &amp; DATA"
                         android:textColor="@color/zen_text_primary"
                         android:textSize="18sp" />
 
@@ -59,8 +59,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif"
-                        android:letterSpacing="0.04"
-                        android:text="Offline Data &amp; Cohort Sync"
+                        android:letterSpacing="0.03"
+                        android:text="Theme Accent &amp; Offline Sync"
                         android:textColor="@color/zen_text_secondary"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -77,11 +77,251 @@
                 app:indicatorColor="@color/zen_accent"
                 app:trackColor="@color/zen_surface_highlight" />
 
+            <!-- SECTION 1: ACCENT THEME COLOR -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.1"
+                android:text="ACCENT THEME COLOR"
+                android:textColor="@color/zen_text_secondary"
+                android:textSize="11.5sp" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_theme_selector"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:cardBackgroundColor="@color/zen_surface"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/zen_border"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Horizontal Selector for 5 Theme Colors -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="8dp">
+
+                        <!-- Color 1: #a7ff67 (Mint Green) -->
+                        <FrameLayout
+                            android:id="@+id/frame_color_mint"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:clickable="true"
+                            android:focusable="true">
+
+                            <View
+                                android:id="@+id/ring_color_mint"
+                                android:layout_width="46dp"
+                                android:layout_height="46dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/bg_color_item" />
+
+                            <View
+                                android:layout_width="34dp"
+                                android:layout_height="34dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/bg_color_item"
+                                android:backgroundTint="#a7ff67" />
+
+                            <ImageView
+                                android:id="@+id/check_color_mint"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_gravity="center"
+                                android:contentDescription="Mint Selected"
+                                android:src="@drawable/ic_check"
+                                android:visibility="visible"
+                                app:tint="#121212" />
+                        </FrameLayout>
+
+                        <!-- Color 2: #00f6ac (Neon Teal) -->
+                        <FrameLayout
+                            android:id="@+id/frame_color_teal"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:clickable="true"
+                            android:focusable="true">
+
+                            <View
+                                android:id="@+id/ring_color_teal"
+                                android:layout_width="46dp"
+                                android:layout_height="46dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/bg_color_item"
+                                android:visibility="gone" />
+
+                            <View
+                                android:layout_width="34dp"
+                                android:layout_height="34dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/bg_color_item"
+                                android:backgroundTint="#00f6ac" />
+
+                            <ImageView
+                                android:id="@+id/check_color_teal"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_gravity="center"
+                                android:contentDescription="Teal Selected"
+                                android:src="@drawable/ic_check"
+                                android:visibility="gone"
+                                app:tint="#121212" />
+                        </FrameLayout>
+
+                        <!-- Color 3: #07B7DC (Cyan Blue) -->
+                        <FrameLayout
+                            android:id="@+id/frame_color_cyan"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:clickable="true"
+                            android:focusable="true">
+
+                            <View
+                                android:id="@+id/ring_color_cyan"
+                                android:layout_width="46dp"
+                                android:layout_height="46dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/bg_color_item"
+                                android:visibility="gone" />
+
+                            <View
+                                android:layout_width="34dp"
+                                android:layout_height="34dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/bg_color_item"
+                                android:backgroundTint="#07B7DC" />
+
+                            <ImageView
+                                android:id="@+id/check_color_cyan"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_gravity="center"
+                                android:contentDescription="Cyan Selected"
+                                android:src="@drawable/ic_check"
+                                android:visibility="gone"
+                                app:tint="#121212" />
+                        </FrameLayout>
+
+                        <!-- Color 4: #BDD0B8 (Sage Green) -->
+                        <FrameLayout
+                            android:id="@+id/frame_color_sage"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:clickable="true"
+                            android:focusable="true">
+
+                            <View
+                                android:id="@+id/ring_color_sage"
+                                android:layout_width="46dp"
+                                android:layout_height="46dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/bg_color_item"
+                                android:visibility="gone" />
+
+                            <View
+                                android:layout_width="34dp"
+                                android:layout_height="34dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/bg_color_item"
+                                android:backgroundTint="#BDD0B8" />
+
+                            <ImageView
+                                android:id="@+id/check_color_sage"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_gravity="center"
+                                android:contentDescription="Sage Selected"
+                                android:src="@drawable/ic_check"
+                                android:visibility="gone"
+                                app:tint="#121212" />
+                        </FrameLayout>
+
+                        <!-- Color 5: #D0FF00 (Electric Lime) -->
+                        <FrameLayout
+                            android:id="@+id/frame_color_lime"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:clickable="true"
+                            android:focusable="true">
+
+                            <View
+                                android:id="@+id/ring_color_lime"
+                                android:layout_width="46dp"
+                                android:layout_height="46dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/bg_color_item"
+                                android:visibility="gone" />
+
+                            <View
+                                android:layout_width="34dp"
+                                android:layout_height="34dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/bg_color_item"
+                                android:backgroundTint="#D0FF00" />
+
+                            <ImageView
+                                android:id="@+id/check_color_lime"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_gravity="center"
+                                android:contentDescription="Lime Selected"
+                                android:src="@drawable/ic_check"
+                                android:visibility="gone"
+                                app:tint="#121212" />
+                        </FrameLayout>
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_theme_applied_hint"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="sans-serif"
+                        android:gravity="center"
+                        android:text="Tap any color chip to instantly theme tabs, badges &amp; buttons"
+                        android:textColor="@color/zen_text_secondary"
+                        android:textSize="11.5sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- SECTION 2: DATABASE & BACKUP -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.1"
+                android:text="CURRENT LOCAL DATABASE"
+                android:textColor="@color/zen_text_secondary"
+                android:textSize="11.5sp" />
+
             <!-- Database Summary Stats Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="10dp"
                 app:cardBackgroundColor="@color/zen_surface"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
@@ -95,11 +335,12 @@
                     android:padding="16dp">
 
                     <TextView
+                        android:id="@+id/tv_db_stats_header"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-medium"
                         android:letterSpacing="0.12"
-                        android:text="CURRENT LOCAL DATABASE"
+                        android:text="LOCAL STORAGE SUMMARY"
                         android:textAllCaps="true"
                         android:textColor="@color/zen_accent"
                         android:textSize="11sp" />
@@ -228,7 +469,7 @@
                 android:letterSpacing="0.1"
                 android:text="BACKUP SCOPE"
                 android:textColor="@color/zen_text_secondary"
-                android:textSize="12sp" />
+                android:textSize="11.5sp" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -388,9 +629,10 @@
                 android:letterSpacing="0.1"
                 android:text="COHORT SHARING"
                 android:textColor="@color/zen_text_secondary"
-                android:textSize="12sp" />
+                android:textSize="11.5sp" />
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_cohort_sharing"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -413,6 +655,7 @@
                         android:orientation="horizontal">
 
                         <ImageView
+                            android:id="@+id/iv_cohort_icon"
                             android:layout_width="28dp"
                             android:layout_height="28dp"
                             android:contentDescription="Cohort Sharing"

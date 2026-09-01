@@ -1,21 +1,48 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Project specific ProGuard rules for ZEN
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Preserve line numbers and source attributes for debugging
+-keepattributes SourceFile,LineNumberTable
+-keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# ===================================================================
+# Room Persistence Library Keep Rules
+# ===================================================================
+-keep class * extends androidx.room.RoomDatabase
+-keepclassmembers class * extends androidx.room.RoomDatabase {
+    public static abstract <methods>;
+}
+-keep @androidx.room.Entity class * { *; }
+-keep @androidx.room.Dao class * { *; }
+-keep class * extends androidx.room.RoomDatabase_Impl
+-keep class androidx.room.** { *; }
+-dontwarn androidx.room.paging.**
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Keep all database DAO and Database classes
+-keep class com.example.database.** { *; }
+
+# ===================================================================
+# Data Models & POJOs
+# ===================================================================
+-keep class com.example.model.** { *; }
+-keepclassmembers class com.example.model.** {
+    @com.google.gson.annotations.SerializedName <fields>;
+    <fields>;
+    <methods>;
+}
+
+# ===================================================================
+# Gson Serialization Rules
+# ===================================================================
+-keep class com.google.gson.** { *; }
+-keep class sun.misc.Unsafe { *; }
+-keep class * implements com.google.gson.TypeAdapter
+-keep class * implements com.google.gson.TypeAdapterFactory
+-keep class * implements com.google.gson.JsonSerializer
+-keep class * implements com.google.gson.JsonDeserializer
+
+# ===================================================================
+# Material Design & AndroidX
+# ===================================================================
+-keep class com.google.android.material.** { *; }
+-dontwarn com.google.android.material.**
+

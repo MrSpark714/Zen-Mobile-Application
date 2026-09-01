@@ -81,14 +81,14 @@
                         android:textSize="11.5sp" />
 
                     <ImageView
-                        android:id="@+id/btn_header_backup"
+                        android:id="@+id/btn_header_settings"
                         android:layout_width="34dp"
                         android:layout_height="34dp"
                         android:layout_marginStart="8dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="Backup and Restore"
+                        android:contentDescription="Settings and Data Management"
                         android:padding="6dp"
-                        android:src="@drawable/ic_backup"
+                        android:src="@drawable/ic_settings"
                         app:tint="@color/zen_text_secondary" />
                 </LinearLayout>
             </RelativeLayout>
