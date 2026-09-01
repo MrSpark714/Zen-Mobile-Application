@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://zenwebsite-teal.vercel.app/#hero"><strong>Visit the Official ZEN Website</strong></a>
+  <a href="https://zenwebsite-alpha.vercel.app/"><strong>Visit the Official ZEN Website</strong></a>
 </p>
 
 <p align="center">
