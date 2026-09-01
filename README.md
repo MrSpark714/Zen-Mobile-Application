@@ -76,7 +76,7 @@ ZEN replaces disconnected planners by combining rich-text notes, scheduled tasks
 ZEN is in continuous development. While the core modules (Notes, Tasks, and Attendance Tracker) are fully operational, you may encounter bugs, unpolished edge cases, or incomplete UI elements during this phase.
 
 If you experience unexpected behavior or have suggestions for improvement, please report them using one of the following methods:
-*   Submit a report directly through the **Feedback Form** located at the bottom of the [Official ZEN Website](https://zenwebsite-teal.vercel.app/#hero).
+*   Submit a report directly through the **Feedback Form** located at the bottom of the [Official ZEN Website](https://zenwebsite-alpha.vercel.app/).
 *   Open a detailed ticket in the **Issues** section of this GitHub repository.
 
 ## License
