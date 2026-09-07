@@ -42,7 +42,7 @@ public class UpdateManager {
 
     // Default GitHub raw JSON endpoint for ZEN app updates
     public static final String DEFAULT_UPDATE_URL =
-            "https://raw.githubusercontent.com/sohaib09973/zen-app/main/update.json";
+            "https://raw.githubusercontent.com/MrSpark714/Zen-Mobile-Application/main/update.json";
 
     private static final ExecutorService backgroundExecutor = Executors.newSingleThreadExecutor();
     private static final Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -145,7 +145,7 @@ public class UpdateManager {
                 connection.setRequestMethod("GET");
                 connection.setConnectTimeout(8000);
                 connection.setReadTimeout(8000);
-                connection.setRequestProperty("Accept", "application/json");
+                // connection.setRequestProperty("Accept", "application/json");
                 connection.setRequestProperty("User-Agent", "ZEN-Android-App/" + BuildConfig.VERSION_NAME);
 
                 int responseCode = connection.getResponseCode();
