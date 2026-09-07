@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="assets/.aistudio/logo_2.png" width="120" height="120" alt="ZEN App Icon">
+  <img src="/logo_2.png" width="120" height="120" alt="ZEN App Icon">
   <br>
   ZEN
 </h1>
