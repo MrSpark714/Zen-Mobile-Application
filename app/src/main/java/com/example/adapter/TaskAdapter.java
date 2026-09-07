@@ -129,6 +129,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                          SimpleDateFormat timeFormat, SimpleDateFormat dateFormat) {
             tvDescription.setText(task.getDescription());
 
+            int accentColor = com.example.util.ThemeHelper.getAccentColor(itemView.getContext());
+            cbStatus.setButtonTintList(com.example.util.ThemeHelper.createCheckboxTintList(accentColor));
+
             cbStatus.setOnCheckedChangeListener(null);
             cbStatus.setChecked(task.isCompleted());
 
@@ -168,7 +171,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 } else {
                     tvTaskTime.setText(timeBuilder.toString());
                     tvTaskTime.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.zen_text_secondary));
-                    ivTimeIcon.setColorFilter(ContextCompat.getColor(itemView.getContext(), R.color.zen_accent));
+                    ivTimeIcon.setColorFilter(accentColor);
                 }
             } else {
                 layoutTaskTime.setVisibility(View.GONE);

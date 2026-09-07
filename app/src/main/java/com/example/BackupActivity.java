@@ -30,9 +30,11 @@ import com.example.model.Task;
 import com.example.model.ZenBackupPayload;
 import com.example.util.BackupHelper;
 import com.example.util.ThemeHelper;
+import com.example.util.UpdateManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -69,6 +71,10 @@ public class BackupActivity extends AppCompatActivity {
     private MaterialButton btnShareTimetable;
     private MaterialCardView cardCohortSharing;
     private ImageView ivCohortIcon;
+
+    // App Updates components
+    private MaterialSwitch switchAutoUpdate;
+    private MaterialButton btnCheckUpdatesManual;
 
     // Theme selector components
     private FrameLayout frameMint, frameTeal, frameCyan, frameSage, frameLime;
@@ -129,6 +135,8 @@ public class BackupActivity extends AppCompatActivity {
         btnShareTimetable = findViewById(R.id.btn_share_timetable);
         cardCohortSharing = findViewById(R.id.card_cohort_sharing);
         ivCohortIcon = findViewById(R.id.iv_cohort_icon);
+        switchAutoUpdate = findViewById(R.id.switch_auto_update);
+        btnCheckUpdatesManual = findViewById(R.id.btn_check_updates_manual);
 
         frameMint = findViewById(R.id.frame_color_mint);
         frameTeal = findViewById(R.id.frame_color_teal);
@@ -233,12 +241,33 @@ public class BackupActivity extends AppCompatActivity {
         if (ivCohortIcon != null) {
             ivCohortIcon.setColorFilter(accentColor);
         }
+        if (btnCheckUpdatesManual != null) {
+            btnCheckUpdatesManual.setTextColor(accentColor);
+            btnCheckUpdatesManual.setIconTint(ColorStateList.valueOf(accentColor));
+        }
+        if (switchAutoUpdate != null) {
+            ThemeHelper.applyAccentToSwitch(switchAutoUpdate, accentColor);
+        }
     }
 
     private void setupListeners() {
         btnExportBackup.setOnClickListener(v -> startExportFlow());
         btnImportBackup.setOnClickListener(v -> startImportFlow());
         btnShareTimetable.setOnClickListener(v -> startCohortShareFlow());
+
+        if (switchAutoUpdate != null) {
+            switchAutoUpdate.setChecked(UpdateManager.isAutoUpdateEnabled(this));
+            switchAutoUpdate.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                UpdateManager.setAutoUpdateEnabled(this, isChecked);
+                Toast.makeText(this, isChecked ? "Auto-update checks enabled" : "Auto-update checks disabled", Toast.LENGTH_SHORT).show();
+            });
+        }
+
+        if (btnCheckUpdatesManual != null) {
+            btnCheckUpdatesManual.setOnClickListener(v -> {
+                UpdateManager.checkForUpdates(this, UpdateManager.DEFAULT_UPDATE_URL, true);
+            });
+        }
 
         View statusInfo = findViewById(R.id.tv_status_info);
         if (statusInfo != null) {

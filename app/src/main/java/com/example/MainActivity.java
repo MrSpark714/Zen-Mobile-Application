@@ -54,11 +54,13 @@ import com.example.model.SubjectStats;
 import com.example.model.Task;
 import com.example.util.NotificationHelper;
 import com.example.util.ThemeHelper;
+import com.example.util.UpdateManager;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
@@ -171,6 +173,9 @@ public class MainActivity extends AppCompatActivity implements
         handleIntent(getIntent());
 
         observeDatabase("");
+
+        // Check for in-app updates in background
+        UpdateManager.checkForUpdates(this);
     }
 
     @Override
@@ -751,6 +756,7 @@ public class MainActivity extends AppCompatActivity implements
 
             // Schedule Day Filters (Strictly Monday-Friday)
             setupDayFilters();
+            refreshDayFiltersTheme(ThemeHelper.getAccentColor(MainActivity.this));
 
             // FAB Action & Theme Styling
             if (fabAddClass != null) {
@@ -765,6 +771,7 @@ public class MainActivity extends AppCompatActivity implements
             if (fabAddClass != null) {
                 ThemeHelper.applyAccentToFab(fabAddClass, accentColor);
             }
+            refreshDayFiltersTheme(accentColor);
             switchSubTab(currentAttendanceSubTab);
         }
 
@@ -776,17 +783,21 @@ public class MainActivity extends AppCompatActivity implements
                 final int index = i;
                 filterChips[i].setOnClickListener(v -> {
                     currentScheduleFilterDay = dayNames[index];
+                    int accentColor = ThemeHelper.getAccentColor(MainActivity.this);
                     for (int j = 0; j < filterChips.length; j++) {
-                        if (j == index) {
-                            filterChips[j].setBackgroundResource(R.drawable.bg_chip_selected);
-                            filterChips[j].setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_accent));
-                        } else {
-                            filterChips[j].setBackgroundResource(R.drawable.bg_chip_unselected);
-                            filterChips[j].setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_text_secondary));
-                        }
+                        ThemeHelper.applyChipSelected(filterChips[j], j == index, accentColor);
                     }
                     refreshWeeklyScheduleView();
                 });
+            }
+        }
+
+        private void refreshDayFiltersTheme(int accentColor) {
+            TextView[] filterChips = {filterDayAll, filterDayMon, filterDayTue, filterDayWed, filterDayThu, filterDayFri};
+            String[] dayNames = {"All", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+            for (int i = 0; i < filterChips.length; i++) {
+                boolean isSelected = dayNames[i].equalsIgnoreCase(currentScheduleFilterDay);
+                ThemeHelper.applyChipSelected(filterChips[i], isSelected, accentColor);
             }
         }
 
@@ -1013,6 +1024,18 @@ public class MainActivity extends AppCompatActivity implements
         MaterialButton btnCancel = dialogView.findViewById(R.id.btn_cancel_class);
         MaterialButton btnSave = dialogView.findViewById(R.id.btn_save_class);
 
+        int accentColor = ThemeHelper.getAccentColor(MainActivity.this);
+        ThemeHelper.applyAccentToPrimaryButton(btnSave, accentColor);
+
+        com.google.android.material.textfield.TextInputLayout tilSubject = dialogView.findViewById(R.id.til_class_subject);
+        com.google.android.material.textfield.TextInputLayout tilRoom = dialogView.findViewById(R.id.til_class_room);
+        TextView tvReminderNote = dialogView.findViewById(R.id.tv_class_reminder_note);
+        ThemeHelper.applyAccentToTextInputLayout(tilSubject, accentColor);
+        ThemeHelper.applyAccentToTextInputLayout(tilRoom, accentColor);
+        if (tvReminderNote != null) {
+            tvReminderNote.setTextColor(accentColor);
+        }
+
         // State Holders
         final String[] selectedDay = {existingSchedule != null ? existingSchedule.getDayOfWeek() : "Monday"};
         final String[] selectedType = {existingSchedule != null ? existingSchedule.getClassType() : "Theory"};
@@ -1035,13 +1058,8 @@ public class MainActivity extends AppCompatActivity implements
 
         Runnable updateDayChips = () -> {
             for (int i = 0; i < dayChips.length; i++) {
-                if (dayNames[i].equalsIgnoreCase(selectedDay[0])) {
-                    dayChips[i].setBackgroundResource(R.drawable.bg_chip_selected);
-                    dayChips[i].setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_accent));
-                } else {
-                    dayChips[i].setBackgroundResource(R.drawable.bg_chip_unselected);
-                    dayChips[i].setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_text_secondary));
-                }
+                boolean isSelected = dayNames[i].equalsIgnoreCase(selectedDay[0]);
+                ThemeHelper.applyChipSelected(dayChips[i], isSelected, accentColor);
             }
         };
         updateDayChips.run();
@@ -1060,13 +1078,8 @@ public class MainActivity extends AppCompatActivity implements
 
         Runnable updateCreditChips = () -> {
             for (int i = 0; i < creditChips.length; i++) {
-                if (creditValues[i] == selectedCredits[0]) {
-                    creditChips[i].setBackgroundResource(R.drawable.bg_chip_selected);
-                    creditChips[i].setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_accent));
-                } else {
-                    creditChips[i].setBackgroundResource(R.drawable.bg_chip_unselected);
-                    creditChips[i].setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_text_secondary));
-                }
+                boolean isSelected = (creditValues[i] == selectedCredits[0]);
+                ThemeHelper.applyChipSelected(creditChips[i], isSelected, accentColor);
             }
         };
         updateCreditChips.run();
@@ -1081,17 +1094,9 @@ public class MainActivity extends AppCompatActivity implements
 
         // Type Selection (Theory vs Lab)
         Runnable updateTypeChips = () -> {
-            if ("Lab".equalsIgnoreCase(selectedType[0])) {
-                chipLab.setBackgroundResource(R.drawable.bg_chip_selected);
-                chipLab.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_accent));
-                chipTheory.setBackgroundResource(R.drawable.bg_chip_unselected);
-                chipTheory.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_text_secondary));
-            } else {
-                chipTheory.setBackgroundResource(R.drawable.bg_chip_selected);
-                chipTheory.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_accent));
-                chipLab.setBackgroundResource(R.drawable.bg_chip_unselected);
-                chipLab.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_text_secondary));
-            }
+            boolean isLab = "Lab".equalsIgnoreCase(selectedType[0]);
+            ThemeHelper.applyChipSelected(chipLab, isLab, accentColor);
+            ThemeHelper.applyChipSelected(chipTheory, !isLab, accentColor);
         };
         updateTypeChips.run();
 
@@ -1294,6 +1299,12 @@ public class MainActivity extends AppCompatActivity implements
         MaterialButton btnCancel = dialogView.findViewById(R.id.btn_cancel_task);
         MaterialButton btnSubmit = dialogView.findViewById(R.id.btn_submit_task);
 
+        int accentColor = ThemeHelper.getAccentColor(MainActivity.this);
+        ThemeHelper.applyAccentToPrimaryButton(btnSubmit, accentColor);
+
+        com.google.android.material.textfield.TextInputLayout tilTaskInput = dialogView.findViewById(R.id.til_task_input);
+        ThemeHelper.applyAccentToTextInputLayout(tilTaskInput, accentColor);
+
         TextView chipNoLimit = dialogView.findViewById(R.id.chip_no_limit);
         TextView chip30m = dialogView.findViewById(R.id.chip_30m);
         TextView chip1h = dialogView.findViewById(R.id.chip_1h);
@@ -1303,6 +1314,7 @@ public class MainActivity extends AppCompatActivity implements
 
         View layoutTimingSummary = dialogView.findViewById(R.id.layout_timing_summary);
         TextView tvTimingPreview = dialogView.findViewById(R.id.tv_timing_preview);
+        tvTimingPreview.setTextColor(accentColor);
 
         final long[] selectedStartTime = {System.currentTimeMillis()};
         final long[] selectedEndTime = {0};
@@ -1328,13 +1340,7 @@ public class MainActivity extends AppCompatActivity implements
 
         java.util.function.Consumer<TextView> selectChip = (selected) -> {
             for (TextView chip : allChips) {
-                if (chip == selected) {
-                    chip.setBackgroundResource(R.drawable.bg_chip_selected);
-                    chip.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_accent));
-                } else {
-                    chip.setBackgroundResource(R.drawable.bg_chip_unselected);
-                    chip.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_text_secondary));
-                }
+                ThemeHelper.applyChipSelected(chip, chip == selected, accentColor);
             }
         };
 

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Exposes the public Downloads directory for downloading and installing APK updates -->
+    <external-path
+        name="external_download"
+        path="Download" />
+    <external-path
+        name="external_root"
+        path="." />
+    <!-- App-specific external files and cache paths -->
+    <external-files-path
+        name="external_files_download"
+        path="Download" />
+    <external-files-path
+        name="external_files"
+        path="." />
+    <cache-path
+        name="shared_files"
+        path="." />
+    <files-path
+        name="internal_files"
+        path="." />
+</paths>

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -139,9 +140,14 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         public void bind(final Note note, final OnNoteClickListener listener, SimpleDateFormat dateFormat) {
             // Badges handling
             boolean showBadges = false;
+            int accentColor = com.example.util.ThemeHelper.getAccentColor(itemView.getContext());
 
             if (note.isImportant()) {
                 badgeImportant.setVisibility(View.VISIBLE);
+                ImageView ivStar = badgeImportant.findViewById(R.id.iv_badge_important_star);
+                TextView tvLabel = badgeImportant.findViewById(R.id.tv_badge_important_label);
+                if (ivStar != null) ivStar.setColorFilter(accentColor);
+                if (tvLabel != null) tvLabel.setTextColor(accentColor);
                 showBadges = true;
             } else {
                 badgeImportant.setVisibility(View.GONE);

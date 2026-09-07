@@ -68,6 +68,9 @@ public class WeeklyScheduleAdapter extends RecyclerView.Adapter<WeeklyScheduleAd
         holder.tvSubjectName.setText(schedule.getSubjectName());
 
         // Day of Week Short Name
+        int accentColor = com.example.util.ThemeHelper.getAccentColor(context);
+        com.example.util.ThemeHelper.applyAccentToBadge(holder.tvDayBadge, accentColor);
+
         String day = schedule.getDayOfWeek();
         if (day != null && day.length() >= 3) {
             holder.tvDayBadge.setText(day.substring(0, 3).toUpperCase());

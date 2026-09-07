@@ -60,7 +60,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif"
                         android:letterSpacing="0.03"
-                        android:text="Theme Accent &amp; Offline Sync"
+                        android:text="Preferences, Updates &amp; Offline Sync"
                         android:textColor="@color/zen_text_secondary"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -303,6 +303,75 @@
                         android:text="Tap any color chip to instantly theme tabs, badges &amp; buttons"
                         android:textColor="@color/zen_text_secondary"
                         android:textSize="11.5sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- SECTION: APP UPDATES -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.1"
+                android:text="APP UPDATES"
+                android:textAllCaps="true"
+                android:textColor="@color/zen_text_secondary"
+                android:textSize="11.5sp" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_auto_updates"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:cardBackgroundColor="@color/zen_surface"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/zen_border"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switch_auto_update"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Enable Auto-Update Checks"
+                        android:textColor="@color/zen_text_primary"
+                        android:textSize="14.5sp" />
+
+                    <TextView
+                        android:id="@+id/tv_auto_update_disclaimer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif"
+                        android:lineSpacingExtra="2dp"
+                        android:text="(Recommend to &apos;ON&apos;) This option does not send any of your personal information to any server or cloud storage."
+                        android:textColor="@color/zen_text_secondary"
+                        android:textSize="11.5sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_check_updates_manual"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:letterSpacing="0.04"
+                        android:paddingStart="0dp"
+                        android:text="Check for updates now"
+                        android:textColor="@color/zen_accent"
+                        android:textSize="12sp"
+                        app:icon="@drawable/ic_download"
+                        app:iconPadding="6dp"
+                        app:iconSize="16dp"
+                        app:iconTint="@color/zen_accent" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

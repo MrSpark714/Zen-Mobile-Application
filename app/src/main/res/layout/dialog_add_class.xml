@@ -65,6 +65,7 @@
 
         <!-- Subject Name Input -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_class_subject"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -431,6 +432,7 @@
 
         <!-- Room Number Input -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_class_room"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -459,6 +461,7 @@
 
         <!-- Advance Reminder Note -->
         <TextView
+            android:id="@+id/tv_class_reminder_note"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"

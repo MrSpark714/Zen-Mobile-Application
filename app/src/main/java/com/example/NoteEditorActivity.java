@@ -32,6 +32,7 @@ import androidx.core.content.ContextCompat;
 
 import com.example.database.AppDatabase;
 import com.example.model.Note;
+import com.example.util.ThemeHelper;
 import com.google.android.material.button.MaterialButton;
 
 import java.text.SimpleDateFormat;
@@ -127,6 +128,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         btnToggleImportant = findViewById(R.id.btn_toggle_important);
         btnShareNote = findViewById(R.id.btn_share_note);
         btnSave = findViewById(R.id.btn_save_note);
+        ThemeHelper.applyAccentToPrimaryButton(btnSave, ThemeHelper.getAccentColor(this));
 
         btnFormatBold = findViewById(R.id.btn_format_bold);
         ivBoldIcon = (ImageView) btnFormatBold.getChildAt(0);
@@ -215,9 +217,10 @@ public class NoteEditorActivity extends AppCompatActivity {
     }
 
     private void updateImportantUI() {
+        int accentColor = ThemeHelper.getAccentColor(this);
         if (isImportant) {
             btnToggleImportant.setImageResource(R.drawable.ic_star_filled);
-            btnToggleImportant.setColorFilter(ContextCompat.getColor(this, R.color.zen_accent));
+            btnToggleImportant.setColorFilter(accentColor);
         } else {
             btnToggleImportant.setImageResource(R.drawable.ic_star_outline);
             btnToggleImportant.setColorFilter(ContextCompat.getColor(this, R.color.zen_text_secondary));
@@ -304,10 +307,11 @@ public class NoteEditorActivity extends AppCompatActivity {
     }
 
     private void updateBoldButtonUI() {
+        int accentColor = ThemeHelper.getAccentColor(this);
         if (isBoldActive) {
             btnFormatBold.setBackgroundResource(R.drawable.bg_format_btn_active);
-            ivBoldIcon.setColorFilter(ContextCompat.getColor(this, R.color.zen_accent));
-            tvBoldLabel.setTextColor(ContextCompat.getColor(this, R.color.zen_accent));
+            ivBoldIcon.setColorFilter(accentColor);
+            tvBoldLabel.setTextColor(accentColor);
         } else {
             btnFormatBold.setBackgroundResource(R.drawable.bg_format_btn);
             ivBoldIcon.setColorFilter(ContextCompat.getColor(this, R.color.zen_text_primary));
@@ -399,6 +403,10 @@ public class NoteEditorActivity extends AppCompatActivity {
         MaterialButton btnCancel = dialog.findViewById(R.id.btn_popup_cancel);
         MaterialButton btnApply = dialog.findViewById(R.id.btn_popup_apply);
 
+        int accentColor = ThemeHelper.getAccentColor(this);
+        ThemeHelper.applyAccentToPrimaryButton(btnApply, accentColor);
+        tvPreview.setTextColor(accentColor);
+
         final Calendar selectedCal = Calendar.getInstance();
         final int[] actionChoice = {0}; // 0: In Text, 1: As Badge, 2: Both
 
@@ -419,13 +427,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         TextView[] presets = {presetToday, presetTomorrow, presetIn3Days, presetNextWeek};
         java.util.function.Consumer<TextView> selectPreset = (selected) -> {
             for (TextView p : presets) {
-                if (p == selected) {
-                    p.setBackgroundResource(R.drawable.bg_chip_selected);
-                    p.setTextColor(ContextCompat.getColor(this, R.color.zen_accent));
-                } else {
-                    p.setBackgroundResource(R.drawable.bg_chip_unselected);
-                    p.setTextColor(ContextCompat.getColor(this, R.color.zen_text_secondary));
-                }
+                ThemeHelper.applyChipSelected(p, p == selected, accentColor);
             }
         };
 
@@ -462,13 +464,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         java.util.function.Consumer<Integer> selectAction = (choice) -> {
             actionChoice[0] = choice;
             for (int i = 0; i < actionViews.length; i++) {
-                if (i == choice) {
-                    actionViews[i].setBackgroundResource(R.drawable.bg_chip_selected);
-                    actionViews[i].setTextColor(ContextCompat.getColor(this, R.color.zen_accent));
-                } else {
-                    actionViews[i].setBackgroundResource(R.drawable.bg_chip_unselected);
-                    actionViews[i].setTextColor(ContextCompat.getColor(this, R.color.zen_text_secondary));
-                }
+                ThemeHelper.applyChipSelected(actionViews[i], i == choice, accentColor);
             }
         };
 
