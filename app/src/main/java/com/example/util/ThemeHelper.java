@@ -81,11 +81,12 @@ public class ThemeHelper {
 
     /**
      * Dynamically builds a rounded pill background for active navigation tabs.
+     * Uses a full capsule radius (Apple-style continuous concentric curves).
      */
     public static GradientDrawable createActiveTabDrawable(int accentColor) {
         GradientDrawable drawable = new GradientDrawable();
         drawable.setShape(GradientDrawable.RECTANGLE);
-        drawable.setCornerRadius(28f); // High corner radius for smooth pill shape
+        drawable.setCornerRadius(1000f); // Auto-clamps to half the height, giving a perfect capsule curve
         drawable.setColor(accentColor);
         return drawable;
     }

@@ -1,5 +1,6 @@
 package com.example;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -272,6 +273,30 @@ public class BackupActivity extends AppCompatActivity {
         View statusInfo = findViewById(R.id.tv_status_info);
         if (statusInfo != null) {
             statusInfo.setOnClickListener(v -> handleEasterEggTap());
+        }
+
+        // GitHub & Version Footer
+        TextView tvVersion = findViewById(R.id.tv_settings_version_backup);
+        if (tvVersion != null) {
+            tvVersion.setText("ZEN v" + BuildConfig.VERSION_NAME);
+        }
+
+        View.OnClickListener openGitHubListener = v -> {
+            try {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://github.com/MrSpark714/Zen-Mobile-Application"));
+                startActivity(browserIntent);
+            } catch (Exception e) {
+                Toast.makeText(this, "Could not open browser: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        };
+        View cardFooter = findViewById(R.id.card_settings_footer_backup);
+        if (cardFooter != null) {
+            cardFooter.setOnClickListener(openGitHubListener);
+        }
+        View btnGitHub = findViewById(R.id.btn_open_github_backup);
+        if (btnGitHub != null) {
+            btnGitHub.setOnClickListener(openGitHubListener);
         }
     }
 

@@ -38,11 +38,12 @@
                         android:id="@+id/tv_header_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
-                        android:letterSpacing="0.22"
+                        android:fontFamily="sans-serif-black"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.12"
                         android:text="ZEN"
                         android:textColor="@color/zen_text_primary"
-                        android:textSize="24sp" />
+                        android:textSize="26sp" />
 
                     <TextView
                         android:id="@+id/tv_header_subtitle"
@@ -148,70 +149,131 @@
             app:layout_constraintBottom_toTopOf="@id/bottom_nav_container"
             app:layout_constraintTop_toBottomOf="@id/header_layout" />
 
-        <!-- Reliable Floating Island Text-Only Navigation Bar -->
-        <LinearLayout
+        <!-- Modern Floating Navigation Bar with Real-time Sliding Indicator & Material Symbols -->
+        <FrameLayout
             android:id="@+id/bottom_nav_container"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
+            android:layout_height="54dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginBottom="16dp"
             android:background="@drawable/bg_floating_bottom_nav"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="5dp"
+            android:elevation="6dp"
+            android:padding="4dp"
             app:layout_constraintBottom_toBottomOf="parent">
 
-            <TextView
-                android:id="@+id/btn_nav_notes"
-                android:layout_width="0dp"
+            <!-- Sliding Indicator Pill that animates seamlessly between tabs -->
+            <View
+                android:id="@+id/nav_sliding_indicator"
+                android:layout_width="100dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/bg_nav_tab_active"
-                android:clickable="true"
-                android:focusable="true"
-                android:fontFamily="sans-serif-bold"
-                android:gravity="center"
-                android:letterSpacing="0.1"
-                android:minHeight="48dp"
-                android:text="NOTES"
-                android:textColor="@color/zen_on_accent"
-                android:textSize="13sp" />
+                android:background="@drawable/bg_nav_tab_active" />
 
-            <TextView
-                android:id="@+id/btn_nav_tasks"
-                android:layout_width="0dp"
+            <!-- Tab Items Container -->
+            <LinearLayout
+                android:id="@+id/nav_tabs_layout"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginStart="6dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_nav_tab_inactive"
-                android:clickable="true"
-                android:focusable="true"
-                android:fontFamily="sans-serif-medium"
-                android:gravity="center"
-                android:letterSpacing="0.1"
-                android:minHeight="48dp"
-                android:text="TASKS"
-                android:textColor="@color/zen_text_secondary"
-                android:textSize="13sp" />
+                android:orientation="horizontal"
+                android:weightSum="3">
 
-            <TextView
-                android:id="@+id/btn_nav_attendance"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="6dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_nav_tab_inactive"
-                android:clickable="true"
-                android:focusable="true"
-                android:fontFamily="sans-serif-medium"
-                android:gravity="center"
-                android:letterSpacing="0.1"
-                android:minHeight="48dp"
-                android:text="CLASSES"
-                android:textColor="@color/zen_text_secondary"
-                android:textSize="13sp" />
-        </LinearLayout>
+                <!-- Tab 1: NOTES -->
+                <LinearLayout
+                    android:id="@+id/btn_nav_notes"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:minHeight="48dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/iv_nav_notes_icon"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:contentDescription="Notes"
+                        android:src="@drawable/ic_notes"
+                        app:tint="@color/zen_on_accent" />
+
+                    <TextView
+                        android:id="@+id/tv_nav_notes_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:fontFamily="sans-serif-bold"
+                        android:letterSpacing="0.08"
+                        android:text="NOTES"
+                        android:textColor="@color/zen_on_accent"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <!-- Tab 2: TASKS -->
+                <LinearLayout
+                    android:id="@+id/btn_nav_tasks"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:minHeight="48dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/iv_nav_tasks_icon"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:contentDescription="Tasks"
+                        android:src="@drawable/ic_tasks"
+                        app:tint="@color/zen_text_secondary" />
+
+                    <TextView
+                        android:id="@+id/tv_nav_tasks_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:letterSpacing="0.08"
+                        android:text="TASKS"
+                        android:textColor="@color/zen_text_secondary"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <!-- Tab 3: CLASSES -->
+                <LinearLayout
+                    android:id="@+id/btn_nav_attendance"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:minHeight="48dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/iv_nav_attendance_icon"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:contentDescription="Classes"
+                        android:src="@drawable/ic_school"
+                        app:tint="@color/zen_text_secondary" />
+
+                    <TextView
+                        android:id="@+id/tv_nav_attendance_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:letterSpacing="0.08"
+                        android:text="CLASSES"
+                        android:textColor="@color/zen_text_secondary"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

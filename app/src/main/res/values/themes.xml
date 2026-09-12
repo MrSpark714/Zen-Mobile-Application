@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Official AndroidX SplashScreen Starting Theme -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <!-- Background color set to black -->
+        <item name="windowSplashScreenBackground">#000000</item>
+
+        <!-- Center app icon -->
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+
+        <!-- Branding image at the bottom (Android 12+) -->
+        <item name="android:windowSplashScreenBrandingImage">@drawable/ic_branding_text</item>
+
+        <!-- Post-splash theme for MainActivity -->
+        <item name="postSplashScreenTheme">@style/Theme.MyApplication</item>
+    </style>
+
     <!-- Base ZEN Dark Theme -->
     <style name="Theme.ZEN" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:windowBackground">@color/zen_background</item>
