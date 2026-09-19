@@ -38,6 +38,14 @@
             android:theme="@style/Theme.MyApplication"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- Dedicated Attendance Log Activity -->
+        <activity
+            android:name=".LogActivity"
+            android:exported="false"
+            android:label="Attendance Log"
+            android:theme="@style/Theme.MyApplication"
+            android:windowSoftInputMode="adjustResize" />
+
         <!-- Backup, Restore, and Cohort Sharing Activity -->
         <activity
             android:name=".BackupActivity"

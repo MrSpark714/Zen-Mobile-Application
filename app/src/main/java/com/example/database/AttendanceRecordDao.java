@@ -32,8 +32,14 @@ public interface AttendanceRecordDao {
     @Update
     void update(AttendanceRecord record);
 
+    @Query("UPDATE attendance_records SET status = :status WHERE id = :id")
+    void updateStatus(int id, String status);
+
     @Delete
     void delete(AttendanceRecord record);
+
+    @Query("SELECT * FROM attendance_records ORDER BY date DESC")
+    LiveData<List<AttendanceRecord>> getAllRecords();
 
     @Query("SELECT * FROM attendance_records WHERE schedule_id = :scheduleId AND date = :date LIMIT 1")
     LiveData<AttendanceRecord> getRecordByScheduleAndDate(int scheduleId, long date);

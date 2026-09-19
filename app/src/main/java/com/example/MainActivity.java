@@ -74,6 +74,7 @@ import com.google.android.material.timepicker.TimeFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -88,6 +89,7 @@ import java.util.Map;
  * 2. Tasks (Scheduled task management with precise alarms)
  * 3. Attendance Tracker (Today's classes, Mon-Fri schedule config, relational percentage analytics, 5-min alarms)
  */
+// Triger Sync
 public class MainActivity extends AppCompatActivity implements
         NoteAdapter.OnNoteClickListener,
         TaskAdapter.OnTaskActionListener,
@@ -579,7 +581,8 @@ public class MainActivity extends AppCompatActivity implements
 
         // Observe All Class Schedules
         database.classScheduleDao().getAllSchedules().observe(this, schedules -> {
-            this.currentSchedules = schedules != null ? schedules : new ArrayList<>();
+            this.currentSchedules = schedules != null ? new ArrayList<>(schedules) : new ArrayList<>();
+            Collections.sort(this.currentSchedules, ClassSchedule.TIMETABLE_COMPARATOR);
             refreshTodayClassesView();
             refreshWeeklyScheduleView();
             updateAttendanceBadge();
@@ -613,6 +616,8 @@ public class MainActivity extends AppCompatActivity implements
                 todaySchedules.add(cs);
             }
         }
+        // Apply chronological sorting by start time for Today's dashboard
+        Collections.sort(todaySchedules, ClassSchedule.CHRONOLOGICAL_COMPARATOR);
 
         // Map today's attendance records by scheduleId
         Map<Integer, AttendanceRecord> recordMap = new HashMap<>();
@@ -635,12 +640,16 @@ public class MainActivity extends AppCompatActivity implements
         List<ClassSchedule> filteredList = new ArrayList<>();
         if ("All".equalsIgnoreCase(currentScheduleFilterDay)) {
             filteredList.addAll(currentSchedules);
+            // Apply chronological sorting for all timetable days (Monday to Friday, ordered by time)
+            Collections.sort(filteredList, ClassSchedule.TIMETABLE_COMPARATOR);
         } else {
             for (ClassSchedule cs : currentSchedules) {
                 if (currentScheduleFilterDay.equalsIgnoreCase(cs.getDayOfWeek())) {
                     filteredList.add(cs);
                 }
             }
+            // Apply chronological sorting by start time for the selected weekday
+            Collections.sort(filteredList, ClassSchedule.CHRONOLOGICAL_COMPARATOR);
         }
 
         weeklyScheduleAdapter.setSchedules(filteredList);
@@ -1116,7 +1125,11 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onSubjectClick(SubjectStats stats) {
-        showSubjectHistoryDialog(stats);
+        Intent intent = new Intent(MainActivity.this, LogActivity.class);
+        if (stats != null) {
+            intent.putExtra(LogActivity.EXTRA_SUBJECT_NAME, stats.getSubjectName());
+        }
+        startActivity(intent);
     }
 
     /**
@@ -1374,52 +1387,6 @@ public class MainActivity extends AppCompatActivity implements
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) imm.showSoftInput(etSubject, InputMethodManager.SHOW_IMPLICIT);
         }, 150);
-    }
-
-    /**
-     * Dialog showing date-by-date history log for a specific subject.
-     */
-    private void showSubjectHistoryDialog(SubjectStats stats) {
-        BottomSheetDialog dialog = new BottomSheetDialog(this, R.style.Theme_ZEN);
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_attendance_history, null);
-        dialog.setContentView(dialogView);
-
-        TextView tvSubject = dialogView.findViewById(R.id.tv_dialog_history_subject);
-        TextView tvSubtitle = dialogView.findViewById(R.id.tv_dialog_history_subtitle);
-        TextView tvPercentage = dialogView.findViewById(R.id.tv_dialog_history_percentage);
-        RecyclerView rvHistory = dialogView.findViewById(R.id.rv_dialog_history);
-        TextView tvEmpty = dialogView.findViewById(R.id.tv_empty_history);
-        MaterialButton btnClose = dialogView.findViewById(R.id.btn_close_history);
-
-        tvSubject.setText(stats.getSubjectName());
-        double percentage = stats.getAttendancePercentage();
-        int totalEffective = stats.getEffectiveTotal();
-
-        if (totalEffective == 0) {
-            tvPercentage.setText("—");
-            tvSubtitle.setText(stats.getHolidayCount() + " Holiday sessions recorded");
-        } else {
-            tvPercentage.setText(String.format(Locale.getDefault(), "%.1f%%", percentage));
-            tvSubtitle.setText(stats.getPresentCount() + " Present • " + stats.getAbsentCount() + " Absent • " + stats.getHolidayCount() + " Holiday");
-        }
-
-        AttendanceHistoryAdapter historyAdapter = new AttendanceHistoryAdapter(this);
-        rvHistory.setLayoutManager(new LinearLayoutManager(this));
-        rvHistory.setAdapter(historyAdapter);
-
-        database.attendanceRecordDao().getHistoryForSubject(stats.getSubjectName()).observe(this, records -> {
-            if (records == null || records.isEmpty()) {
-                tvEmpty.setVisibility(View.VISIBLE);
-                rvHistory.setVisibility(View.GONE);
-            } else {
-                tvEmpty.setVisibility(View.GONE);
-                rvHistory.setVisibility(View.VISIBLE);
-                historyAdapter.setHistory(records);
-            }
-        });
-
-        btnClose.setOnClickListener(v -> dialog.dismiss());
-        dialog.show();
     }
 
     // =========================================================================

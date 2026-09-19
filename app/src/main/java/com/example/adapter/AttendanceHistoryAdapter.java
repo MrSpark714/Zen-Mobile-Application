@@ -24,12 +24,39 @@ import java.util.Locale;
  */
 public class AttendanceHistoryAdapter extends RecyclerView.Adapter<AttendanceHistoryAdapter.HistoryViewHolder> {
 
+    public interface OnRecordLongClickListener {
+        void onRecordLongClick(AttendanceRecord record, int position);
+    }
+
+    public interface OnRecordClickListener {
+        void onRecordClick(AttendanceRecord record, int position);
+    }
+
+    public interface OnStatusTagClickListener {
+        void onStatusTagClick(AttendanceRecord record, int position);
+    }
+
     private final Context context;
     private final List<AttendanceRecord> historyList = new ArrayList<>();
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d, yyyy", Locale.getDefault());
+    private OnRecordLongClickListener longClickListener;
+    private OnRecordClickListener clickListener;
+    private OnStatusTagClickListener statusTagClickListener;
 
     public AttendanceHistoryAdapter(Context context) {
         this.context = context;
+    }
+
+    public void setOnRecordLongClickListener(OnRecordLongClickListener listener) {
+        this.longClickListener = listener;
+    }
+
+    public void setOnRecordClickListener(OnRecordClickListener listener) {
+        this.clickListener = listener;
+    }
+
+    public void setOnStatusTagClickListener(OnStatusTagClickListener listener) {
+        this.statusTagClickListener = listener;
     }
 
     public void setHistory(List<AttendanceRecord> items) {
@@ -68,6 +95,20 @@ public class AttendanceHistoryAdapter extends RecyclerView.Adapter<AttendanceHis
             holder.tvStatusBadge.setBackgroundResource(R.drawable.bg_status_holiday);
             holder.tvStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.status_holiday));
         }
+
+        // Tap exclusively on the status tag (Present, Absent, Holiday) to edit status
+        holder.tvStatusBadge.setOnClickListener(v -> {
+            int pos = holder.getBindingAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION && pos < historyList.size() && statusTagClickListener != null) {
+                statusTagClickListener.onStatusTagClick(historyList.get(pos), pos);
+            }
+        });
+
+        // Ensure row itself has no click or long-click handlers
+        holder.itemView.setOnClickListener(null);
+        holder.itemView.setOnLongClickListener(null);
+        holder.itemView.setClickable(false);
+        holder.itemView.setLongClickable(false);
     }
 
     @Override
