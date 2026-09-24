@@ -2,7 +2,6 @@ package com.example;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -11,235 +10,126 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.adapter.AttendanceHistoryAdapter;
+import com.example.adapter.ActivityLogAdapter;
 import com.example.database.AppDatabase;
-import com.example.model.AttendanceRecord;
-import com.example.model.SubjectStats;
+import com.example.model.ActivityLog;
 import com.example.util.ThemeHelper;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.divider.MaterialDividerItemDecoration;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
- * LogActivity: Dedicated full-screen attendance log management screen.
- *
- * Implements:
- * - Full-page view of date-by-date attendance sessions with back navigation.
- * - Real-time Room database LiveData observation for session history and weighted statistics.
- * - History Edit via Long-Press: MaterialAlertDialog to update status between Present, Absent, and Holiday.
+ * LogActivity: Dedicated full-screen activity displaying the system activity logs.
+ * Does not use dialogs for viewing; items are rendered on single clean lines
+ * separated by MaterialDividerItemDecoration.
  */
 public class LogActivity extends AppCompatActivity {
 
     public static final String EXTRA_SUBJECT_NAME = "extra_subject_name";
 
     private AppDatabase database;
-    private AttendanceHistoryAdapter historyAdapter;
+    private ActivityLogAdapter adapter;
 
     private ImageView btnBack;
+    private ImageView btnClearLogs;
     private TextView tvHeaderTitle;
     private TextView tvHeaderSubtitle;
-    private TextView tvLogBadgePercentage;
-    private MaterialCardView cardStatsSummary;
-    private TextView tvLogSubjectName;
-    private TextView tvLogBreakdown;
-    private TextView tvTotalRecordsCount;
-    private RecyclerView rvLogHistory;
-    private LinearLayout layoutEmptyLog;
-
-    private String subjectName;
-    private final SimpleDateFormat recordDateFormat = new SimpleDateFormat("EEEE, MMM d, yyyy", Locale.getDefault());
+    private RecyclerView rvActivityLogs;
+    private LinearLayout layoutEmptyLogs;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // If extra_subject_name is passed by any legacy caller, forward seamlessly to DetailedHistoryActivity
+        if (getIntent().hasExtra(EXTRA_SUBJECT_NAME)) {
+            Intent forwardIntent = new Intent(this, DetailedHistoryActivity.class);
+            forwardIntent.putExtras(getIntent());
+            startActivity(forwardIntent);
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_log);
 
         database = AppDatabase.getInstance(this);
 
-        subjectName = getIntent().getStringExtra(EXTRA_SUBJECT_NAME);
-
         initViews();
         setupRecyclerView();
-        observeData();
+        setupListeners();
+        observeLogs();
     }
 
     private void initViews() {
         btnBack = findViewById(R.id.btn_back);
+        btnClearLogs = findViewById(R.id.btn_clear_logs);
         tvHeaderTitle = findViewById(R.id.tv_header_title);
         tvHeaderSubtitle = findViewById(R.id.tv_header_subtitle);
-        tvLogBadgePercentage = findViewById(R.id.tv_log_badge_percentage);
-        cardStatsSummary = findViewById(R.id.card_stats_summary);
-        tvLogSubjectName = findViewById(R.id.tv_log_subject_name);
-        tvLogBreakdown = findViewById(R.id.tv_log_breakdown);
-        tvTotalRecordsCount = findViewById(R.id.tv_total_records_count);
-        rvLogHistory = findViewById(R.id.rv_log_history);
-        layoutEmptyLog = findViewById(R.id.layout_empty_log);
-
-        btnBack.setOnClickListener(v -> finish());
-
-        if (subjectName != null && !subjectName.trim().isEmpty()) {
-            tvHeaderTitle.setText(subjectName.toUpperCase(Locale.ROOT));
-            tvLogSubjectName.setText(subjectName);
-            tvHeaderSubtitle.setText("Tap status tag to edit past attendance");
-        } else {
-            tvHeaderTitle.setText("ALL ATTENDANCE LOGS");
-            tvLogSubjectName.setText("All Enrolled Subjects");
-            tvHeaderSubtitle.setText("Tap status tag to edit past attendance");
-        }
+        rvActivityLogs = findViewById(R.id.rv_activity_logs);
+        layoutEmptyLogs = findViewById(R.id.layout_empty_logs);
     }
 
     private void setupRecyclerView() {
-        historyAdapter = new AttendanceHistoryAdapter(this);
-        rvLogHistory.setLayoutManager(new LinearLayoutManager(this));
-        rvLogHistory.setAdapter(historyAdapter);
+        rvActivityLogs.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new ActivityLogAdapter(this);
+        rvActivityLogs.setAdapter(adapter);
 
-        // Add subtle divider between session rows
-        DividerItemDecoration divider = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-        rvLogHistory.addItemDecoration(divider);
+        // MaterialDividerItemDecoration to separate items with thin lines
+        MaterialDividerItemDecoration divider = new MaterialDividerItemDecoration(this, LinearLayoutManager.VERTICAL);
+        divider.setDividerColor(ContextCompat.getColor(this, R.color.zen_border));
+        divider.setDividerThickness((int) (1 * getResources().getDisplayMetrics().density));
+        divider.setLastItemDecorated(false);
+        rvActivityLogs.addItemDecoration(divider);
+    }
 
-        // Tap exclusively on the status tag (Present/Absent/Holiday) to change status
-        historyAdapter.setOnStatusTagClickListener((record, position) -> {
-            showEditStatusDialog(record);
+    private void setupListeners() {
+        btnBack.setOnClickListener(v -> finish());
+
+        btnClearLogs.setOnClickListener(v -> {
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("Clear Activity Logs")
+                    .setMessage("Are you sure you want to clear all activity log entries?")
+                    .setPositiveButton("Clear", (dialog, which) -> {
+                        AppDatabase.databaseWriteExecutor.execute(() -> {
+                            database.activityLogDao().deleteAllLogs();
+                            runOnUiThread(() -> {
+                                Toast.makeText(this, "Activity logs cleared", Toast.LENGTH_SHORT).show();
+                            });
+                        });
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
         });
     }
 
-    private void observeData() {
-        if (subjectName != null && !subjectName.trim().isEmpty()) {
-            // Observe session records for this subject
-            database.attendanceRecordDao().getHistoryForSubject(subjectName).observe(this, this::updateRecordsList);
-
-            // Observe live credit-hour weighted statistics for this subject
-            database.attendanceRecordDao().getStatsForSubject(subjectName).observe(this, this::updateStatsUI);
-        } else {
-            // Observe all session records across all subjects
-            database.attendanceRecordDao().getAllRecords().observe(this, this::updateRecordsList);
-            cardStatsSummary.setVisibility(View.GONE);
-            tvLogBadgePercentage.setVisibility(View.GONE);
-        }
-    }
-
-    private void updateRecordsList(List<AttendanceRecord> records) {
-        if (records == null || records.isEmpty()) {
-            layoutEmptyLog.setVisibility(View.VISIBLE);
-            rvLogHistory.setVisibility(View.GONE);
-            tvTotalRecordsCount.setText("0 records");
-            historyAdapter.setHistory(null);
-        } else {
-            layoutEmptyLog.setVisibility(View.GONE);
-            rvLogHistory.setVisibility(View.VISIBLE);
-            tvTotalRecordsCount.setText(records.size() + (records.size() == 1 ? " record" : " records"));
-            historyAdapter.setHistory(records);
-        }
-    }
-
-    private void updateStatsUI(SubjectStats stats) {
-        if (stats == null) {
-            tvLogBadgePercentage.setText("—");
-            tvLogBreakdown.setText("No marked sessions recorded yet.");
-            return;
-        }
-
-        int totalEffective = stats.getEffectiveTotal();
-        if (totalEffective == 0) {
-            tvLogBadgePercentage.setText("—");
-            tvLogBreakdown.setText(stats.getHolidayCount() + " Holiday sessions recorded (no classes held)");
-        } else {
-            double percentage = stats.getAttendancePercentage();
-            tvLogBadgePercentage.setText(String.format(Locale.getDefault(), "%.1f%%", percentage));
-            tvLogBreakdown.setText(String.format(Locale.getDefault(),
-                    "%d Present • %d Absent • %d Holiday (%d total)",
-                    stats.getPresentCount(),
-                    stats.getAbsentCount(),
-                    stats.getHolidayCount(),
-                    stats.getTotalClassesMarked()));
-        }
-    }
-
-    /**
-     * Shows a beautifully styled modal bottom sheet dialog allowing the user to select
-     * between "Present", "Absent", and "Holiday" options with clear visual cards and radio check marks.
-     */
-    private void showEditStatusDialog(AttendanceRecord record) {
-        BottomSheetDialog dialog = new BottomSheetDialog(this, R.style.Theme_ZEN);
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_edit_attendance_status, null);
-        dialog.setContentView(dialogView);
-
-        TextView tvTitle = dialogView.findViewById(R.id.tv_dialog_status_title);
-        TextView tvSubtitle = dialogView.findViewById(R.id.tv_dialog_status_subtitle);
-        View btnPresent = dialogView.findViewById(R.id.btn_option_present);
-        View btnAbsent = dialogView.findViewById(R.id.btn_option_absent);
-        View btnHoliday = dialogView.findViewById(R.id.btn_option_holiday);
-        ImageView ivCheckPresent = dialogView.findViewById(R.id.iv_check_present);
-        ImageView ivCheckAbsent = dialogView.findViewById(R.id.iv_check_absent);
-        ImageView ivCheckHoliday = dialogView.findViewById(R.id.iv_check_holiday);
-        View btnCancel = dialogView.findViewById(R.id.btn_cancel_status_dialog);
-
-        String titleSubject = record.getSubjectName() != null ? record.getSubjectName() : "Class Session";
-        String formattedDate = recordDateFormat.format(new Date(record.getDate()));
-
-        tvTitle.setText(titleSubject.toUpperCase(Locale.ROOT));
-        tvSubtitle.setText("Past session: " + formattedDate);
-
-        // Highlight current status
-        String currentStatus = record.getStatus();
-        if (AttendanceRecord.STATUS_PRESENT.equalsIgnoreCase(currentStatus)) {
-            ivCheckPresent.setVisibility(View.VISIBLE);
-        } else if (AttendanceRecord.STATUS_ABSENT.equalsIgnoreCase(currentStatus)) {
-            ivCheckAbsent.setVisibility(View.VISIBLE);
-        } else if (AttendanceRecord.STATUS_HOLIDAY.equalsIgnoreCase(currentStatus)) {
-            ivCheckHoliday.setVisibility(View.VISIBLE);
-        }
-
-        btnPresent.setOnClickListener(v -> {
-            dialog.dismiss();
-            if (!AttendanceRecord.STATUS_PRESENT.equalsIgnoreCase(record.getStatus())) {
-                updateRecordInDatabase(record, AttendanceRecord.STATUS_PRESENT);
-            }
-        });
-
-        btnAbsent.setOnClickListener(v -> {
-            dialog.dismiss();
-            if (!AttendanceRecord.STATUS_ABSENT.equalsIgnoreCase(record.getStatus())) {
-                updateRecordInDatabase(record, AttendanceRecord.STATUS_ABSENT);
-            }
-        });
-
-        btnHoliday.setOnClickListener(v -> {
-            dialog.dismiss();
-            if (!AttendanceRecord.STATUS_HOLIDAY.equalsIgnoreCase(record.getStatus())) {
-                updateRecordInDatabase(record, AttendanceRecord.STATUS_HOLIDAY);
-            }
-        });
-
-        btnCancel.setOnClickListener(v -> dialog.dismiss());
-
-        dialog.show();
-    }
-
-    /**
-     * Executes the Room Database update query to persist the new attendance status.
-     */
-    private void updateRecordInDatabase(AttendanceRecord record, String newStatus) {
+    private void observeLogs() {
+        // Pre-seed an initial log if table is empty
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            // Update the entity status in memory
-            record.setStatus(newStatus);
+            if (database.activityLogDao().getLogCountSync() == 0) {
+                database.activityLogDao().insert(new ActivityLog(
+                        System.currentTimeMillis(),
+                        "System initialized and ready"
+                ));
+            }
+        });
 
-            // Execute Room database update queries
-            database.attendanceRecordDao().update(record);
-            database.attendanceRecordDao().updateStatus(record.getId(), newStatus);
-
-            // Notify UI on main thread
-            runOnUiThread(() -> {
-                Toast.makeText(LogActivity.this, "Status updated to " + newStatus, Toast.LENGTH_SHORT).show();
-            });
+        database.activityLogDao().getAllLogs().observe(this, logs -> {
+            if (logs == null || logs.isEmpty()) {
+                adapter.setLogs(logs);
+                layoutEmptyLogs.setVisibility(View.VISIBLE);
+                rvActivityLogs.setVisibility(View.GONE);
+                btnClearLogs.setVisibility(View.GONE);
+            } else {
+                layoutEmptyLogs.setVisibility(View.GONE);
+                rvActivityLogs.setVisibility(View.VISIBLE);
+                btnClearLogs.setVisibility(View.VISIBLE);
+                adapter.setLogs(logs);
+            }
         });
     }
 }

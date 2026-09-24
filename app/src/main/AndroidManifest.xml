@@ -38,11 +38,27 @@
             android:theme="@style/Theme.MyApplication"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- Dedicated Attendance Log Activity -->
+        <!-- Activity Log Activity -->
         <activity
             android:name=".LogActivity"
             android:exported="false"
-            android:label="Attendance Log"
+            android:label="Activity Log"
+            android:theme="@style/Theme.MyApplication"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Detailed Subject Attendance History Activity -->
+        <activity
+            android:name=".DetailedHistoryActivity"
+            android:exported="false"
+            android:label="Detailed History"
+            android:theme="@style/Theme.MyApplication"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Settings Activity -->
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:label="Settings"
             android:theme="@style/Theme.MyApplication"
             android:windowSoftInputMode="adjustResize" />
 

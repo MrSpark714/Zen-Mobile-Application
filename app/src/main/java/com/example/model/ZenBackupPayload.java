@@ -40,14 +40,14 @@ public class ZenBackupPayload implements Serializable {
     private List<ClassSchedule> schedules = new ArrayList<>();
 
     @SerializedName("attendance_records")
-    private List<AttendanceRecord> attendanceRecords = new ArrayList<>();
+    private List<AttendanceHistory> attendanceRecords = new ArrayList<>();
 
     public ZenBackupPayload() {
         this.exportTimestamp = System.currentTimeMillis();
     }
 
     public ZenBackupPayload(String backupType, List<Note> notes, List<Task> tasks,
-                            List<ClassSchedule> schedules, List<AttendanceRecord> attendanceRecords) {
+                            List<ClassSchedule> schedules, List<AttendanceHistory> attendanceRecords) {
         this.appName = "ZEN";
         this.version = "1.0";
         this.backupType = backupType;
@@ -114,11 +114,11 @@ public class ZenBackupPayload implements Serializable {
         this.schedules = schedules;
     }
 
-    public List<AttendanceRecord> getAttendanceRecords() {
+    public List<AttendanceHistory> getAttendanceRecords() {
         return attendanceRecords != null ? attendanceRecords : new ArrayList<>();
     }
 
-    public void setAttendanceRecords(List<AttendanceRecord> attendanceRecords) {
+    public void setAttendanceRecords(List<AttendanceHistory> attendanceRecords) {
         this.attendanceRecords = attendanceRecords;
     }
 }

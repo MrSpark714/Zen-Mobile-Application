@@ -6,7 +6,8 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import com.example.model.AttendanceRecord;
+import com.example.model.ActivityLog;
+import com.example.model.AttendanceHistory;
 import com.example.model.ClassSchedule;
 import com.example.model.Note;
 import com.example.model.Task;
@@ -21,7 +22,7 @@ import java.util.concurrent.Executors;
  * is opened across the entire application process, saving system resources and
  * preventing concurrency locking issues.
  */
-@Database(entities = {Note.class, Task.class, ClassSchedule.class, AttendanceRecord.class}, version = 3, exportSchema = false)
+@Database(entities = {Note.class, Task.class, ClassSchedule.class, AttendanceHistory.class, ActivityLog.class}, version = 5, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     // Database name on device storage
@@ -52,9 +53,14 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract ClassScheduleDao classScheduleDao();
 
     /**
-     * Abstract method to access the AttendanceRecordDao.
+     * Abstract method to access the AttendanceHistoryDao.
      */
-    public abstract AttendanceRecordDao attendanceRecordDao();
+    public abstract AttendanceHistoryDao attendanceHistoryDao();
+
+    /**
+     * Abstract method to access the ActivityLogDao.
+     */
+    public abstract ActivityLogDao activityLogDao();
 
     /**
      * Thread-safe Singleton getter to retrieve the AppDatabase instance.

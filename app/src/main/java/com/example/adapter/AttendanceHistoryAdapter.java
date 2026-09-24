@@ -11,7 +11,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.R;
-import com.example.model.AttendanceRecord;
+import com.example.model.AttendanceHistory;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,19 +25,19 @@ import java.util.Locale;
 public class AttendanceHistoryAdapter extends RecyclerView.Adapter<AttendanceHistoryAdapter.HistoryViewHolder> {
 
     public interface OnRecordLongClickListener {
-        void onRecordLongClick(AttendanceRecord record, int position);
+        void onRecordLongClick(AttendanceHistory record, int position);
     }
 
     public interface OnRecordClickListener {
-        void onRecordClick(AttendanceRecord record, int position);
+        void onRecordClick(AttendanceHistory record, int position);
     }
 
     public interface OnStatusTagClickListener {
-        void onStatusTagClick(AttendanceRecord record, int position);
+        void onStatusTagClick(AttendanceHistory record, int position);
     }
 
     private final Context context;
-    private final List<AttendanceRecord> historyList = new ArrayList<>();
+    private final List<AttendanceHistory> historyList = new ArrayList<>();
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMM d, yyyy", Locale.getDefault());
     private OnRecordLongClickListener longClickListener;
     private OnRecordClickListener clickListener;
@@ -59,7 +59,7 @@ public class AttendanceHistoryAdapter extends RecyclerView.Adapter<AttendanceHis
         this.statusTagClickListener = listener;
     }
 
-    public void setHistory(List<AttendanceRecord> items) {
+    public void setHistory(List<AttendanceHistory> items) {
         this.historyList.clear();
         if (items != null) {
             this.historyList.addAll(items);
@@ -76,19 +76,26 @@ public class AttendanceHistoryAdapter extends RecyclerView.Adapter<AttendanceHis
 
     @Override
     public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
-        AttendanceRecord record = historyList.get(position);
+        AttendanceHistory record = historyList.get(position);
 
         String formattedDate = dateFormat.format(new Date(record.getDate()));
         holder.tvDate.setText(formattedDate);
-        holder.tvSubtitle.setText("Subject Session Log");
+
+        // Display class credit hours and type for clear context in the history
+        int credits = record.getCreditHours();
+        String creditText = (credits > 0 ? credits : 1) + (credits == 1 ? " Credit Hour" : " Credit Hours");
+        if (record.getClassType() != null && !record.getClassType().trim().isEmpty()) {
+            creditText += " • " + record.getClassType();
+        }
+        holder.tvSubtitle.setText(creditText);
 
         String status = record.getStatus();
         holder.tvStatusBadge.setText(status != null ? status.toUpperCase() : "PRESENT");
 
-        if (AttendanceRecord.STATUS_PRESENT.equalsIgnoreCase(status)) {
+        if (AttendanceHistory.STATUS_PRESENT.equalsIgnoreCase(status)) {
             holder.tvStatusBadge.setBackgroundResource(R.drawable.bg_status_present);
             holder.tvStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.status_present));
-        } else if (AttendanceRecord.STATUS_ABSENT.equalsIgnoreCase(status)) {
+        } else if (AttendanceHistory.STATUS_ABSENT.equalsIgnoreCase(status)) {
             holder.tvStatusBadge.setBackgroundResource(R.drawable.bg_status_absent);
             holder.tvStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.status_absent));
         } else {
@@ -96,13 +103,15 @@ public class AttendanceHistoryAdapter extends RecyclerView.Adapter<AttendanceHis
             holder.tvStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.status_holiday));
         }
 
-        // Tap exclusively on the status tag (Present, Absent, Holiday) to edit status
+        // Tap directly on the status badge to edit the history
         holder.tvStatusBadge.setOnClickListener(v -> {
             int pos = holder.getBindingAdapterPosition();
             if (pos != RecyclerView.NO_POSITION && pos < historyList.size() && statusTagClickListener != null) {
                 statusTagClickListener.onStatusTagClick(historyList.get(pos), pos);
             }
         });
+        holder.tvStatusBadge.setOnLongClickListener(null);
+        holder.tvStatusBadge.setLongClickable(false);
 
         // Ensure row itself has no click or long-click handlers
         holder.itemView.setOnClickListener(null);

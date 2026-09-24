@@ -8,9 +8,9 @@ import java.io.Serializable;
 public class ClassWithTodayStatus implements Serializable {
 
     private ClassSchedule schedule;
-    private AttendanceRecord todayRecord;
+    private AttendanceHistory todayRecord;
 
-    public ClassWithTodayStatus(ClassSchedule schedule, AttendanceRecord todayRecord) {
+    public ClassWithTodayStatus(ClassSchedule schedule, AttendanceHistory todayRecord) {
         this.schedule = schedule;
         this.todayRecord = todayRecord;
     }
@@ -23,11 +23,11 @@ public class ClassWithTodayStatus implements Serializable {
         this.schedule = schedule;
     }
 
-    public AttendanceRecord getTodayRecord() {
+    public AttendanceHistory getTodayRecord() {
         return todayRecord;
     }
 
-    public void setTodayRecord(AttendanceRecord todayRecord) {
+    public void setTodayRecord(AttendanceHistory todayRecord) {
         this.todayRecord = todayRecord;
     }
 

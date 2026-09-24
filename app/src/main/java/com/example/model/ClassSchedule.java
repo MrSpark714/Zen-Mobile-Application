@@ -20,26 +20,34 @@ import com.example.util.NotificationHelper;
 public class ClassSchedule implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
+    @com.google.gson.annotations.SerializedName(value = "id", alternate = {"scheduleId", "schedule_id"})
     private int id;
 
+    @com.google.gson.annotations.SerializedName(value = "day_of_week", alternate = {"dayOfWeek", "day"})
     @ColumnInfo(name = "day_of_week")
     private String dayOfWeek; // "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"
 
+    @com.google.gson.annotations.SerializedName(value = "subject_name", alternate = {"subjectName", "subject"})
     @ColumnInfo(name = "subject_name")
     private String subjectName;
 
+    @com.google.gson.annotations.SerializedName(value = "start_time", alternate = {"startTime"})
     @ColumnInfo(name = "start_time")
     private String startTime; // e.g. "09:00 AM" or "14:30"
 
+    @com.google.gson.annotations.SerializedName(value = "end_time", alternate = {"endTime"})
     @ColumnInfo(name = "end_time")
     private String endTime; // e.g. "10:30 AM" or "16:00"
 
+    @com.google.gson.annotations.SerializedName(value = "credit_hours", alternate = {"creditHours", "credits"})
     @ColumnInfo(name = "credit_hours")
     private int creditHours;
 
+    @com.google.gson.annotations.SerializedName(value = "class_type", alternate = {"classType", "type"})
     @ColumnInfo(name = "class_type")
     private String classType; // "Theory" or "Lab"
 
+    @com.google.gson.annotations.SerializedName(value = "room_number", alternate = {"roomNumber", "room"})
     @ColumnInfo(name = "room_number")
     private String roomNumber;
 

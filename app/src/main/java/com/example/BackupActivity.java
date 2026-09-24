@@ -24,7 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import com.example.database.AppDatabase;
-import com.example.model.AttendanceRecord;
+import com.example.model.AttendanceHistory;
 import com.example.model.ClassSchedule;
 import com.example.model.Note;
 import com.example.model.Task;
@@ -298,6 +298,15 @@ public class BackupActivity extends AppCompatActivity {
         if (btnGitHub != null) {
             btnGitHub.setOnClickListener(openGitHubListener);
         }
+
+        // Activity Log navigation
+        View cardActivityLog = findViewById(R.id.card_settings_activity_log);
+        if (cardActivityLog != null) {
+            cardActivityLog.setOnClickListener(v -> {
+                Intent logIntent = new Intent(this, LogActivity.class);
+                startActivity(logIntent);
+            });
+        }
     }
 
     // Easter Egg Watermark: 7-tap detection within 3 seconds
@@ -356,7 +365,7 @@ public class BackupActivity extends AppCompatActivity {
         });
 
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            List<AttendanceRecord> records = database.attendanceRecordDao().getAllRecordsSync();
+            List<AttendanceHistory> records = database.attendanceHistoryDao().getAllRecordsSync();
             int count = records != null ? records.size() : 0;
             mainHandler.post(() -> tvCountAttendance.setText(String.valueOf(count)));
         });
@@ -382,15 +391,23 @@ public class BackupActivity extends AppCompatActivity {
             try {
                 List<Note> notes = new ArrayList<>();
                 List<Task> tasks = new ArrayList<>();
-                List<ClassSchedule> schedules = database.classScheduleDao().getAllSchedulesSync();
-                List<AttendanceRecord> records = database.attendanceRecordDao().getAllRecordsSync();
-
-                if (backupType.equals(ZenBackupPayload.TYPE_FULL) || backupType.equals(ZenBackupPayload.TYPE_NOTES_ATTENDANCE)) {
-                    notes = database.noteDao().getAllNotesSync();
-                }
+                List<ClassSchedule> schedules = new ArrayList<>();
+                List<AttendanceHistory> records = database.attendanceHistoryDao().getAllRecordsSync();
 
                 if (backupType.equals(ZenBackupPayload.TYPE_FULL)) {
+                    // Mode A (Full Backup): Query and serialize all tables: notes, tasks, class_schedules, attendance_history
+                    notes = database.noteDao().getAllNotesSync();
                     tasks = database.taskDao().getAllTasksSync();
+                    schedules = database.classScheduleDao().getAllSchedulesSync();
+                } else if (backupType.equals(ZenBackupPayload.TYPE_ATTENDANCE_ONLY)) {
+                    // Mode B (History Only Backup): Strictly attendance_history.
+                    // Leave schedules, notes, and tasks arrays empty/null to prevent overwriting current timetable.
+                    notes = new ArrayList<>();
+                    tasks = new ArrayList<>();
+                    schedules = new ArrayList<>();
+                } else if (backupType.equals(ZenBackupPayload.TYPE_NOTES_ATTENDANCE)) {
+                    notes = database.noteDao().getAllNotesSync();
+                    schedules = database.classScheduleDao().getAllSchedulesSync();
                 }
 
                 ZenBackupPayload payload = new ZenBackupPayload(backupType, notes, tasks, schedules, records);
@@ -516,7 +533,7 @@ public class BackupActivity extends AppCompatActivity {
                     database.classScheduleDao().insertAll(payload.getSchedules());
                 }
                 if (!payload.getAttendanceRecords().isEmpty()) {
-                    database.attendanceRecordDao().insertAll(payload.getAttendanceRecords());
+                    database.attendanceHistoryDao().insertAll(payload.getAttendanceRecords());
                 }
 
                 mainHandler.post(() -> {

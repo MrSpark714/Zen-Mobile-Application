@@ -14,7 +14,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.R;
-import com.example.model.AttendanceRecord;
+import com.example.model.AttendanceHistory;
 import com.example.model.ClassSchedule;
 import com.example.model.ClassWithTodayStatus;
 import com.google.android.material.card.MaterialCardView;
@@ -31,6 +31,7 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.To
 
     public interface OnAttendanceActionListener {
         void onMarkAttendance(ClassSchedule schedule, String status);
+        void onMarkAttendance(String subjectName, int creditHours, String classType, String status);
     }
 
     private final Context context;
@@ -101,7 +102,7 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.To
             holder.tvStatusText.setText("Marked: " + currentStatus);
 
             switch (currentStatus) {
-                case AttendanceRecord.STATUS_PRESENT:
+                case AttendanceHistory.STATUS_PRESENT:
                     holder.btnPresent.setBackgroundResource(R.drawable.bg_status_present);
                     holder.btnPresent.setTextColor(ContextCompat.getColor(context, R.color.status_present));
                     holder.layoutStatusBadge.setBackgroundResource(R.drawable.bg_badge);
@@ -110,7 +111,7 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.To
                     holder.cardView.setStrokeColor(ContextCompat.getColor(context, R.color.status_present));
                     break;
 
-                case AttendanceRecord.STATUS_ABSENT:
+                case AttendanceHistory.STATUS_ABSENT:
                     holder.btnAbsent.setBackgroundResource(R.drawable.bg_status_absent);
                     holder.btnAbsent.setTextColor(ContextCompat.getColor(context, R.color.status_absent));
                     holder.layoutStatusBadge.setBackgroundResource(R.drawable.bg_status_absent);
@@ -119,7 +120,7 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.To
                     holder.cardView.setStrokeColor(ContextCompat.getColor(context, R.color.status_absent));
                     break;
 
-                case AttendanceRecord.STATUS_HOLIDAY:
+                case AttendanceHistory.STATUS_HOLIDAY:
                     holder.btnHoliday.setBackgroundResource(R.drawable.bg_status_holiday);
                     holder.btnHoliday.setTextColor(ContextCompat.getColor(context, R.color.status_holiday));
                     holder.layoutStatusBadge.setBackgroundResource(R.drawable.bg_status_holiday);
@@ -133,22 +134,31 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.To
             holder.cardView.setStrokeColor(ContextCompat.getColor(context, R.color.zen_border));
         }
 
-        // Action Click Listeners
+        // Action Click Listeners: Grab subject_name, credit_hours, and class_type from selected ClassSchedule
         holder.btnPresent.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onMarkAttendance(schedule, AttendanceRecord.STATUS_PRESENT);
+                String subjectName = schedule.getSubjectName();
+                int creditHours = schedule.getCreditHours();
+                String type = schedule.getClassType();
+                listener.onMarkAttendance(subjectName, creditHours, type, AttendanceHistory.STATUS_PRESENT);
             }
         });
 
         holder.btnAbsent.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onMarkAttendance(schedule, AttendanceRecord.STATUS_ABSENT);
+                String subjectName = schedule.getSubjectName();
+                int creditHours = schedule.getCreditHours();
+                String type = schedule.getClassType();
+                listener.onMarkAttendance(subjectName, creditHours, type, AttendanceHistory.STATUS_ABSENT);
             }
         });
 
         holder.btnHoliday.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onMarkAttendance(schedule, AttendanceRecord.STATUS_HOLIDAY);
+                String subjectName = schedule.getSubjectName();
+                int creditHours = schedule.getCreditHours();
+                String type = schedule.getClassType();
+                listener.onMarkAttendance(subjectName, creditHours, type, AttendanceHistory.STATUS_HOLIDAY);
             }
         });
     }

@@ -69,4 +69,7 @@ public interface ClassScheduleDao {
 
     @Query("DELETE FROM class_schedules WHERE id = :id")
     void deleteById(int id);
+
+    @Query("DELETE FROM class_schedules")
+    void deleteAllSchedules();
 }

@@ -51,7 +51,7 @@ import com.example.adapter.TaskAdapter;
 import com.example.adapter.TodayClassAdapter;
 import com.example.adapter.WeeklyScheduleAdapter;
 import com.example.database.AppDatabase;
-import com.example.model.AttendanceRecord;
+import com.example.model.AttendanceHistory;
 import com.example.model.ClassSchedule;
 import com.example.model.ClassWithTodayStatus;
 import com.example.model.Note;
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements
     private List<Note> currentNotes = new ArrayList<>();
     private List<Task> currentTasks = new ArrayList<>();
     private List<ClassSchedule> currentSchedules = new ArrayList<>();
-    private List<AttendanceRecord> todayAttendanceRecords = new ArrayList<>();
+    private List<AttendanceHistory> todayAttendanceRecords = new ArrayList<>();
     private List<SubjectStats> currentSubjectStats = new ArrayList<>();
     private String currentScheduleFilterDay = "All";
 
@@ -195,6 +195,9 @@ public class MainActivity extends AppCompatActivity implements
 
         // Check for in-app updates in background
         UpdateManager.checkForUpdates(this);
+
+        // Schedule nightly attendance auto-marker via WorkManager (runs around 11:55 PM daily)
+        com.example.worker.DailyAttendanceWorker.scheduleDailyAutoMarker(this);
     }
 
     @Override
@@ -574,7 +577,7 @@ public class MainActivity extends AppCompatActivity implements
         long todayStartOfDay = getStartOfDayMillis(Calendar.getInstance());
 
         // Observe Today's Attendance Records
-        database.attendanceRecordDao().getRecordsForDate(todayStartOfDay).observe(this, records -> {
+        database.attendanceHistoryDao().getRecordsForDate(todayStartOfDay).observe(this, records -> {
             this.todayAttendanceRecords = records != null ? records : new ArrayList<>();
             refreshTodayClassesView();
         });
@@ -589,7 +592,7 @@ public class MainActivity extends AppCompatActivity implements
         });
 
         // Observe Subject Analytics with exact SQL percentage math
-        database.attendanceRecordDao().getAllSubjectStats().observe(this, stats -> {
+        database.attendanceHistoryDao().getAllSubjectStats().observe(this, stats -> {
             this.currentSubjectStats = stats != null ? stats : new ArrayList<>();
             if (attendanceViewHolder != null) {
                 attendanceViewHolder.updateAnalyticsView(currentSubjectStats);
@@ -619,15 +622,18 @@ public class MainActivity extends AppCompatActivity implements
         // Apply chronological sorting by start time for Today's dashboard
         Collections.sort(todaySchedules, ClassSchedule.CHRONOLOGICAL_COMPARATOR);
 
-        // Map today's attendance records by scheduleId
-        Map<Integer, AttendanceRecord> recordMap = new HashMap<>();
-        for (AttendanceRecord ar : todayAttendanceRecords) {
-            recordMap.put(ar.getScheduleId(), ar);
+        // Map today's attendance records by subject name
+        Map<String, AttendanceHistory> recordMap = new HashMap<>();
+        for (AttendanceHistory ar : todayAttendanceRecords) {
+            if (ar.getSubjectName() != null) {
+                recordMap.put(ar.getSubjectName().trim().toLowerCase(Locale.ROOT), ar);
+            }
         }
 
         List<ClassWithTodayStatus> compositeList = new ArrayList<>();
         for (ClassSchedule cs : todaySchedules) {
-            compositeList.add(new ClassWithTodayStatus(cs, recordMap.get(cs.getId())));
+            String key = cs.getSubjectName() != null ? cs.getSubjectName().trim().toLowerCase(Locale.ROOT) : "";
+            compositeList.add(new ClassWithTodayStatus(cs, recordMap.get(key)));
         }
 
         todayClassAdapter.setClasses(compositeList);
@@ -833,12 +839,7 @@ public class MainActivity extends AppCompatActivity implements
         RecyclerView rvWeeklySchedule;
         View layoutEmptySchedule;
 
-        // Analytics View Components
-        TextView tvOverallPercentage;
-        ProgressBar progressOverallAttendance;
-        TextView tvTotalPresent;
-        TextView tvTotalAbsent;
-        TextView tvTotalHoliday;
+        // History View Components
         RecyclerView rvSubjectAnalytics;
         View layoutEmptyAnalytics;
 
@@ -870,11 +871,6 @@ public class MainActivity extends AppCompatActivity implements
             rvWeeklySchedule = itemView.findViewById(R.id.rv_weekly_schedule);
             layoutEmptySchedule = itemView.findViewById(R.id.layout_empty_schedule);
 
-            tvOverallPercentage = itemView.findViewById(R.id.tv_overall_percentage);
-            progressOverallAttendance = itemView.findViewById(R.id.progress_overall_attendance);
-            tvTotalPresent = itemView.findViewById(R.id.tv_total_present);
-            tvTotalAbsent = itemView.findViewById(R.id.tv_total_absent);
-            tvTotalHoliday = itemView.findViewById(R.id.tv_total_holiday);
             rvSubjectAnalytics = itemView.findViewById(R.id.rv_subject_analytics);
             layoutEmptyAnalytics = itemView.findViewById(R.id.layout_empty_analytics);
 
@@ -1034,47 +1030,9 @@ public class MainActivity extends AppCompatActivity implements
             if (stats == null || stats.isEmpty()) {
                 layoutEmptyAnalytics.setVisibility(View.VISIBLE);
                 rvSubjectAnalytics.setVisibility(View.GONE);
-                tvOverallPercentage.setText("—");
-                progressOverallAttendance.setProgress(0);
-                tvTotalPresent.setText("0 Present");
-                tvTotalAbsent.setText("0 Absent");
-                tvTotalHoliday.setText("0 Holiday");
             } else {
                 layoutEmptyAnalytics.setVisibility(View.GONE);
                 rvSubjectAnalytics.setVisibility(View.VISIBLE);
-
-                int totalPresent = 0;
-                int totalAbsent = 0;
-                int totalHoliday = 0;
-
-                for (SubjectStats s : stats) {
-                    totalPresent += s.getPresentCount();
-                    totalAbsent += s.getAbsentCount();
-                    totalHoliday += s.getHolidayCount();
-                }
-
-                int effectiveTotal = totalPresent + totalAbsent;
-                double overallPercentage = effectiveTotal > 0 ? (totalPresent * 100.0) / effectiveTotal : 0.0;
-
-                if (effectiveTotal == 0) {
-                    tvOverallPercentage.setText("—");
-                    progressOverallAttendance.setProgress(0);
-                } else {
-                    tvOverallPercentage.setText(String.format(Locale.getDefault(), "%.1f%%", overallPercentage));
-                    progressOverallAttendance.setProgress((int) Math.round(overallPercentage));
-
-                    int color = overallPercentage >= 75.0 ?
-                            ContextCompat.getColor(MainActivity.this, R.color.status_present) :
-                            (overallPercentage >= 60.0 ?
-                                    ContextCompat.getColor(MainActivity.this, R.color.status_holiday) :
-                                    ContextCompat.getColor(MainActivity.this, R.color.status_absent));
-                    tvOverallPercentage.setTextColor(color);
-                    progressOverallAttendance.setProgressTintList(ColorStateList.valueOf(color));
-                }
-
-                tvTotalPresent.setText(totalPresent + " Present");
-                tvTotalAbsent.setText(totalAbsent + " Absent");
-                tvTotalHoliday.setText(totalHoliday + " Holiday");
             }
         }
     }
@@ -1084,21 +1042,41 @@ public class MainActivity extends AppCompatActivity implements
     // =========================================================================
 
     @Override
-    public void onMarkAttendance(ClassSchedule schedule, String status) {
+    public void onMarkAttendance(String subjectName, int creditHours, String classType, String status) {
         long todayDate = getStartOfDayMillis(Calendar.getInstance());
 
-        AttendanceRecord record = new AttendanceRecord(
-                schedule.getId(),
-                schedule.getSubjectName(),
-                todayDate,
-                status
-        );
-
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            database.attendanceRecordDao().insertOrUpdate(record);
+            AttendanceHistory existing = database.attendanceHistoryDao()
+                    .getRecordBySubjectAndDateSync(subjectName, todayDate);
+            if (existing != null) {
+                existing.setStatus(status);
+                existing.setCreditHours(creditHours);
+                existing.setClassType(classType);
+                database.attendanceHistoryDao().update(existing);
+            } else {
+                AttendanceHistory record = new AttendanceHistory(
+                        subjectName,
+                        creditHours,
+                        classType,
+                        todayDate,
+                        status
+                );
+                database.attendanceHistoryDao().insert(record);
+            }
+            database.activityLogDao().insert(new com.example.model.ActivityLog(
+                    System.currentTimeMillis(),
+                    "Marked " + subjectName + " as " + status
+            ));
         });
 
-        Toast.makeText(this, "Marked " + schedule.getSubjectName() + " as " + status, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Marked " + subjectName + " as " + status, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onMarkAttendance(ClassSchedule schedule, String status) {
+        if (schedule != null) {
+            onMarkAttendance(schedule.getSubjectName(), schedule.getCreditHours(), schedule.getClassType(), status);
+        }
     }
 
     @Override
@@ -1125,9 +1103,9 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onSubjectClick(SubjectStats stats) {
-        Intent intent = new Intent(MainActivity.this, LogActivity.class);
+        Intent intent = new Intent(MainActivity.this, DetailedHistoryActivity.class);
         if (stats != null) {
-            intent.putExtra(LogActivity.EXTRA_SUBJECT_NAME, stats.getSubjectName());
+            intent.putExtra(DetailedHistoryActivity.EXTRA_SUBJECT_NAME, stats.getSubjectName());
         }
         startActivity(intent);
     }
