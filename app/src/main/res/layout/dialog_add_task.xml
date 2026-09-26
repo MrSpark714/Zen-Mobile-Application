@@ -6,17 +6,17 @@
     android:layout_height="wrap_content"
     android:background="@drawable/bg_bottom_sheet"
     android:orientation="vertical"
-    android:paddingStart="24dp"
-    android:paddingTop="18dp"
-    android:paddingEnd="24dp"
-    android:paddingBottom="28dp">
+    android:paddingStart="@dimen/_20sdp"
+    android:paddingTop="@dimen/_15sdp"
+    android:paddingEnd="@dimen/_20sdp"
+    android:paddingBottom="@dimen/_23sdp">
 
     <!-- Bottom Sheet Drag Handle indicator -->
     <View
-        android:layout_width="36dp"
-        android:layout_height="4dp"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_3sdp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="14dp"
+        android:layout_marginBottom="@dimen/_11sdp"
         android:background="@drawable/bg_pill"
         android:backgroundTint="@color/zen_surface_highlight" />
 
@@ -27,22 +27,22 @@
         android:letterSpacing="0.1"
         android:text="NEW TASK"
         android:textColor="@color/zen_text_primary"
-        android:textSize="17sp" />
+        android:textSize="@dimen/_14ssp" />
 
     <!-- Task Description Input -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_task_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="@dimen/_11sdp"
         app:boxBackgroundColor="@color/zen_surface_variant"
-        app:boxCornerRadiusBottomEnd="14dp"
-        app:boxCornerRadiusBottomStart="14dp"
-        app:boxCornerRadiusTopEnd="14dp"
-        app:boxCornerRadiusTopStart="14dp"
+        app:boxCornerRadiusBottomEnd="@dimen/_11sdp"
+        app:boxCornerRadiusBottomStart="@dimen/_11sdp"
+        app:boxCornerRadiusTopEnd="@dimen/_11sdp"
+        app:boxCornerRadiusTopStart="@dimen/_11sdp"
         app:boxStrokeColor="@color/zen_accent"
         app:boxStrokeWidth="1dp"
-        app:boxStrokeWidthFocused="2dp"
+        app:boxStrokeWidthFocused="@dimen/_2sdp"
         app:hintTextColor="@color/zen_accent">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -56,25 +56,25 @@
             android:maxLines="3"
             android:textColor="@color/zen_text_primary"
             android:textColorHint="@color/zen_text_tertiary"
-            android:textSize="14.5sp" />
+            android:textSize="@dimen/_12ssp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Task Completion Time / Duration Heading -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/_13sdp"
         android:fontFamily="sans-serif-medium"
         android:letterSpacing="0.05"
         android:text="COMPLETION TIME &amp; DURATION"
         android:textColor="@color/zen_text_secondary"
-        android:textSize="11sp" />
+        android:textSize="@dimen/_9ssp" />
 
     <!-- Horizontal Scrollable Duration Presets -->
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/_7sdp"
         android:overScrollMode="never"
         android:scrollbars="none">
 
@@ -86,98 +86,98 @@
             <TextView
                 android:id="@+id/chip_no_limit"
                 android:layout_width="wrap_content"
-                android:layout_height="34dp"
+                android:layout_height="@dimen/_28sdp"
                 android:background="@drawable/bg_chip_selected"
                 android:clickable="true"
                 android:focusable="true"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
+                android:paddingStart="@dimen/_10sdp"
+                android:paddingEnd="@dimen/_10sdp"
                 android:text="No Limit"
                 android:textColor="@color/zen_accent"
-                android:textSize="12sp" />
+                android:textSize="@dimen/_10ssp" />
 
             <TextView
                 android:id="@+id/chip_30m"
                 android:layout_width="wrap_content"
-                android:layout_height="34dp"
-                android:layout_marginStart="8dp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_marginStart="@dimen/_7sdp"
                 android:background="@drawable/bg_chip_unselected"
                 android:clickable="true"
                 android:focusable="true"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
+                android:paddingStart="@dimen/_10sdp"
+                android:paddingEnd="@dimen/_10sdp"
                 android:text="30 Mins"
                 android:textColor="@color/zen_text_secondary"
-                android:textSize="12sp" />
+                android:textSize="@dimen/_10ssp" />
 
             <TextView
                 android:id="@+id/chip_1h"
                 android:layout_width="wrap_content"
-                android:layout_height="34dp"
-                android:layout_marginStart="8dp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_marginStart="@dimen/_7sdp"
                 android:background="@drawable/bg_chip_unselected"
                 android:clickable="true"
                 android:focusable="true"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
+                android:paddingStart="@dimen/_10sdp"
+                android:paddingEnd="@dimen/_10sdp"
                 android:text="1 Hour"
                 android:textColor="@color/zen_text_secondary"
-                android:textSize="12sp" />
+                android:textSize="@dimen/_10ssp" />
 
             <!-- Specifically requested 3 Hours -->
             <TextView
                 android:id="@+id/chip_3h"
                 android:layout_width="wrap_content"
-                android:layout_height="34dp"
-                android:layout_marginStart="8dp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_marginStart="@dimen/_7sdp"
                 android:background="@drawable/bg_chip_unselected"
                 android:clickable="true"
                 android:focusable="true"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
+                android:paddingStart="@dimen/_10sdp"
+                android:paddingEnd="@dimen/_10sdp"
                 android:text="3 Hours"
                 android:textColor="@color/zen_text_secondary"
-                android:textSize="12sp" />
+                android:textSize="@dimen/_10ssp" />
 
             <TextView
                 android:id="@+id/chip_today_eod"
                 android:layout_width="wrap_content"
-                android:layout_height="34dp"
-                android:layout_marginStart="8dp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_marginStart="@dimen/_7sdp"
                 android:background="@drawable/bg_chip_unselected"
                 android:clickable="true"
                 android:focusable="true"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
+                android:paddingStart="@dimen/_10sdp"
+                android:paddingEnd="@dimen/_10sdp"
                 android:text="Today EOD (6 PM)"
                 android:textColor="@color/zen_text_secondary"
-                android:textSize="12sp" />
+                android:textSize="@dimen/_10ssp" />
 
             <TextView
                 android:id="@+id/chip_custom_time"
                 android:layout_width="wrap_content"
-                android:layout_height="34dp"
-                android:layout_marginStart="8dp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_marginStart="@dimen/_7sdp"
                 android:background="@drawable/bg_chip_unselected"
                 android:clickable="true"
                 android:focusable="true"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
+                android:paddingStart="@dimen/_10sdp"
+                android:paddingEnd="@dimen/_10sdp"
                 android:text="Custom Time ⏱️"
                 android:textColor="@color/zen_text_secondary"
-                android:textSize="12sp" />
+                android:textSize="@dimen/_10ssp" />
         </LinearLayout>
     </HorizontalScrollView>
 
@@ -186,10 +186,10 @@
         android:id="@+id/layout_timing_summary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/_10sdp"
         android:background="@drawable/bg_card_task"
         android:orientation="vertical"
-        android:padding="12dp"
+        android:padding="@dimen/_10sdp"
         android:visibility="gone"
         tools:visibility="visible">
 
@@ -200,8 +200,8 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="@dimen/_13sdp"
+                android:layout_height="@dimen/_13sdp"
                 android:contentDescription="Timer"
                 android:src="@drawable/ic_schedule"
                 app:tint="@color/zen_accent" />
@@ -210,30 +210,30 @@
                 android:id="@+id/tv_timing_preview"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="@dimen/_7sdp"
                 android:layout_weight="1"
                 android:fontFamily="monospace"
                 android:textColor="@color/zen_text_primary"
-                android:textSize="12sp"
+                android:textSize="@dimen/_10ssp"
                 tools:text="Start: 10:00 AM • Due: 1:00 PM (3 hrs)" />
         </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_3sdp"
             android:fontFamily="sans-serif"
             android:text="🔔 Notification will pull to status bar when due"
             android:textColor="@color/zen_accent"
-            android:textSize="10.5sp" />
+            android:textSize="@dimen/_9ssp" />
     </LinearLayout>
 
     <!-- Action Buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="@dimen/_16sdp"
         android:gravity="end"
         android:orientation="horizontal">
 
@@ -241,7 +241,7 @@
             android:id="@+id/btn_cancel_task"
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
-            android:layout_height="42dp"
+            android:layout_height="@dimen/_35sdp"
             android:fontFamily="sans-serif-medium"
             android:text="@string/cancel"
             android:textColor="@color/zen_text_secondary" />
@@ -249,13 +249,13 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_submit_task"
             android:layout_width="wrap_content"
-            android:layout_height="42dp"
-            android:layout_marginStart="8dp"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginStart="@dimen/_7sdp"
             android:backgroundTint="@color/zen_accent"
             android:fontFamily="sans-serif-medium"
             android:text="Add Task"
             android:textColor="@color/zen_on_accent"
-            app:cornerRadius="14dp" />
+            app:cornerRadius="@dimen/_11sdp" />
     </LinearLayout>
 
 </LinearLayout>

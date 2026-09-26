@@ -58,16 +58,16 @@
 
     <!-- Custom Bottom Navigation Style -->
     <style name="Widget.ZEN.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
-        <item name="android:background">@color/transparent</item>
+        <item name="android:background">@color/surfaceDark</item>
         <item name="itemIconTint">@color/nav_item_color</item>
         <item name="itemTextColor">@color/nav_item_color</item>
-        <item name="itemRippleColor">#26B9F6CA</item>
+        <item name="itemRippleColor">#26A7FF67</item>
         <item name="itemActiveIndicatorStyle">@style/Widget.ZEN.BottomNavIndicator</item>
-        <item name="elevation">0dp</item>
+        <item name="elevation">8dp</item>
     </style>
 
     <style name="Widget.ZEN.BottomNavIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
-        <item name="android:color">#26B9F6CA</item>
+        <item name="android:color">@color/zen_accent</item>
     </style>
 </resources>
 

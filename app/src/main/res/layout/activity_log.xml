@@ -12,20 +12,20 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="12dp">
+        android:paddingStart="@dimen/_13sdp"
+        android:paddingTop="@dimen/_13sdp"
+        android:paddingEnd="@dimen/_13sdp"
+        android:paddingBottom="@dimen/_10sdp">
 
         <ImageView
             android:id="@+id/btn_back"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Back"
-            android:padding="10dp"
+            android:padding="@dimen/_8sdp"
             android:src="@drawable/ic_back"
             app:tint="@color/zen_text_primary" />
 
@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="@dimen/_7sdp"
             android:layout_toStartOf="@id/btn_clear_logs"
             android:layout_toEndOf="@id/btn_back"
             android:orientation="vertical">
@@ -46,7 +46,7 @@
                 android:letterSpacing="0.06"
                 android:text="ACTIVITY LOG"
                 android:textColor="@color/zen_text_primary"
-                android:textSize="18sp" />
+                android:textSize="@dimen/_15ssp" />
 
             <TextView
                 android:id="@+id/tv_header_subtitle"
@@ -55,19 +55,19 @@
                 android:fontFamily="sans-serif"
                 android:text="System events and attendance changes"
                 android:textColor="@color/zen_text_secondary"
-                android:textSize="12sp" />
+                android:textSize="@dimen/_10ssp" />
         </LinearLayout>
 
         <!-- Clear Logs Option -->
         <ImageView
             android:id="@+id/btn_clear_logs"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="@dimen/_33sdp"
+            android:layout_height="@dimen/_33sdp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Clear Activity Logs"
-            android:padding="9dp"
+            android:padding="@dimen/_7sdp"
             android:src="@drawable/ic_delete"
             app:tint="@color/zen_text_tertiary" />
     </RelativeLayout>
@@ -88,8 +88,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:paddingTop="4dp"
-            android:paddingBottom="24dp" />
+            android:paddingTop="@dimen/_3sdp"
+            android:paddingBottom="@dimen/_20sdp" />
 
         <!-- Empty State View -->
         <LinearLayout
@@ -98,12 +98,12 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="32dp"
+            android:padding="@dimen/_26sdp"
             android:visibility="gone">
 
             <ImageView
-                android:layout_width="56dp"
-                android:layout_height="56dp"
+                android:layout_width="@dimen/_46sdp"
+                android:layout_height="@dimen/_46sdp"
                 android:contentDescription="No logs"
                 android:src="@drawable/ic_history"
                 app:tint="@color/zen_text_tertiary" />
@@ -111,21 +111,21 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/_13sdp"
                 android:fontFamily="sans-serif-medium"
                 android:text="No Activity Logs"
                 android:textColor="@color/zen_text_primary"
-                android:textSize="16sp" />
+                android:textSize="@dimen/_13ssp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="@dimen/_5sdp"
                 android:fontFamily="sans-serif"
                 android:gravity="center"
                 android:text="Recent actions, timetable imports, and attendance entries will be recorded here."
                 android:textColor="@color/zen_text_secondary"
-                android:textSize="13sp" />
+                android:textSize="@dimen/_11ssp" />
         </LinearLayout>
     </FrameLayout>
 

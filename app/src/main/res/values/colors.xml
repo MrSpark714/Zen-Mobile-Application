@@ -3,6 +3,7 @@
     <!-- ZEN Elegant Dark Palette -->
     <color name="zen_background">#121212</color>
     <color name="zen_surface">#1E1E1E</color>
+    <color name="surfaceDark">#1E1E1E</color>
     <color name="zen_surface_variant">#242426</color>
     <color name="zen_surface_highlight">#2D2D30</color>
     <color name="zen_border">#27272A</color>
