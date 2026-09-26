@@ -9,10 +9,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingStart="@dimen/_13sdp"
-        android:paddingTop="@dimen/_7sdp"
-        android:paddingEnd="@dimen/_13sdp"
-        android:paddingBottom="@dimen/_80sdp"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="96dp"
         tools:listitem="@layout/item_task" />
 
     <!-- Empty State for Tasks -->
@@ -23,12 +23,12 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="@dimen/_26sdp"
+        android:padding="32dp"
         android:visibility="gone">
 
         <ImageView
-            android:layout_width="@dimen/_46sdp"
-            android:layout_height="@dimen/_46sdp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:contentDescription="Empty Tasks"
             android:src="@drawable/ic_tasks"
             android:tint="@color/zen_surface_highlight" />
@@ -36,20 +36,20 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_13sdp"
+            android:layout_marginTop="16dp"
             android:fontFamily="sans-serif-medium"
             android:text="@string/empty_tasks_title"
             android:textColor="@color/zen_text_primary"
-            android:textSize="@dimen/_15ssp" />
+            android:textSize="18sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginTop="6dp"
             android:fontFamily="sans-serif"
             android:gravity="center"
             android:text="@string/empty_tasks_desc"
             android:textColor="@color/zen_text_secondary"
-            android:textSize="@dimen/_12ssp" />
+            android:textSize="14sp" />
     </LinearLayout>
 </FrameLayout>

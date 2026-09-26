@@ -5,14 +5,14 @@
     android:id="@+id/card_subject_analytics"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/_16sdp"
-    android:layout_marginTop="@dimen/_4sdp"
-    android:layout_marginEnd="@dimen/_16sdp"
-    android:layout_marginBottom="@dimen/_7sdp"
+    android:layout_marginStart="20dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginBottom="8dp"
     android:backgroundTint="@color/zen_surface"
     android:clickable="true"
     android:focusable="true"
-    app:cardCornerRadius="@dimen/_13sdp"
+    app:cardCornerRadius="16dp"
     app:cardElevation="0dp"
     app:strokeColor="@color/zen_border"
     app:strokeWidth="1dp">
@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/_13sdp">
+        android:padding="16dp">
 
         <!-- Subject Name & Attendance Percentage Badge -->
         <RelativeLayout
@@ -39,7 +39,7 @@
                 android:fontFamily="sans-serif-bold"
                 android:maxLines="1"
                 android:textColor="@color/zen_text_primary"
-                android:textSize="@dimen/_14ssp"
+                android:textSize="17sp"
                 tools:text="Software Engineering" />
 
             <TextView
@@ -51,12 +51,12 @@
                 android:background="@drawable/bg_badge"
                 android:fontFamily="sans-serif-bold"
                 android:letterSpacing="0.04"
-                android:paddingStart="@dimen/_8sdp"
-                android:paddingTop="@dimen/_3sdp"
-                android:paddingEnd="@dimen/_8sdp"
-                android:paddingBottom="@dimen/_3sdp"
+                android:paddingStart="10dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="4dp"
                 android:textColor="@color/zen_accent"
-                android:textSize="@dimen/_12ssp"
+                android:textSize="14sp"
                 tools:text="85.7%" />
         </RelativeLayout>
 
@@ -65,8 +65,8 @@
             android:id="@+id/progress_attendance"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_height="6dp"
+            android:layout_marginTop="12dp"
             android:max="100"
             android:progress="85"
             android:progressBackgroundTint="@color/zen_surface_variant"
@@ -76,7 +76,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_8sdp">
+            android:layout_marginTop="10dp">
 
             <TextView
                 android:id="@+id/tv_analytics_breakdown"
@@ -86,7 +86,7 @@
                 android:layout_centerVertical="true"
                 android:fontFamily="sans-serif"
                 android:textColor="@color/zen_text_secondary"
-                android:textSize="@dimen/_10ssp"
+                android:textSize="12sp"
                 tools:text="6 Present • 1 Absent • 1 Holiday" />
 
             <TextView
@@ -98,7 +98,7 @@
                 android:letterSpacing="0.05"
                 android:text="HISTORY ›"
                 android:textColor="@color/zen_accent"
-                android:textSize="@dimen/_9ssp" />
+                android:textSize="11sp" />
         </RelativeLayout>
 
     </LinearLayout>

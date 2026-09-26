@@ -6,10 +6,10 @@
     android:background="?attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingStart="@dimen/_13sdp"
-    android:paddingTop="@dimen/_10sdp"
-    android:paddingEnd="@dimen/_13sdp"
-    android:paddingBottom="@dimen/_10sdp">
+    android:paddingStart="16dp"
+    android:paddingTop="12dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="12dp">
 
     <!-- Timestamp on the left -->
     <TextView
@@ -19,18 +19,18 @@
         android:fontFamily="sans-serif-medium"
         android:letterSpacing="0.02"
         android:textColor="@color/zen_accent"
-        android:textSize="@dimen/_10ssp"
+        android:textSize="12sp"
         tools:text="Sep 24, 11:42" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_7sdp"
-        android:layout_marginEnd="@dimen/_7sdp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:fontFamily="sans-serif"
         android:text="•"
         android:textColor="@color/zen_text_tertiary"
-        android:textSize="@dimen/_10ssp" />
+        android:textSize="12sp" />
 
     <!-- Message filling the rest of the single clean line -->
     <TextView
@@ -43,7 +43,7 @@
         android:maxLines="1"
         android:singleLine="true"
         android:textColor="@color/zen_text_primary"
-        android:textSize="@dimen/_11ssp"
+        android:textSize="13sp"
         tools:text="Marked Database Systems as Present" />
 
 </LinearLayout>

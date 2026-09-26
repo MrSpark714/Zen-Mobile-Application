@@ -12,20 +12,20 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/_13sdp"
-        android:paddingTop="@dimen/_13sdp"
-        android:paddingEnd="@dimen/_13sdp"
-        android:paddingBottom="@dimen/_10sdp">
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp">
 
         <ImageView
             android:id="@+id/btn_back"
-            android:layout_width="@dimen/_36sdp"
-            android:layout_height="@dimen/_36sdp"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Back"
-            android:padding="@dimen/_8sdp"
+            android:padding="10dp"
             android:src="@drawable/ic_back"
             app:tint="@color/zen_text_primary" />
 
@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginStart="@dimen/_7sdp"
+            android:layout_marginStart="8dp"
             android:layout_toStartOf="@id/layout_header_end_actions"
             android:layout_toEndOf="@id/btn_back"
             android:orientation="vertical">
@@ -48,7 +48,7 @@
                 android:maxLines="1"
                 android:text="DETAILED HISTORY"
                 android:textColor="@color/zen_text_primary"
-                android:textSize="@dimen/_15ssp"
+                android:textSize="18sp"
                 tools:text="OPERATING SYSTEMS" />
 
             <TextView
@@ -60,7 +60,7 @@
                 android:maxLines="1"
                 android:text="Tap status tag to edit past attendance"
                 android:textColor="@color/zen_accent"
-                android:textSize="@dimen/_10ssp" />
+                android:textSize="12sp" />
         </LinearLayout>
 
         <!-- End Actions: Percentage Badge + Delete Icon Button (Trash Can) -->
@@ -79,23 +79,23 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_badge"
                 android:fontFamily="sans-serif-bold"
-                android:paddingStart="@dimen/_8sdp"
-                android:paddingTop="@dimen/_4sdp"
-                android:paddingEnd="@dimen/_8sdp"
-                android:paddingBottom="@dimen/_4sdp"
+                android:paddingStart="10dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="5dp"
                 android:textColor="@color/zen_accent"
-                android:textSize="@dimen/_11ssp"
+                android:textSize="13sp"
                 tools:text="85.7%" />
 
             <!-- Small Delete Icon Button (Trash Can) -->
             <ImageView
                 android:id="@+id/btn_delete_subject_history"
-                android:layout_width="@dimen/_33sdp"
-                android:layout_height="@dimen/_33sdp"
-                android:layout_marginStart="@dimen/_7sdp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Delete Subject History"
-                android:padding="@dimen/_7sdp"
+                android:padding="9dp"
                 android:src="@drawable/ic_delete"
                 app:tint="@color/status_absent" />
         </LinearLayout>
@@ -111,11 +111,11 @@
         android:id="@+id/card_stats_summary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_13sdp"
-        android:layout_marginTop="@dimen/_13sdp"
-        android:layout_marginEnd="@dimen/_13sdp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:backgroundTint="@color/zen_surface"
-        app:cardCornerRadius="@dimen/_13sdp"
+        app:cardCornerRadius="16dp"
         app:cardElevation="0dp"
         app:strokeColor="@color/zen_border"
         app:strokeWidth="1dp">
@@ -124,7 +124,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="@dimen/_13sdp">
+            android:padding="16dp">
 
             <TextView
                 android:id="@+id/tv_log_subject_name"
@@ -132,17 +132,17 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-bold"
                 android:textColor="@color/zen_text_primary"
-                android:textSize="@dimen/_15ssp"
+                android:textSize="18sp"
                 tools:text="Operating Systems" />
 
             <TextView
                 android:id="@+id/tv_log_breakdown"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_3sdp"
+                android:layout_marginTop="4dp"
                 android:fontFamily="sans-serif"
                 android:textColor="@color/zen_text_secondary"
-                android:textSize="@dimen/_11ssp"
+                android:textSize="13sp"
                 tools:text="12 Present • 2 Absent • 1 Holiday" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
@@ -151,10 +151,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_16sdp"
-        android:layout_marginTop="@dimen/_13sdp"
-        android:layout_marginEnd="@dimen/_16sdp"
-        android:layout_marginBottom="@dimen/_7sdp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="8dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -166,7 +166,7 @@
             android:letterSpacing="0.06"
             android:text="SESSION HISTORY"
             android:textColor="@color/zen_text_secondary"
-            android:textSize="@dimen/_10ssp" />
+            android:textSize="11.5sp" />
 
         <TextView
             android:id="@+id/tv_total_records_count"
@@ -174,7 +174,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
             android:textColor="@color/zen_text_tertiary"
-            android:textSize="@dimen/_10ssp"
+            android:textSize="12sp"
             tools:text="15 Records" />
     </LinearLayout>
 
@@ -189,7 +189,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:paddingBottom="@dimen/_20sdp" />
+            android:paddingBottom="24dp" />
 
         <!-- Empty State -->
         <LinearLayout
@@ -198,12 +198,12 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="@dimen/_26sdp"
+            android:padding="32dp"
             android:visibility="gone">
 
             <ImageView
-                android:layout_width="@dimen/_46sdp"
-                android:layout_height="@dimen/_46sdp"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
                 android:contentDescription="Empty Log"
                 android:src="@drawable/ic_history"
                 app:tint="@color/zen_text_tertiary" />
@@ -211,21 +211,21 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_13sdp"
+                android:layout_marginTop="16dp"
                 android:fontFamily="sans-serif-medium"
                 android:text="No Attendance Records"
                 android:textColor="@color/zen_text_primary"
-                android:textSize="@dimen/_13ssp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginTop="6dp"
                 android:fontFamily="sans-serif"
                 android:gravity="center"
                 android:text="Mark attendance from the Today tab to build this subject's history ledger."
                 android:textColor="@color/zen_text_secondary"
-                android:textSize="@dimen/_11ssp" />
+                android:textSize="13sp" />
         </LinearLayout>
     </FrameLayout>
 

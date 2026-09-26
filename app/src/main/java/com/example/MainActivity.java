@@ -40,9 +40,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.splashscreen.SplashScreen;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.adapter.AttendanceHistoryAdapter;
 import com.example.adapter.NoteAdapter;
@@ -51,9 +51,6 @@ import com.example.adapter.TaskAdapter;
 import com.example.adapter.TodayClassAdapter;
 import com.example.adapter.WeeklyScheduleAdapter;
 import com.example.database.AppDatabase;
-import com.example.fragment.ClassesFragment;
-import com.example.fragment.NotesFragment;
-import com.example.fragment.TasksFragment;
 import com.example.model.AttendanceHistory;
 import com.example.model.ClassSchedule;
 import com.example.model.ClassWithTodayStatus;
@@ -63,7 +60,6 @@ import com.example.model.Task;
 import com.example.util.NotificationHelper;
 import com.example.util.ThemeHelper;
 import com.example.util.UpdateManager;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
@@ -120,8 +116,19 @@ public class MainActivity extends AppCompatActivity implements
     private ImageView btnClearSearch;
     private LinearLayout searchBarContainer;
 
-    // View References - Navigation
-    private BottomNavigationView bottomNavigationView;
+    // View References - Navigation & Pager
+    private ViewPager2 viewPager;
+    private View bottomNavContainer;
+    private View navSlidingIndicator;
+    private View btnNavNotes;
+    private View btnNavTasks;
+    private View btnNavAttendance;
+    private ImageView ivNavNotesIcon;
+    private ImageView ivNavTasksIcon;
+    private ImageView ivNavAttendanceIcon;
+    private TextView tvNavNotesText;
+    private TextView tvNavTasksText;
+    private TextView tvNavAttendanceText;
     private FloatingActionButton fabAdd;
 
     // Page Views & Adapters - Notes & Tasks
@@ -137,6 +144,8 @@ public class MainActivity extends AppCompatActivity implements
     private TodayClassAdapter todayClassAdapter;
     private WeeklyScheduleAdapter weeklyScheduleAdapter;
     private SubjectAnalyticsAdapter subjectAnalyticsAdapter;
+
+    private MainPagerAdapter pagerAdapter;
 
     // Cached Data
     private List<Note> currentNotes = new ArrayList<>();
@@ -172,16 +181,13 @@ public class MainActivity extends AppCompatActivity implements
 
         bindViews();
         setupAdapters();
+        setupViewPager();
         setupNavigation();
         setupSearch();
         setupFab();
 
         int storedAccent = ThemeHelper.getAccentColor(this);
         applyThemeAccent(storedAccent);
-
-        if (savedInstanceState == null) {
-            switchToTab(TAB_NOTES);
-        }
 
         handleIntent(getIntent());
 
@@ -205,9 +211,9 @@ public class MainActivity extends AppCompatActivity implements
         if (intent != null) {
             String tab = intent.getStringExtra("NAV_TAB");
             if ("tasks".equalsIgnoreCase(tab)) {
-                if (bottomNavigationView != null) bottomNavigationView.setSelectedItemId(R.id.nav_tasks);
+                if (viewPager != null) viewPager.setCurrentItem(TAB_TASKS, true);
             } else if ("attendance".equalsIgnoreCase(tab) || "classes".equalsIgnoreCase(tab)) {
-                if (bottomNavigationView != null) bottomNavigationView.setSelectedItemId(R.id.nav_classes);
+                if (viewPager != null) viewPager.setCurrentItem(TAB_ATTENDANCE, true);
             }
         }
     }
@@ -227,6 +233,74 @@ public class MainActivity extends AppCompatActivity implements
     private static final int REQUIRED_EASTER_EGG_TAPS = 7;
     private static final long EASTER_EGG_TIME_WINDOW_MS = 3000L;
 
+    // Touch & Gesture Disambiguation: Prevents vertical list scrolling from triggering ViewPager2 page shifts
+    private float touchDownX = 0f;
+    private float touchDownY = 0f;
+    private boolean isGestureLocked = false;
+    private int scaledTouchSlop = 0;
+
+    private final RecyclerView.OnScrollListener verticalScrollStateListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+            if (viewPager == null) return;
+            if (newState == RecyclerView.SCROLL_STATE_DRAGGING || newState == RecyclerView.SCROLL_STATE_SETTLING) {
+                viewPager.setUserInputEnabled(false);
+            } else if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                viewPager.setUserInputEnabled(true);
+            }
+        }
+    };
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (scaledTouchSlop == 0) {
+            scaledTouchSlop = ViewConfiguration.get(this).getScaledTouchSlop();
+        }
+
+        int action = ev.getActionMasked();
+        if (action == MotionEvent.ACTION_DOWN) {
+            touchDownX = ev.getRawX();
+            touchDownY = ev.getRawY();
+            isGestureLocked = false;
+        } else if (action == MotionEvent.ACTION_MOVE && !isGestureLocked) {
+            float dx = Math.abs(ev.getRawX() - touchDownX);
+            float dy = Math.abs(ev.getRawY() - touchDownY);
+
+            // React quickly as soon as motion starts (fraction of standard touch slop)
+            if (dx > scaledTouchSlop * 0.35f || dy > scaledTouchSlop * 0.35f) {
+                isGestureLocked = true;
+                // If the gesture has vertical intent (scrolling up/down through notes, tasks, or classes)
+                if (dy >= dx * 0.55f) {
+                    if (viewPager != null) {
+                        viewPager.setUserInputEnabled(false);
+                        viewPager.requestDisallowInterceptTouchEvent(true);
+                    }
+                } else if (dx > dy * 1.8f) {
+                    // Deliberate horizontal swipe across screens
+                    if (viewPager != null) {
+                        viewPager.setUserInputEnabled(true);
+                    }
+                }
+            }
+        } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+            isGestureLocked = false;
+            // Only re-enable horizontal paging if no vertical list is actively flinging/scrolling
+            if (viewPager != null && !isAnyListActivelyScrolling()) {
+                viewPager.setUserInputEnabled(true);
+            }
+        }
+
+        return super.dispatchTouchEvent(ev);
+    }
+
+    private boolean isAnyListActivelyScrolling() {
+        if (rvNotes != null && rvNotes.getScrollState() != RecyclerView.SCROLL_STATE_IDLE) return true;
+        if (rvTasks != null && rvTasks.getScrollState() != RecyclerView.SCROLL_STATE_IDLE) return true;
+        if (attendanceViewHolder != null && attendanceViewHolder.isScrolling()) return true;
+        return false;
+    }
+
     private void bindViews() {
         tvHeaderTitle = findViewById(R.id.tv_header_title);
         tvHeaderSubtitle = findViewById(R.id.tv_header_subtitle);
@@ -235,7 +309,18 @@ public class MainActivity extends AppCompatActivity implements
         etSearch = findViewById(R.id.et_search);
         btnClearSearch = findViewById(R.id.btn_clear_search);
 
-        bottomNavigationView = findViewById(R.id.bottom_nav_view);
+        viewPager = findViewById(R.id.view_pager);
+        bottomNavContainer = findViewById(R.id.bottom_nav_container);
+        navSlidingIndicator = findViewById(R.id.nav_sliding_indicator);
+        btnNavNotes = findViewById(R.id.btn_nav_notes);
+        btnNavTasks = findViewById(R.id.btn_nav_tasks);
+        btnNavAttendance = findViewById(R.id.btn_nav_attendance);
+        ivNavNotesIcon = findViewById(R.id.iv_nav_notes_icon);
+        ivNavTasksIcon = findViewById(R.id.iv_nav_tasks_icon);
+        ivNavAttendanceIcon = findViewById(R.id.iv_nav_attendance_icon);
+        tvNavNotesText = findViewById(R.id.tv_nav_notes_text);
+        tvNavTasksText = findViewById(R.id.tv_nav_tasks_text);
+        tvNavAttendanceText = findViewById(R.id.tv_nav_attendance_text);
         fabAdd = findViewById(R.id.fab_add);
 
         // Attach Easter Egg 7-tap listener on Header Title & Subtitle
@@ -297,48 +382,80 @@ public class MainActivity extends AppCompatActivity implements
         subjectAnalyticsAdapter = new SubjectAnalyticsAdapter(this, this);
     }
 
+    private void setupViewPager() {
+        pagerAdapter = new MainPagerAdapter();
+        viewPager.setAdapter(pagerAdapter);
+        viewPager.setOffscreenPageLimit(2);
+
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+                slideNavIndicator(position, positionOffset);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                onTabChanged(position);
+            }
+        });
+    }
+
     private void setupNavigation() {
-        if (bottomNavigationView != null) {
-            bottomNavigationView.setOnItemSelectedListener(item -> {
-                int itemId = item.getItemId();
-                if (itemId == R.id.nav_notes) {
-                    switchToTab(TAB_NOTES);
-                    return true;
-                } else if (itemId == R.id.nav_tasks) {
-                    switchToTab(TAB_TASKS);
-                    return true;
-                } else if (itemId == R.id.nav_classes) {
-                    switchToTab(TAB_ATTENDANCE);
-                    return true;
+        btnNavNotes.setOnClickListener(v -> viewPager.setCurrentItem(TAB_NOTES, true));
+        btnNavTasks.setOnClickListener(v -> viewPager.setCurrentItem(TAB_TASKS, true));
+        btnNavAttendance.setOnClickListener(v -> viewPager.setCurrentItem(TAB_ATTENDANCE, true));
+
+        if (bottomNavContainer != null) {
+            bottomNavContainer.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+                if (right - left != oldRight - oldLeft) {
+                    initSlidingIndicator();
                 }
-                return false;
             });
+            bottomNavContainer.post(this::initSlidingIndicator);
         }
     }
 
-    private void switchToTab(int tab) {
-        currentTab = tab;
-        Fragment fragment;
-        if (tab == TAB_NOTES) {
-            fragment = new NotesFragment();
-        } else if (tab == TAB_TASKS) {
-            fragment = new TasksFragment();
-        } else {
-            fragment = new ClassesFragment();
+    private void initSlidingIndicator() {
+        if (bottomNavContainer == null || navSlidingIndicator == null) return;
+        int innerWidth = bottomNavContainer.getWidth() - bottomNavContainer.getPaddingLeft() - bottomNavContainer.getPaddingRight();
+        if (innerWidth > 0) {
+            int tabWidth = innerWidth / 3;
+            ViewGroup.LayoutParams lp = navSlidingIndicator.getLayoutParams();
+            lp.width = tabWidth;
+            navSlidingIndicator.setLayoutParams(lp);
+
+            int current = viewPager != null ? viewPager.getCurrentItem() : 0;
+            navSlidingIndicator.setTranslationX(current * tabWidth);
         }
+    }
 
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .commit();
-
-        onTabChanged(tab);
+    private void slideNavIndicator(int position, float positionOffset) {
+        if (bottomNavContainer == null || navSlidingIndicator == null) return;
+        int innerWidth = bottomNavContainer.getWidth() - bottomNavContainer.getPaddingLeft() - bottomNavContainer.getPaddingRight();
+        if (innerWidth > 0) {
+            float tabWidth = innerWidth / 3.0f;
+            navSlidingIndicator.setTranslationX((position + positionOffset) * tabWidth);
+        }
     }
 
     private void onTabChanged(int tab) {
         currentTab = tab;
-        String query = etSearch != null ? etSearch.getText().toString().trim() : "";
+        String query = etSearch.getText().toString().trim();
 
         int accentColor = ThemeHelper.getAccentColor(this);
+        int onAccentColor = ThemeHelper.getOnAccentColor(accentColor);
+        int inactiveColor = ContextCompat.getColor(this, R.color.zen_text_secondary);
+
+        if (navSlidingIndicator != null) {
+            navSlidingIndicator.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
+        }
+        slideNavIndicator(tab, 0f);
+
+        updateTabItemVisuals(ivNavNotesIcon, tvNavNotesText, tab == TAB_NOTES, onAccentColor, inactiveColor);
+        updateTabItemVisuals(ivNavTasksIcon, tvNavTasksText, tab == TAB_TASKS, onAccentColor, inactiveColor);
+        updateTabItemVisuals(ivNavAttendanceIcon, tvNavAttendanceText, tab == TAB_ATTENDANCE, onAccentColor, inactiveColor);
 
         if (tab == TAB_NOTES) {
             tvHeaderTitle.setText("ZEN");
@@ -370,6 +487,16 @@ public class MainActivity extends AppCompatActivity implements
         observeDatabase(query);
     }
 
+    private void updateTabItemVisuals(ImageView icon, TextView text, boolean isActive, int activeColor, int inactiveColor) {
+        if (icon != null) {
+            icon.setColorFilter(isActive ? activeColor : inactiveColor);
+        }
+        if (text != null) {
+            text.setTextColor(isActive ? activeColor : inactiveColor);
+            text.setTypeface(null, isActive ? Typeface.BOLD : Typeface.NORMAL);
+        }
+    }
+
     /**
      * Dynamically applies the chosen accent color across the app UI elements.
      */
@@ -377,9 +504,16 @@ public class MainActivity extends AppCompatActivity implements
         ThemeHelper.applyAccentToFab(fabAdd, accentColor);
         ThemeHelper.applyAccentToBadge(tvItemCountBadge, accentColor);
 
-        if (bottomNavigationView != null) {
-            bottomNavigationView.setItemActiveIndicatorColor(ColorStateList.valueOf(accentColor));
+        int onAccentColor = ThemeHelper.getOnAccentColor(accentColor);
+        int inactiveColor = ContextCompat.getColor(this, R.color.zen_text_secondary);
+
+        if (navSlidingIndicator != null) {
+            navSlidingIndicator.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
         }
+
+        updateTabItemVisuals(ivNavNotesIcon, tvNavNotesText, currentTab == TAB_NOTES, onAccentColor, inactiveColor);
+        updateTabItemVisuals(ivNavTasksIcon, tvNavTasksText, currentTab == TAB_TASKS, onAccentColor, inactiveColor);
+        updateTabItemVisuals(ivNavAttendanceIcon, tvNavAttendanceText, currentTab == TAB_ATTENDANCE, onAccentColor, inactiveColor);
 
         if (attendanceViewHolder != null) {
             attendanceViewHolder.refreshThemeAccent(accentColor);
