@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="@dimen/_13sdp"
-    android:paddingTop="@dimen/_10sdp"
-    android:paddingEnd="@dimen/_13sdp"
-    android:paddingBottom="@dimen/_10sdp">
+    android:paddingStart="13dp"
+    android:paddingTop="10dp"
+    android:paddingEnd="13dp"
+    android:paddingBottom="10dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -22,17 +22,17 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
             android:textColor="@color/zen_text_primary"
-            android:textSize="@dimen/_12ssp"
+            android:textSize="12sp"
             tools:text="Wednesday, Aug 26, 2026" />
 
         <TextView
             android:id="@+id/tv_history_day_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_2sdp"
+            android:layout_marginTop="2dp"
             android:fontFamily="sans-serif"
             android:textColor="@color/zen_text_secondary"
-            android:textSize="@dimen/_10ssp"
+            android:textSize="10sp"
             tools:text="Regular Class Session" />
     </LinearLayout>
 
@@ -49,14 +49,14 @@
         android:foreground="?attr/selectableItemBackgroundBorderless"
         android:gravity="center"
         android:letterSpacing="0.06"
-        android:minHeight="@dimen/_30sdp"
-        android:paddingStart="@dimen/_11sdp"
-        android:paddingTop="@dimen/_6sdp"
-        android:paddingEnd="@dimen/_11sdp"
-        android:paddingBottom="@dimen/_6sdp"
+        android:minHeight="30dp"
+        android:paddingStart="11dp"
+        android:paddingTop="6dp"
+        android:paddingEnd="11dp"
+        android:paddingBottom="6dp"
         android:text="PRESENT"
         android:textColor="@color/status_present"
-        android:textSize="@dimen/_9ssp"
+        android:textSize="9sp"
         tools:text="PRESENT" />
 
 </RelativeLayout>
