@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/bg_dialog_popup"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:padding="@dimen/_16sdp">
 
     <!-- Header with Title & Close Icon -->
     <RelativeLayout
@@ -26,28 +26,28 @@
                 android:letterSpacing="0.08"
                 android:text="SELECT DATE"
                 android:textColor="@color/zen_text_primary"
-                android:textSize="17sp" />
+                android:textSize="@dimen/_14ssp" />
 
             <TextView
                 android:id="@+id/tv_popup_selected_preview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:fontFamily="sans-serif"
                 android:text="Tuesday, Aug 25, 2026"
                 android:textColor="@color/zen_accent"
-                android:textSize="12.5sp" />
+                android:textSize="@dimen/_10ssp" />
         </LinearLayout>
 
         <ImageView
             android:id="@+id/btn_close_date_popup"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="@dimen/_26sdp"
+            android:layout_height="@dimen/_26sdp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Close"
-            android:padding="6dp"
+            android:padding="@dimen/_5sdp"
             android:src="@drawable/ic_close"
             android:tint="@color/zen_text_secondary" />
     </RelativeLayout>
@@ -55,8 +55,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
         android:background="@color/zen_divider" />
 
     <!-- Quick Presets -->
@@ -67,12 +67,12 @@
         android:letterSpacing="0.06"
         android:text="QUICK PRESETS"
         android:textColor="@color/zen_text_secondary"
-        android:textSize="11sp" />
+        android:textSize="@dimen/_9ssp" />
 
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/_7sdp"
         android:overScrollMode="never"
         android:scrollbars="none">
 
@@ -84,65 +84,65 @@
             <TextView
                 android:id="@+id/preset_today"
                 android:layout_width="wrap_content"
-                android:layout_height="36dp"
+                android:layout_height="@dimen/_30sdp"
                 android:background="@drawable/bg_chip_selected"
                 android:clickable="true"
                 android:focusable="true"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:paddingStart="14dp"
-                android:paddingEnd="14dp"
+                android:paddingStart="@dimen/_11sdp"
+                android:paddingEnd="@dimen/_11sdp"
                 android:text="Today"
                 android:textColor="@color/zen_accent"
-                android:textSize="12sp" />
+                android:textSize="@dimen/_10ssp" />
 
             <TextView
                 android:id="@+id/preset_tomorrow"
                 android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:layout_marginStart="8dp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_marginStart="@dimen/_7sdp"
                 android:background="@drawable/bg_chip_unselected"
                 android:clickable="true"
                 android:focusable="true"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:paddingStart="14dp"
-                android:paddingEnd="14dp"
+                android:paddingStart="@dimen/_11sdp"
+                android:paddingEnd="@dimen/_11sdp"
                 android:text="Tomorrow"
                 android:textColor="@color/zen_text_secondary"
-                android:textSize="12sp" />
+                android:textSize="@dimen/_10ssp" />
 
             <TextView
                 android:id="@+id/preset_in_3_days"
                 android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:layout_marginStart="8dp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_marginStart="@dimen/_7sdp"
                 android:background="@drawable/bg_chip_unselected"
                 android:clickable="true"
                 android:focusable="true"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:paddingStart="14dp"
-                android:paddingEnd="14dp"
+                android:paddingStart="@dimen/_11sdp"
+                android:paddingEnd="@dimen/_11sdp"
                 android:text="In 3 Days"
                 android:textColor="@color/zen_text_secondary"
-                android:textSize="12sp" />
+                android:textSize="@dimen/_10ssp" />
 
             <TextView
                 android:id="@+id/preset_next_week"
                 android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:layout_marginStart="8dp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_marginStart="@dimen/_7sdp"
                 android:background="@drawable/bg_chip_unselected"
                 android:clickable="true"
                 android:focusable="true"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:paddingStart="14dp"
-                android:paddingEnd="14dp"
+                android:paddingStart="@dimen/_11sdp"
+                android:paddingEnd="@dimen/_11sdp"
                 android:text="Next Week"
                 android:textColor="@color/zen_text_secondary"
-                android:textSize="12sp" />
+                android:textSize="@dimen/_10ssp" />
         </LinearLayout>
     </HorizontalScrollView>
 
@@ -151,7 +151,7 @@
         android:id="@+id/popup_date_picker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/_8sdp"
         android:calendarViewShown="true"
         android:datePickerMode="calendar"
         android:spinnersShown="false" />
@@ -160,23 +160,23 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/_7sdp"
         android:fontFamily="sans-serif-medium"
         android:letterSpacing="0.06"
         android:text="ACTION"
         android:textColor="@color/zen_text_secondary"
-        android:textSize="11sp" />
+        android:textSize="@dimen/_9ssp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/_7sdp"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/opt_insert_text"
             android:layout_width="0dp"
-            android:layout_height="38dp"
+            android:layout_height="@dimen/_32sdp"
             android:layout_weight="1"
             android:background="@drawable/bg_chip_selected"
             android:clickable="true"
@@ -185,13 +185,13 @@
             android:gravity="center"
             android:text="In Text"
             android:textColor="@color/zen_accent"
-            android:textSize="12sp" />
+            android:textSize="@dimen/_10ssp" />
 
         <TextView
             android:id="@+id/opt_attach_badge"
             android:layout_width="0dp"
-            android:layout_height="38dp"
-            android:layout_marginStart="6dp"
+            android:layout_height="@dimen/_32sdp"
+            android:layout_marginStart="@dimen/_5sdp"
             android:layout_weight="1"
             android:background="@drawable/bg_chip_unselected"
             android:clickable="true"
@@ -200,13 +200,13 @@
             android:gravity="center"
             android:text="As Badge"
             android:textColor="@color/zen_text_secondary"
-            android:textSize="12sp" />
+            android:textSize="@dimen/_10ssp" />
 
         <TextView
             android:id="@+id/opt_both"
             android:layout_width="0dp"
-            android:layout_height="38dp"
-            android:layout_marginStart="6dp"
+            android:layout_height="@dimen/_32sdp"
+            android:layout_marginStart="@dimen/_5sdp"
             android:layout_weight="1"
             android:background="@drawable/bg_chip_unselected"
             android:clickable="true"
@@ -215,14 +215,14 @@
             android:gravity="center"
             android:text="Both"
             android:textColor="@color/zen_text_secondary"
-            android:textSize="12sp" />
+            android:textSize="@dimen/_10ssp" />
     </LinearLayout>
 
     <!-- Bottom Buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/_13sdp"
         android:gravity="end"
         android:orientation="horizontal">
 
@@ -230,7 +230,7 @@
             android:id="@+id/btn_popup_cancel"
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
-            android:layout_height="44dp"
+            android:layout_height="@dimen/_36sdp"
             android:fontFamily="sans-serif-medium"
             android:letterSpacing="0.04"
             android:text="Cancel"
@@ -240,13 +240,13 @@
             android:id="@+id/btn_popup_apply"
             style="@style/Widget.Material3.Button"
             android:layout_width="wrap_content"
-            android:layout_height="44dp"
-            android:layout_marginStart="10dp"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_marginStart="@dimen/_8sdp"
             android:backgroundTint="@color/zen_accent"
             android:fontFamily="sans-serif-medium"
             android:letterSpacing="0.04"
             android:text="Apply Date"
             android:textColor="@color/zen_on_accent"
-            app:cornerRadius="12dp" />
+            app:cornerRadius="@dimen/_10sdp" />
     </LinearLayout>
 </LinearLayout>

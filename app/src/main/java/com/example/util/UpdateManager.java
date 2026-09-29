@@ -3,6 +3,7 @@ package com.example.util;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Environment;
@@ -11,6 +12,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.BackupActivity;
 import com.example.BuildConfig;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -216,13 +218,24 @@ public class UpdateManager {
 
     /**
      * Shows Material Design 3 AlertDialog informing user about available update.
+     * Incorporates 3-action workflow: Update Now, Backup Data First, and Later.
      */
     private static void showUpdatePromptDialog(Activity activity, String latestVersionName, String releaseNotes, String apkUrl) {
+        if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
+            return;
+        }
+
+        String warningMessage = "\n\n⚠️ CRITICAL: Upgrading may reset local database tables. Performing a full backup of your data first is strongly advised before installing this update.";
+
         new MaterialAlertDialogBuilder(activity)
                 .setTitle("Update Available")
-                .setMessage("A new version of ZEN (v" + latestVersionName + ") is available!\n\nRelease Notes:\n" + releaseNotes)
+                .setMessage("A new version of ZEN (v" + latestVersionName + ") is available!\n\nRelease Notes:\n" + releaseNotes + warningMessage)
                 .setPositiveButton("Update Now", (dialog, which) -> {
                     startApkDownload(activity, apkUrl, latestVersionName);
+                })
+                .setNeutralButton("Backup Data First", (dialog, which) -> {
+                    Intent backupIntent = new Intent(activity, BackupActivity.class);
+                    activity.startActivity(backupIntent);
                 })
                 .setNegativeButton("Later", (dialog, which) -> dialog.dismiss())
                 .setCancelable(true)

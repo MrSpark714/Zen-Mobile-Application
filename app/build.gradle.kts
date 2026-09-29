@@ -82,6 +82,8 @@ dependencies {
   implementation(libs.androidx.core.splashscreen)
   implementation(libs.androidx.appcompat)
   implementation(libs.material)
+  implementation(libs.sdp.android)
+  implementation(libs.ssp.android)
   implementation(libs.androidx.constraintlayout)
   implementation(libs.androidx.recyclerview)
   implementation(libs.androidx.viewpager2)

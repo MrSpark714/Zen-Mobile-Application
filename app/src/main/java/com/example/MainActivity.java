@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -193,11 +194,44 @@ public class MainActivity extends AppCompatActivity implements
 
         observeDatabase("");
 
-        // Check for in-app updates in background
-        UpdateManager.checkForUpdates(this);
+        // Automated background check for in-app updates on app launch
+        if (UpdateManager.isAutoUpdateEnabled(this)) {
+            UpdateManager.checkForUpdates(this);
+        }
 
         // Schedule nightly attendance auto-marker via WorkManager (runs around 11:55 PM daily)
         com.example.worker.DailyAttendanceWorker.scheduleDailyAutoMarker(this);
+
+        checkMigrationDialog();
+    }
+
+    /**
+     * Checks if the user is launching the app for the first time following the v9.3
+     * database architecture migration. If so, prompts the user to import their legacy backup.
+     */
+    private void checkMigrationDialog() {
+        SharedPreferences prefs = getSharedPreferences("zen_prefs", Context.MODE_PRIVATE);
+        SharedPreferences defaultPrefs = android.preference.PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isFirstLaunch = prefs.getBoolean("is_first_launch_v9_3_migration", true)
+                && defaultPrefs.getBoolean("is_first_launch_v9_3_migration", true);
+
+        if (isFirstLaunch) {
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("Welcome to the New ZEN!")
+                    .setMessage("We have completely upgraded the database architecture to prevent future data loss. If you created a backup in the older version, please import it now using the Smart Import feature.")
+                    .setPositiveButton("Import Data", (dialog, which) -> {
+                        prefs.edit().putBoolean("is_first_launch_v9_3_migration", false).apply();
+                        defaultPrefs.edit().putBoolean("is_first_launch_v9_3_migration", false).apply();
+                        Intent intent = new Intent(MainActivity.this, BackupActivity.class);
+                        startActivity(intent);
+                    })
+                    .setNegativeButton("Start Fresh", (dialog, which) -> {
+                        prefs.edit().putBoolean("is_first_launch_v9_3_migration", false).apply();
+                        defaultPrefs.edit().putBoolean("is_first_launch_v9_3_migration", false).apply();
+                        dialog.dismiss();
+                    })
+                    .show();
+        }
     }
 
     @Override
@@ -790,6 +824,36 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    public void onTasksFragmentAttached(com.example.fragment.TasksFragment fragment) {
+        if (fragment != null) {
+            this.rvTasks = fragment.getRecyclerView();
+            this.layoutEmptyTasks = fragment.getEmptyView();
+            if (this.rvTasks != null && this.taskAdapter != null) {
+                this.rvTasks.setAdapter(this.taskAdapter);
+                updateTasksList(this.currentTasks);
+            }
+        }
+    }
+
+    public void onNotesFragmentAttached(com.example.fragment.NotesFragment fragment) {
+        if (fragment != null) {
+            this.rvNotes = fragment.getRecyclerView();
+            this.layoutEmptyNotes = fragment.getEmptyView();
+            if (this.rvNotes != null && this.noteAdapter != null) {
+                this.rvNotes.setAdapter(this.noteAdapter);
+                updateNotesList(this.currentNotes);
+            }
+        }
+    }
+
+    public void onClassesFragmentAttached(View view) {
+        if (view != null) {
+            attendanceViewHolder = new AttendanceViewHolder(view);
+            attendanceViewHolder.setup();
+            observeAttendanceData();
+        }
+    }
+
     static class NotesViewHolder extends RecyclerView.ViewHolder {
         RecyclerView rvNotes;
         View layoutEmptyNotes;
@@ -1115,7 +1179,7 @@ public class MainActivity extends AppCompatActivity implements
      * Crucial Rule: Day selector ONLY allows Monday, Tuesday, Wednesday, Thursday, Friday.
      * Saturday and Sunday are strictly blocked from scheduling.
      */
-    private void showAddClassBottomSheet(ClassSchedule existingSchedule) {
+    public void showAddClassBottomSheet(ClassSchedule existingSchedule) {
         BottomSheetDialog dialog = new BottomSheetDialog(this, R.style.Theme_ZEN);
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_class, null);
         dialog.setContentView(dialogView);
@@ -1371,7 +1435,7 @@ public class MainActivity extends AppCompatActivity implements
     // Task Bottom Sheet Dialog
     // =========================================================================
 
-    private void showAddTaskBottomSheet() {
+    public void showAddTaskBottomSheet() {
         BottomSheetDialog dialog = new BottomSheetDialog(this, R.style.Theme_ZEN);
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_task, null);
         dialog.setContentView(dialogView);
