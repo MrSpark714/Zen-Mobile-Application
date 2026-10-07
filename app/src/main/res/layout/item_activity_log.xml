@@ -6,20 +6,20 @@
     android:background="?attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingStart="12dp"
-    android:paddingTop="12dp"
-    android:paddingEnd="12dp"
-    android:paddingBottom="12dp">
+    android:paddingStart="13dp"
+    android:paddingTop="10dp"
+    android:paddingEnd="13dp"
+    android:paddingBottom="10dp">
 
     <!-- Timestamp on the left -->
     <TextView
         android:id="@+id/tv_log_timestamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-bold"
+        android:fontFamily="sans-serif-medium"
         android:letterSpacing="0.02"
         android:textColor="@color/zen_accent"
-        android:textSize="11sp"
+        android:textSize="10sp"
         tools:text="Sep 24, 11:42" />
 
     <TextView
@@ -30,7 +30,7 @@
         android:fontFamily="sans-serif"
         android:text="•"
         android:textColor="@color/zen_text_tertiary"
-        android:textSize="11sp" />
+        android:textSize="10sp" />
 
     <!-- Message filling the rest of the single clean line -->
     <TextView
@@ -43,7 +43,7 @@
         android:maxLines="1"
         android:singleLine="true"
         android:textColor="@color/zen_text_primary"
-        android:textSize="13sp"
+        android:textSize="11sp"
         tools:text="Marked Database Systems as Present" />
 
 </LinearLayout>

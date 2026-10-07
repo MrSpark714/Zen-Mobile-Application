@@ -38,7 +38,7 @@
                         android:fontFamily="sans-serif-black"
                         android:letterSpacing="0.1"
                         android:text="SETTINGS"
-                        android:textColor="@color/white"
+                        android:textColor="@color/zen_text_primary"
                         android:textSize="22sp"
                         android:textStyle="bold" />
 
@@ -50,12 +50,12 @@
                         android:letterSpacing="0.12"
                         android:text="PREFERENCES &amp; DATA MANAGEMENT"
                         android:textAllCaps="true"
-                        android:textColor="#A0A0A0"
-                        android:textSize="11sp" />
+                        android:textColor="@color/zen_text_secondary"
+                        android:textSize="10.5sp" />
                 </LinearLayout>
             </RelativeLayout>
 
-            <!-- Loading / Progress Indicator (Height 4dp) -->
+            <!-- Loading / Progress Indicator -->
             <com.google.android.material.progressindicator.LinearProgressIndicator
                 android:id="@+id/progress_indicator"
                 android:layout_width="match_parent"
@@ -64,8 +64,7 @@
                 android:indeterminate="true"
                 android:visibility="gone"
                 app:indicatorColor="@color/zen_accent"
-                app:trackColor="@color/zen_surface_highlight"
-                app:trackThickness="4dp" />
+                app:trackColor="@color/zen_surface_highlight" />
 
             <!-- SECTION 1: ACCENT THEME COLOR -->
             <TextView
@@ -83,9 +82,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                app:cardBackgroundColor="@color/surfaceDark"
+                app:cardBackgroundColor="@color/zen_surface"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="0dp">
+                app:cardElevation="0dp"
+                app:strokeColor="@color/zen_border"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -302,9 +303,11 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                app:cardBackgroundColor="@color/surfaceDark"
+                app:cardBackgroundColor="@color/zen_surface"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="0dp">
+                app:cardElevation="0dp"
+                app:strokeColor="@color/zen_border"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -375,9 +378,11 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?attr/selectableItemBackground"
-                app:cardBackgroundColor="@color/surfaceDark"
+                app:cardBackgroundColor="@color/zen_surface"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="0dp">
+                app:cardElevation="0dp"
+                app:strokeColor="@color/zen_border"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -444,9 +449,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                app:cardBackgroundColor="@color/surfaceDark"
+                app:cardBackgroundColor="@color/zen_surface"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="0dp">
+                app:cardElevation="0dp"
+                app:strokeColor="@color/zen_border"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"

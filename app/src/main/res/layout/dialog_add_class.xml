@@ -36,9 +36,8 @@
                     android:fontFamily="sans-serif-bold"
                     android:letterSpacing="0.06"
                     android:text="SCHEDULE NEW CLASS"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/zen_text_primary"
+                    android:textSize="13sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -46,8 +45,8 @@
                     android:layout_marginTop="2dp"
                     android:fontFamily="sans-serif"
                     android:text="Monday to Friday repeating schedule"
-                    android:textColor="#A0A0A0"
-                    android:textSize="13sp" />
+                    android:textColor="@color/zen_text_secondary"
+                    android:textSize="10sp" />
             </LinearLayout>
 
             <ImageButton
@@ -64,53 +63,50 @@
                 app:tint="@color/zen_text_secondary" />
         </RelativeLayout>
 
-        <!-- Subject Name Input: Borderless solid dark gray filled box (#1E1E1E) -->
+        <!-- Subject Name Input -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_class_subject"
-            style="@style/Widget.Material3.TextInputLayout.FilledBox"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="13dp"
             android:hint="Subject Name"
-            android:textColorHint="#A0A0A0"
-            app:boxBackgroundColor="#1E1E1E"
+            android:textColorHint="@color/zen_text_secondary"
+            app:boxBackgroundColor="@color/zen_surface_variant"
             app:boxCornerRadiusBottomEnd="10dp"
             app:boxCornerRadiusBottomStart="10dp"
             app:boxCornerRadiusTopEnd="10dp"
             app:boxCornerRadiusTopStart="10dp"
-            app:boxStrokeColor="@android:color/transparent"
-            app:boxStrokeWidth="0dp"
-            app:boxStrokeWidthFocused="0dp"
+            app:boxStrokeColor="@color/zen_accent"
             app:hintTextColor="@color/zen_accent">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_class_subject"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
                 android:fontFamily="sans-serif"
                 android:imeOptions="actionNext"
                 android:inputType="textCapWords"
                 android:maxLines="1"
-                android:textColor="@color/white"
-                android:textSize="13sp" />
+                android:textColor="@color/zen_text_primary"
+                android:textSize="12sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Day Selector (Strictly Mon-Fri only) -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="11dp"
             android:fontFamily="sans-serif-medium"
             android:letterSpacing="0.06"
             android:text="DAY OF WEEK (WEEKDAYS ONLY)"
-            android:textColor="#A0A0A0"
-            android:textSize="11sp" />
+            android:textColor="@color/zen_text_secondary"
+            android:textSize="9sp" />
 
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="7dp"
             android:overScrollMode="never"
             android:scrollbars="none">
 
@@ -122,81 +118,81 @@
                 <TextView
                     android:id="@+id/chip_day_mon"
                     android:layout_width="wrap_content"
-                    android:layout_height="32dp"
+                    android:layout_height="30dp"
                     android:background="@drawable/bg_chip_selected"
                     android:clickable="true"
                     android:focusable="true"
-                    android:fontFamily="sans-serif-bold"
+                    android:fontFamily="sans-serif-medium"
                     android:gravity="center"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
+                    android:paddingStart="11dp"
+                    android:paddingEnd="11dp"
                     android:text="Monday"
-                    android:textColor="@color/black"
-                    android:textSize="11sp" />
+                    android:textColor="@color/zen_accent"
+                    android:textSize="10sp" />
 
                 <TextView
                     android:id="@+id/chip_day_tue"
                     android:layout_width="wrap_content"
-                    android:layout_height="32dp"
+                    android:layout_height="30dp"
                     android:layout_marginStart="7dp"
                     android:background="@drawable/bg_chip_unselected"
                     android:clickable="true"
                     android:focusable="true"
                     android:fontFamily="sans-serif-medium"
                     android:gravity="center"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
+                    android:paddingStart="11dp"
+                    android:paddingEnd="11dp"
                     android:text="Tuesday"
-                    android:textColor="#A0A0A0"
-                    android:textSize="11sp" />
+                    android:textColor="@color/zen_text_secondary"
+                    android:textSize="10sp" />
 
                 <TextView
                     android:id="@+id/chip_day_wed"
                     android:layout_width="wrap_content"
-                    android:layout_height="32dp"
+                    android:layout_height="30dp"
                     android:layout_marginStart="7dp"
                     android:background="@drawable/bg_chip_unselected"
                     android:clickable="true"
                     android:focusable="true"
                     android:fontFamily="sans-serif-medium"
                     android:gravity="center"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
+                    android:paddingStart="11dp"
+                    android:paddingEnd="11dp"
                     android:text="Wednesday"
-                    android:textColor="#A0A0A0"
-                    android:textSize="11sp" />
+                    android:textColor="@color/zen_text_secondary"
+                    android:textSize="10sp" />
 
                 <TextView
                     android:id="@+id/chip_day_thu"
                     android:layout_width="wrap_content"
-                    android:layout_height="32dp"
+                    android:layout_height="30dp"
                     android:layout_marginStart="7dp"
                     android:background="@drawable/bg_chip_unselected"
                     android:clickable="true"
                     android:focusable="true"
                     android:fontFamily="sans-serif-medium"
                     android:gravity="center"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
+                    android:paddingStart="11dp"
+                    android:paddingEnd="11dp"
                     android:text="Thursday"
-                    android:textColor="#A0A0A0"
-                    android:textSize="11sp" />
+                    android:textColor="@color/zen_text_secondary"
+                    android:textSize="10sp" />
 
                 <TextView
                     android:id="@+id/chip_day_fri"
                     android:layout_width="wrap_content"
-                    android:layout_height="32dp"
+                    android:layout_height="30dp"
                     android:layout_marginStart="7dp"
                     android:background="@drawable/bg_chip_unselected"
                     android:clickable="true"
                     android:focusable="true"
                     android:fontFamily="sans-serif-medium"
                     android:gravity="center"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
+                    android:paddingStart="11dp"
+                    android:paddingEnd="11dp"
                     android:text="Friday"
-                    android:textColor="#A0A0A0"
-                    android:textSize="11sp" />
+                    android:textColor="@color/zen_text_secondary"
+                    android:textSize="10sp" />
             </LinearLayout>
         </HorizontalScrollView>
 
@@ -204,36 +200,36 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="11dp"
             android:fontFamily="sans-serif-medium"
             android:letterSpacing="0.06"
             android:text="CLASS TIMING"
-            android:textColor="#A0A0A0"
-            android:textSize="11sp" />
+            android:textColor="@color/zen_text_secondary"
+            android:textSize="9sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="7dp"
             android:orientation="horizontal">
 
             <!-- Start Time Selector -->
             <LinearLayout
                 android:id="@+id/btn_select_start_time"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
+                android:layout_height="38dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_chip_unselected"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="11dp"
-                android:paddingEnd="11dp">
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp">
 
                 <ImageView
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
+                    android:layout_width="13dp"
+                    android:layout_height="13dp"
                     android:src="@drawable/ic_schedule"
                     app:tint="@color/zen_accent" />
 
@@ -244,8 +240,8 @@
                     android:layout_marginStart="7dp"
                     android:fontFamily="sans-serif-medium"
                     android:text="09:00 AM"
-                    android:textColor="@color/white"
-                    android:textSize="12sp" />
+                    android:textColor="@color/zen_text_primary"
+                    android:textSize="11sp" />
             </LinearLayout>
 
             <TextView
@@ -255,26 +251,25 @@
                 android:layout_marginStart="7dp"
                 android:layout_marginEnd="7dp"
                 android:text="to"
-                android:textColor="@color/zen_text_tertiary"
-                android:textSize="12sp" />
+                android:textColor="@color/zen_text_tertiary" />
 
             <!-- End Time Selector -->
             <LinearLayout
                 android:id="@+id/btn_select_end_time"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
+                android:layout_height="38dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_chip_unselected"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="11dp"
-                android:paddingEnd="11dp">
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp">
 
                 <ImageView
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
+                    android:layout_width="13dp"
+                    android:layout_height="13dp"
                     android:src="@drawable/ic_schedule"
                     app:tint="@color/zen_accent" />
 
@@ -285,8 +280,8 @@
                     android:layout_marginStart="7dp"
                     android:fontFamily="sans-serif-medium"
                     android:text="10:30 AM"
-                    android:textColor="@color/white"
-                    android:textSize="12sp" />
+                    android:textColor="@color/zen_text_primary"
+                    android:textSize="11sp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -294,7 +289,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="11dp"
             android:orientation="horizontal">
 
             <!-- Class Type (Theory vs Lab) -->
@@ -310,12 +305,12 @@
                     android:fontFamily="sans-serif-medium"
                     android:letterSpacing="0.06"
                     android:text="CLASS TYPE"
-                    android:textColor="#A0A0A0"
-                    android:textSize="11sp" />
+                    android:textColor="@color/zen_text_secondary"
+                    android:textSize="9sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="36dp"
+                    android:layout_height="35dp"
                     android:layout_marginTop="5dp"
                     android:orientation="horizontal">
 
@@ -327,17 +322,17 @@
                         android:background="@drawable/bg_chip_selected"
                         android:clickable="true"
                         android:focusable="true"
-                        android:fontFamily="sans-serif-bold"
+                        android:fontFamily="sans-serif-medium"
                         android:gravity="center"
                         android:text="Theory"
-                        android:textColor="@color/black"
-                        android:textSize="11sp" />
+                        android:textColor="@color/zen_accent"
+                        android:textSize="10sp" />
 
                     <TextView
                         android:id="@+id/chip_type_lab"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="6dp"
+                        android:layout_marginStart="5dp"
                         android:layout_weight="1"
                         android:background="@drawable/bg_chip_unselected"
                         android:clickable="true"
@@ -345,8 +340,8 @@
                         android:fontFamily="sans-serif-medium"
                         android:gravity="center"
                         android:text="Lab"
-                        android:textColor="#A0A0A0"
-                        android:textSize="11sp" />
+                        android:textColor="@color/zen_text_secondary"
+                        android:textSize="10sp" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -364,12 +359,12 @@
                     android:fontFamily="sans-serif-medium"
                     android:letterSpacing="0.06"
                     android:text="CREDIT HOURS"
-                    android:textColor="#A0A0A0"
-                    android:textSize="11sp" />
+                    android:textColor="@color/zen_text_secondary"
+                    android:textSize="9sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="36dp"
+                    android:layout_height="35dp"
                     android:layout_marginTop="5dp"
                     android:orientation="horizontal">
 
@@ -384,8 +379,8 @@
                         android:fontFamily="sans-serif-medium"
                         android:gravity="center"
                         android:text="1"
-                        android:textColor="#A0A0A0"
-                        android:textSize="11sp" />
+                        android:textColor="@color/zen_text_secondary"
+                        android:textSize="10sp" />
 
                     <TextView
                         android:id="@+id/chip_cr_2"
@@ -399,8 +394,8 @@
                         android:fontFamily="sans-serif-medium"
                         android:gravity="center"
                         android:text="2"
-                        android:textColor="#A0A0A0"
-                        android:textSize="11sp" />
+                        android:textColor="@color/zen_text_secondary"
+                        android:textSize="10sp" />
 
                     <TextView
                         android:id="@+id/chip_cr_3"
@@ -411,11 +406,11 @@
                         android:background="@drawable/bg_chip_selected"
                         android:clickable="true"
                         android:focusable="true"
-                        android:fontFamily="sans-serif-bold"
+                        android:fontFamily="sans-serif-medium"
                         android:gravity="center"
                         android:text="3"
-                        android:textColor="@color/black"
-                        android:textSize="11sp" />
+                        android:textColor="@color/zen_accent"
+                        android:textSize="10sp" />
 
                     <TextView
                         android:id="@+id/chip_cr_4"
@@ -429,42 +424,39 @@
                         android:fontFamily="sans-serif-medium"
                         android:gravity="center"
                         android:text="4"
-                        android:textColor="#A0A0A0"
-                        android:textSize="11sp" />
+                        android:textColor="@color/zen_text_secondary"
+                        android:textSize="10sp" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Room Number Input: Borderless solid dark gray filled box (#1E1E1E) -->
+        <!-- Room Number Input -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_class_room"
-            style="@style/Widget.Material3.TextInputLayout.FilledBox"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="11dp"
             android:hint="Room Number (e.g. Room 204, Lab 3)"
-            android:textColorHint="#A0A0A0"
-            app:boxBackgroundColor="#1E1E1E"
+            android:textColorHint="@color/zen_text_secondary"
+            app:boxBackgroundColor="@color/zen_surface_variant"
             app:boxCornerRadiusBottomEnd="10dp"
             app:boxCornerRadiusBottomStart="10dp"
             app:boxCornerRadiusTopEnd="10dp"
             app:boxCornerRadiusTopStart="10dp"
-            app:boxStrokeColor="@android:color/transparent"
-            app:boxStrokeWidth="0dp"
-            app:boxStrokeWidthFocused="0dp"
+            app:boxStrokeColor="@color/zen_accent"
             app:hintTextColor="@color/zen_accent">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_class_room"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
                 android:fontFamily="sans-serif"
                 android:imeOptions="actionDone"
                 android:inputType="textCapWords"
                 android:maxLines="1"
-                android:textColor="@color/white"
-                android:textSize="13sp" />
+                android:textColor="@color/zen_text_primary"
+                android:textSize="12sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Advance Reminder Note -->
@@ -476,7 +468,7 @@
             android:fontFamily="sans-serif"
             android:text="🔔 Notifications will automatically trigger 5 minutes before class start time."
             android:textColor="@color/zen_accent"
-            android:textSize="11sp" />
+            android:textSize="10sp" />
 
         <!-- Dialog Action Buttons -->
         <LinearLayout
@@ -490,17 +482,17 @@
                 android:id="@+id/btn_cancel_class"
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="38dp"
                 android:fontFamily="sans-serif-medium"
                 android:letterSpacing="0.04"
                 android:text="Cancel"
-                android:textColor="#A0A0A0" />
+                android:textColor="@color/zen_text_secondary" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_save_class"
                 style="@style/Widget.Material3.Button"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="38dp"
                 android:layout_marginStart="8dp"
                 android:backgroundTint="@color/zen_accent"
                 android:fontFamily="sans-serif-bold"
