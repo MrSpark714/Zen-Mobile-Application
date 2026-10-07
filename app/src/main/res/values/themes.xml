@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Official AndroidX SplashScreen Starting Theme -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <!-- Background color set to black -->
+        <item name="windowSplashScreenBackground">#000000</item>
+
+        <!-- Center app icon -->
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+
+        <!-- Branding image at the bottom (Android 12+) -->
+        <item name="android:windowSplashScreenBrandingImage">@drawable/ic_branding_text</item>
+
+        <!-- Post-splash theme for MainActivity -->
+        <item name="postSplashScreenTheme">@style/Theme.MyApplication</item>
+    </style>
+
+    <!-- Base ZEN Dark Theme -->
+    <style name="Theme.ZEN" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:windowBackground">@color/zen_background</item>
+        <item name="android:colorBackground">@color/zen_background</item>
+        <item name="android:statusBarColor">@color/zen_background</item>
+        <item name="android:navigationBarColor">@color/zen_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+        
+        <!-- Primary & Accent Colors -->
+        <item name="colorPrimary">@color/zen_accent</item>
+        <item name="colorOnPrimary">@color/zen_on_accent</item>
+        <item name="colorSecondary">@color/zen_accent_light</item>
+        <item name="colorOnSecondary">@color/zen_background</item>
+        <item name="colorSurface">@color/zen_surface</item>
+        <item name="colorOnSurface">@color/zen_text_primary</item>
+        <item name="colorSurfaceVariant">@color/zen_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/zen_text_secondary</item>
+        
+        <item name="floatingActionButtonStyle">@style/Widget.ZEN.FloatingActionButton</item>
+        <item name="bottomNavigationStyle">@style/Widget.ZEN.BottomNavigationView</item>
+    </style>
+
+    <style name="Theme.MyApplication" parent="Theme.ZEN" />
+
+    <!-- Custom FAB Style with 16dp rounded corners (rounded-2xl) -->
+    <style name="Widget.ZEN.FloatingActionButton" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="backgroundTint">@color/zen_accent</item>
+        <item name="tint">@color/zen_on_accent</item>
+        <item name="elevation">6dp</item>
+        <item name="borderWidth">0dp</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.ZEN.Rounded2xl</item>
+    </style>
+
+    <style name="ShapeAppearance.ZEN.Rounded2xl" parent="">
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <style name="ShapeAppearance.ZEN.Rounded3xl" parent="">
+        <item name="cornerSize">24dp</item>
+    </style>
+
+    <!-- Custom Bottom Navigation Style -->
+    <style name="Widget.ZEN.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:background">@color/surfaceDark</item>
+        <item name="itemIconTint">@color/nav_item_color</item>
+        <item name="itemTextColor">@color/nav_item_color</item>
+        <item name="itemRippleColor">#26A7FF67</item>
+        <item name="itemActiveIndicatorStyle">@style/Widget.ZEN.BottomNavIndicator</item>
+        <item name="elevation">8dp</item>
+    </style>
+
+    <style name="Widget.ZEN.BottomNavIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/zen_accent</item>
+    </style>
+</resources>
+

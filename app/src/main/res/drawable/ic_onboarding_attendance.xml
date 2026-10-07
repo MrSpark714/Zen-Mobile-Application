@@ -1,0 +1,40 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="64dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+    <!-- Academic Cap / University Base -->
+    <path
+        android:fillColor="#242426"
+        android:pathData="M32,8 L8,20 L32,32 L56,20 Z" />
+    <path
+        android:strokeColor="#A6FF54"
+        android:strokeWidth="2.5"
+        android:strokeLineJoin="round"
+        android:pathData="M32,8 L8,20 L32,32 L56,20 Z" />
+    <!-- Tassel -->
+    <path
+        android:strokeColor="#A6FF54"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M50,23 L50,35" />
+    <path
+        android:fillColor="#A6FF54"
+        android:pathData="M50,37 A2,2 0 1,1 50,33 A2,2 0 1,1 50,37 Z" />
+    <!-- Analytics / Attendance Ledger Shield Container -->
+    <path
+        android:fillColor="#1A241C"
+        android:pathData="M16,28 L32,36 L48,28 L48,44 C48,52 32,58 32,58 C32,58 16,52 16,44 Z" />
+    <path
+        android:strokeColor="#71717A"
+        android:strokeWidth="2"
+        android:strokeLineJoin="round"
+        android:pathData="M16,28 L32,36 L48,28 L48,44 C48,52 32,58 32,58 C32,58 16,52 16,44 Z" />
+    <!-- Percentage / High-attendance Checkmark symbol -->
+    <path
+        android:strokeColor="#A6FF54"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M25,44 L29,48 L39,38" />
+</vector>

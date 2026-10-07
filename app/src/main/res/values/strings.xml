@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">ZEN</string>
+    <string name="nav_notes">Notes</string>
+    <string name="nav_tasks">Tasks</string>
+    <string name="nav_attendance">Classes</string>
+    <string name="title_notes">ZEN Notes</string>
+    <string name="title_tasks">ZEN Tasks</string>
+    <string name="title_attendance">ZEN Attendance</string>
+    <string name="search_notes_hint">Search notes…</string>
+    <string name="search_tasks_hint">Search tasks…</string>
+    <string name="search_classes_hint">Search classes…</string>
+    <string name="empty_weekend_classes">No classes this weekend</string>
+    <string name="delete_class_confirm">Delete this class from weekly schedule?</string>
+    <string name="new_note_title_hint">Title</string>
+    <string name="new_note_body_hint">Start writing…</string>
+    <string name="add_task_hint">Add a new task…</string>
+    <string name="empty_notes_title">Quiet Mind</string>
+    <string name="empty_notes_desc">Capture your thoughts, ideas, and reflections.</string>
+    <string name="empty_tasks_title">Clear Space</string>
+    <string name="empty_tasks_desc">Nothing pending. Enjoy the present moment.</string>
+    <string name="delete_note_confirm">Delete this note?</string>
+    <string name="delete_task_confirm">Delete this task?</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+
+    <!-- Onboarding Flow -->
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_slide1_title">Unified Student Workspace</string>
+    <string name="onboarding_slide1_desc">Capture thoughts with markdown notes and stay on top of daily coursework with precise, distraction-free task scheduling.</string>
+    <string name="onboarding_slide2_title">Credit-Weighted Attendance</string>
+    <string name="onboarding_slide2_desc">Track theory and lab courses effortlessly with an automated background auto-marker, analytics, and an editable 7-day attendance ledger.</string>
+    <string name="onboarding_slide3_title">Your Data, Fully Offline</string>
+    <string name="onboarding_slide3_desc">ZEN stores everything locally on your device. Upgrading from an older version or starting brand new?</string>
+    <string name="onboarding_btn_import_backup">Import Legacy Backup</string>
+    <string name="onboarding_btn_start_fresh">Start Fresh</string>
+</resources>
+
