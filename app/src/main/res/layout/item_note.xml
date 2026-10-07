@@ -5,12 +5,10 @@
     android:id="@+id/card_note"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginTop="5dp"
-    android:layout_marginEnd="16dp"
-    android:layout_marginBottom="5dp"
-    app:cardBackgroundColor="@color/surfaceDark"
-    app:cardCornerRadius="16dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="4dp"
+    app:cardBackgroundColor="@color/zen_surface"
+    app:cardCornerRadius="13dp"
     app:cardElevation="0dp"
     app:strokeColor="@color/zen_border"
     app:strokeWidth="1dp">
@@ -18,14 +16,14 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="13dp">
 
         <!-- Optional Top Badges Row (Important / Date) -->
         <LinearLayout
             android:id="@+id/layout_badges_row"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
+            android:layout_marginBottom="7dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:visibility="gone"
@@ -40,20 +38,20 @@
                 android:id="@+id/badge_important"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
+                android:layout_marginEnd="5dp"
                 android:background="@drawable/bg_badge"
                 android:gravity="center_vertical"
-                android:paddingStart="8dp"
-                android:paddingTop="3dp"
-                android:paddingEnd="8dp"
-                android:paddingBottom="3dp"
+                android:paddingStart="7dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="7dp"
+                android:paddingBottom="2dp"
                 android:visibility="gone"
                 tools:visibility="visible">
 
                 <ImageView
                     android:id="@+id/iv_badge_important_star"
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
                     android:contentDescription="Important"
                     android:src="@drawable/ic_star_filled"
                     app:tint="@color/zen_accent" />
@@ -62,87 +60,102 @@
                     android:id="@+id/tv_badge_important_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:fontFamily="sans-serif-bold"
-                    android:letterSpacing="0.04"
+                    android:layout_marginStart="3dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:letterSpacing="0.05"
                     android:text="IMPORTANT"
                     android:textColor="@color/zen_accent"
-                    android:textSize="11sp" />
+                    android:textSize="8sp" />
             </LinearLayout>
 
-            <!-- Creation Date Badge Container -->
+            <!-- Target Date Badge -->
             <LinearLayout
                 android:id="@+id/badge_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical">
+                android:background="@drawable/bg_badge"
+                android:gravity="center_vertical"
+                android:paddingStart="7dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="7dp"
+                android:paddingBottom="2dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:contentDescription="Date"
+                    android:src="@drawable/ic_calendar"
+                    app:tint="@color/zen_text_secondary" />
 
                 <TextView
                     android:id="@+id/tv_badge_date_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"
+                    android:layout_marginStart="3dp"
+                    android:fontFamily="monospace"
                     android:textColor="@color/zen_text_secondary"
-                    android:textSize="11sp"
-                    tools:text="Oct 7" />
+                    android:textSize="8sp"
+                    tools:text="Aug 25, 2026" />
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/tv_note_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif"
-                android:textColor="@color/zen_text_secondary"
-                android:textSize="11sp"
-                android:visibility="gone"
-                tools:text="Oct 7" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/tv_note_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="7dp"
             android:ellipsize="end"
-            android:fontFamily="sans-serif-bold"
+            android:fontFamily="sans-serif-medium"
             android:maxLines="1"
-            android:textColor="@color/white"
-            android:textSize="17sp"
-            android:textStyle="bold"
+            android:textColor="@color/zen_text_primary"
+            android:textSize="13sp"
             app:layout_constraintEnd_toStartOf="@id/btn_delete_note"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layout_badges_row"
-            tools:text="Calculus II Lecture Notes" />
+            tools:text="Architecture Ideas" />
+
+        <ImageButton
+            android:id="@+id/btn_delete_note"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/delete"
+            android:padding="5dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_delete"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/zen_text_tertiary" />
 
         <TextView
             android:id="@+id/tv_note_preview"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:layout_marginEnd="8dp"
             android:ellipsize="end"
             android:fontFamily="sans-serif"
             android:lineSpacingExtra="2dp"
-            android:maxLines="2"
-            android:textColor="#A0A0A0"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@id/btn_delete_note"
+            android:maxLines="3"
+            android:textColor="@color/zen_text_secondary"
+            android:textSize="10sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_note_title"
-            tools:text="Integration by parts formulas and example problems from chapter 4." />
+            tools:text="Exploring Clean Architecture for better unit testing of Room entities and DAOs..." />
 
-        <ImageButton
-            android:id="@+id/btn_delete_note"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Delete Note"
-            android:padding="8dp"
-            android:src="@drawable/ic_delete"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/zen_text_secondary" />
+        <TextView
+            android:id="@+id/tv_note_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="monospace"
+            android:textColor="@color/zen_text_tertiary"
+            android:textSize="9sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_note_preview"
+            tools:text="OCT 24 • 10:30 AM" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

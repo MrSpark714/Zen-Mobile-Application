@@ -43,26 +43,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:fontFamily="sans-serif-bold"
-                android:letterSpacing="0.04"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.06"
                 android:maxLines="1"
                 android:text="DETAILED HISTORY"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:textStyle="bold"
+                android:textColor="@color/zen_text_primary"
+                android:textSize="15sp"
                 tools:text="OPERATING SYSTEMS" />
 
             <TextView
                 android:id="@+id/tv_header_subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
                 android:ellipsize="end"
                 android:fontFamily="sans-serif"
                 android:maxLines="1"
                 android:text="Tap status tag to edit past attendance"
-                android:textColor="#A0A0A0"
-                android:textSize="11sp" />
+                android:textColor="@color/zen_accent"
+                android:textSize="10sp" />
         </LinearLayout>
 
         <!-- End Actions: Percentage Badge + Delete Icon Button (Trash Can) -->
@@ -86,7 +84,7 @@
                 android:paddingEnd="8dp"
                 android:paddingBottom="4dp"
                 android:textColor="@color/zen_accent"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 tools:text="85.7%" />
 
             <!-- Small Delete Icon Button (Trash Can) -->
@@ -106,7 +104,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/zen_divider" />
+        android:background="@color/zen_border" />
 
     <!-- Summary Stats Card -->
     <com.google.android.material.card.MaterialCardView
@@ -114,26 +112,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="13dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="13dp"
         android:layout_marginEnd="13dp"
-        app:cardBackgroundColor="@color/surfaceDark"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="0dp">
+        android:backgroundTint="@color/zen_surface"
+        app:cardCornerRadius="13dp"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/zen_border"
+        app:strokeWidth="1dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="12dp">
+            android:padding="13dp">
 
             <TextView
                 android:id="@+id/tv_log_subject_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-bold"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold"
+                android:textColor="@color/zen_text_primary"
+                android:textSize="15sp"
                 tools:text="Operating Systems" />
 
             <TextView
@@ -142,8 +141,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:fontFamily="sans-serif"
-                android:textColor="#A0A0A0"
-                android:textSize="13sp"
+                android:textColor="@color/zen_text_secondary"
+                android:textSize="11sp"
                 tools:text="12 Present • 2 Absent • 1 Holiday" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

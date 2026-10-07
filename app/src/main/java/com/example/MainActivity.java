@@ -194,8 +194,10 @@ public class MainActivity extends AppCompatActivity implements
 
         observeDatabase("");
 
-        // Check for in-app updates in background
-        UpdateManager.checkForUpdates(this);
+        // Automated background check for in-app updates on app launch
+        if (UpdateManager.isAutoUpdateEnabled(this)) {
+            UpdateManager.checkForUpdates(this);
+        }
 
         // Schedule nightly attendance auto-marker via WorkManager (runs around 11:55 PM daily)
         com.example.worker.DailyAttendanceWorker.scheduleDailyAutoMarker(this);
@@ -819,6 +821,36 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         public int getItemCount() {
             return 3;
+        }
+    }
+
+    public void onTasksFragmentAttached(com.example.fragment.TasksFragment fragment) {
+        if (fragment != null) {
+            this.rvTasks = fragment.getRecyclerView();
+            this.layoutEmptyTasks = fragment.getEmptyView();
+            if (this.rvTasks != null && this.taskAdapter != null) {
+                this.rvTasks.setAdapter(this.taskAdapter);
+                updateTasksList(this.currentTasks);
+            }
+        }
+    }
+
+    public void onNotesFragmentAttached(com.example.fragment.NotesFragment fragment) {
+        if (fragment != null) {
+            this.rvNotes = fragment.getRecyclerView();
+            this.layoutEmptyNotes = fragment.getEmptyView();
+            if (this.rvNotes != null && this.noteAdapter != null) {
+                this.rvNotes.setAdapter(this.noteAdapter);
+                updateNotesList(this.currentNotes);
+            }
+        }
+    }
+
+    public void onClassesFragmentAttached(View view) {
+        if (view != null) {
+            attendanceViewHolder = new AttendanceViewHolder(view);
+            attendanceViewHolder.setup();
+            observeAttendanceData();
         }
     }
 
@@ -1742,40 +1774,6 @@ public class MainActivity extends AppCompatActivity implements
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
-    }
-
-    public void onClassesFragmentAttached(View view) {
-        if (view != null && attendanceViewHolder == null) {
-            attendanceViewHolder = new AttendanceViewHolder(view);
-            attendanceViewHolder.setup();
-            observeAttendanceData();
-        }
-    }
-
-    public void onTasksFragmentAttached(com.example.fragment.TasksFragment fragment) {
-        if (fragment != null) {
-            rvTasks = fragment.getRecyclerView();
-            layoutEmptyTasks = fragment.getEmptyView();
-            if (rvTasks != null) {
-                rvTasks.setAdapter(taskAdapter);
-                rvTasks.clearOnScrollListeners();
-                rvTasks.addOnScrollListener(verticalScrollStateListener);
-            }
-            updateTasksList(currentTasks);
-        }
-    }
-
-    public void onNotesFragmentAttached(com.example.fragment.NotesFragment fragment) {
-        if (fragment != null) {
-            rvNotes = fragment.getRecyclerView();
-            layoutEmptyNotes = fragment.getEmptyView();
-            if (rvNotes != null) {
-                rvNotes.setAdapter(noteAdapter);
-                rvNotes.clearOnScrollListeners();
-                rvNotes.addOnScrollListener(verticalScrollStateListener);
-            }
-            updateNotesList(currentNotes);
         }
     }
 }

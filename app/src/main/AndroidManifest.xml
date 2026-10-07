@@ -31,15 +31,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- Minimalist 3-Step Onboarding Flow -->
-        <activity
-            android:name=".OnboardingActivity"
-            android:exported="false"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.MyApplication"
-            android:windowSoftInputMode="adjustPan" />
-
         <activity
             android:name=".NoteEditorActivity"
             android:exported="false"

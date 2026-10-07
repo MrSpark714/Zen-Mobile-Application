@@ -28,15 +28,13 @@
 
                 <ImageView
                     android:id="@+id/btn_back"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="33dp"
+                    android:layout_height="33dp"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="Back"
-                    android:minWidth="48dp"
-                    android:minHeight="48dp"
-                    android:padding="12dp"
+                    android:padding="7dp"
                     android:src="@drawable/ic_back"
                     app:tint="@color/zen_text_primary" />
 
@@ -119,14 +117,12 @@
                         <!-- Color 1: #a7ff67 (Mint Green) -->
                         <FrameLayout
                             android:id="@+id/frame_color_mint"
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:layout_marginEnd="8dp"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:clickable="true"
-                            android:focusable="true"
-                            android:minWidth="48dp"
-                            android:minHeight="48dp">
+                            android:focusable="true">
 
                             <View
                                 android:id="@+id/ring_color_mint"
@@ -156,14 +152,12 @@
                         <!-- Color 2: #00f6ac (Neon Teal) -->
                         <FrameLayout
                             android:id="@+id/frame_color_teal"
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:layout_marginEnd="8dp"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:clickable="true"
-                            android:focusable="true"
-                            android:minWidth="48dp"
-                            android:minHeight="48dp">
+                            android:focusable="true">
 
                             <View
                                 android:id="@+id/ring_color_teal"
@@ -194,14 +188,12 @@
                         <!-- Color 3: #07B7DC (Cyan Blue) -->
                         <FrameLayout
                             android:id="@+id/frame_color_cyan"
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:layout_marginEnd="8dp"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:clickable="true"
-                            android:focusable="true"
-                            android:minWidth="48dp"
-                            android:minHeight="48dp">
+                            android:focusable="true">
 
                             <View
                                 android:id="@+id/ring_color_cyan"
@@ -232,14 +224,12 @@
                         <!-- Color 4: #BDD0B8 (Sage Green) -->
                         <FrameLayout
                             android:id="@+id/frame_color_sage"
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:layout_marginEnd="8dp"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:clickable="true"
-                            android:focusable="true"
-                            android:minWidth="48dp"
-                            android:minHeight="48dp">
+                            android:focusable="true">
 
                             <View
                                 android:id="@+id/ring_color_sage"
@@ -270,13 +260,11 @@
                         <!-- Color 5: #D0FF00 (Electric Lime) -->
                         <FrameLayout
                             android:id="@+id/frame_color_lime"
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:clickable="true"
-                            android:focusable="true"
-                            android:minWidth="48dp"
-                            android:minHeight="48dp">
+                            android:focusable="true">
 
                             <View
                                 android:id="@+id/ring_color_lime"
@@ -376,7 +364,6 @@
                         android:layout_marginTop="7dp"
                         android:fontFamily="sans-serif-medium"
                         android:letterSpacing="0.04"
-                        android:minHeight="48dp"
                         android:paddingStart="0dp"
                         android:text="Check for updates now"
                         android:textColor="@color/zen_accent"
@@ -666,13 +653,12 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_export_backup"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="43dp"
                     android:layout_marginEnd="7dp"
                     android:layout_weight="1"
                     android:backgroundTint="@color/zen_accent"
                     android:fontFamily="sans-serif-bold"
                     android:letterSpacing="0.05"
-                    android:minHeight="48dp"
                     android:text="Export Backup"
                     android:textColor="@color/zen_on_accent"
                     android:textSize="11sp"
@@ -685,13 +671,12 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_import_backup"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="43dp"
                     android:layout_marginStart="7dp"
                     android:layout_weight="1"
                     android:backgroundTint="@color/zen_surface"
                     android:fontFamily="sans-serif-bold"
                     android:letterSpacing="0.05"
-                    android:minHeight="48dp"
                     android:text="Import Backup"
                     android:textColor="@color/zen_text_primary"
                     android:textSize="11sp"
@@ -770,12 +755,11 @@
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_share_timetable"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
                         android:layout_marginTop="11dp"
                         android:backgroundTint="@color/zen_accent"
                         android:fontFamily="sans-serif-bold"
                         android:letterSpacing="0.06"
-                        android:minHeight="48dp"
                         android:text="Share Class Timetable"
                         android:textColor="@color/zen_on_accent"
                         android:textSize="11sp"
@@ -949,11 +933,10 @@
                         android:id="@+id/btn_open_github_backup"
                         style="@style/Widget.Material3.Button.TonalButton"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="36dp"
                         android:layout_marginTop="10dp"
                         android:fontFamily="sans-serif-medium"
                         android:letterSpacing="0.04"
-                        android:minHeight="48dp"
                         android:text="Star on GitHub"
                         android:textColor="@color/zen_text_primary"
                         android:textSize="10sp"

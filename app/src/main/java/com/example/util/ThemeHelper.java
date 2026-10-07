@@ -211,14 +211,15 @@ public class ThemeHelper {
     }
 
     /**
-     * Dynamically builds a solid borderless rounded chip background for selected options
-     * matching the current accent color (solid fill, 0dp stroke).
+     * Dynamically builds a rounded chip background for selected options
+     * matching the current accent color (14% alpha container + 1.5dp accent border).
      */
     public static GradientDrawable createSelectedChipDrawable(int accentColor) {
         GradientDrawable drawable = new GradientDrawable();
         drawable.setShape(GradientDrawable.RECTANGLE);
         drawable.setCornerRadius(24f); // 12dp equivalent
-        drawable.setColor(accentColor);
+        drawable.setColor(getAccentContainerColor(accentColor));
+        drawable.setStroke(3, accentColor);
         return drawable;
     }
 
@@ -229,10 +230,10 @@ public class ThemeHelper {
         if (chip == null) return;
         if (isSelected) {
             chip.setBackground(createSelectedChipDrawable(accentColor));
-            chip.setTextColor(Color.BLACK);
+            chip.setTextColor(accentColor);
         } else {
             chip.setBackgroundResource(R.drawable.bg_chip_unselected);
-            chip.setTextColor(Color.parseColor("#A0A0A0"));
+            chip.setTextColor(ContextCompat.getColor(chip.getContext(), R.color.zen_text_secondary));
         }
     }
 

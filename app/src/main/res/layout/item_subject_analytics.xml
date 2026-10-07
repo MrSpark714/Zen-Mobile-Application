@@ -6,13 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="16dp"
-    android:layout_marginTop="6dp"
+    android:layout_marginTop="4dp"
     android:layout_marginEnd="16dp"
-    android:layout_marginBottom="8dp"
+    android:layout_marginBottom="7dp"
+    android:backgroundTint="@color/zen_surface"
     android:clickable="true"
     android:focusable="true"
-    app:cardBackgroundColor="@color/surfaceDark"
-    app:cardCornerRadius="16dp"
+    app:cardCornerRadius="13dp"
     app:cardElevation="0dp"
     app:strokeColor="@color/zen_border"
     app:strokeWidth="1dp">
@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="13dp">
 
         <!-- Subject Name & Attendance Percentage Badge -->
         <RelativeLayout
@@ -38,10 +38,9 @@
                 android:ellipsize="end"
                 android:fontFamily="sans-serif-bold"
                 android:maxLines="1"
-                android:textColor="@color/white"
-                android:textSize="17sp"
-                android:textStyle="bold"
-                tools:text="Computer Architecture" />
+                android:textColor="@color/zen_text_primary"
+                android:textSize="14sp"
+                tools:text="Software Engineering" />
 
             <TextView
                 android:id="@+id/tv_analytics_percentage"
@@ -52,24 +51,24 @@
                 android:background="@drawable/bg_badge"
                 android:fontFamily="sans-serif-bold"
                 android:letterSpacing="0.04"
-                android:paddingStart="10dp"
-                android:paddingTop="4dp"
-                android:paddingEnd="10dp"
-                android:paddingBottom="4dp"
+                android:paddingStart="8dp"
+                android:paddingTop="3dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="3dp"
                 android:textColor="@color/zen_accent"
-                android:textSize="13sp"
-                tools:text="83.3%" />
+                android:textSize="12sp"
+                tools:text="85.7%" />
         </RelativeLayout>
 
-        <!-- Progress Indicator (Thick clean bar: 6dp) -->
+        <!-- Progress Indicator -->
         <ProgressBar
             android:id="@+id/progress_attendance"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_height="6dp"
+            android:layout_height="5dp"
             android:layout_marginTop="10dp"
             android:max="100"
-            android:progress="83"
+            android:progress="85"
             android:progressBackgroundTint="@color/zen_surface_variant"
             android:progressTint="@color/zen_accent" />
 
@@ -86,20 +85,20 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:fontFamily="sans-serif"
-                android:textColor="#A0A0A0"
-                android:textSize="13sp"
-                tools:text="5 Present • 1 Absent • 1 Holiday" />
+                android:textColor="@color/zen_text_secondary"
+                android:textSize="10sp"
+                tools:text="6 Present • 1 Absent • 1 Holiday" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:fontFamily="sans-serif-bold"
+                android:fontFamily="sans-serif-medium"
                 android:letterSpacing="0.05"
                 android:text="HISTORY ›"
                 android:textColor="@color/zen_accent"
-                android:textSize="12sp" />
+                android:textSize="9sp" />
         </RelativeLayout>
 
     </LinearLayout>

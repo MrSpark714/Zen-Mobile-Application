@@ -6,11 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="16dp"
-    android:layout_marginTop="6dp"
+    android:layout_marginTop="4dp"
     android:layout_marginEnd="16dp"
-    android:layout_marginBottom="8dp"
-    app:cardBackgroundColor="@color/surfaceDark"
-    app:cardCornerRadius="16dp"
+    android:layout_marginBottom="6dp"
+    android:backgroundTint="@color/zen_surface"
+    app:cardCornerRadius="11dp"
     app:cardElevation="0dp"
     app:strokeColor="@color/zen_border"
     app:strokeWidth="1dp">
@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="11dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -46,42 +46,41 @@
                         android:background="@drawable/bg_badge"
                         android:fontFamily="sans-serif-bold"
                         android:letterSpacing="0.08"
-                        android:paddingStart="8dp"
-                        android:paddingTop="3dp"
-                        android:paddingEnd="8dp"
-                        android:paddingBottom="3dp"
+                        android:paddingStart="6dp"
+                        android:paddingTop="2dp"
+                        android:paddingEnd="6dp"
+                        android:paddingBottom="2dp"
                         android:text="MON"
                         android:textColor="@color/zen_accent"
-                        android:textSize="11sp" />
+                        android:textSize="9sp" />
 
                     <TextView
                         android:id="@+id/tv_schedule_type_badge"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="5dp"
                         android:background="@drawable/bg_type_theory"
-                        android:fontFamily="sans-serif-bold"
+                        android:fontFamily="sans-serif-medium"
                         android:letterSpacing="0.06"
-                        android:paddingStart="8dp"
-                        android:paddingTop="3dp"
-                        android:paddingEnd="8dp"
-                        android:paddingBottom="3dp"
+                        android:paddingStart="6dp"
+                        android:paddingTop="2dp"
+                        android:paddingEnd="6dp"
+                        android:paddingBottom="2dp"
                         android:text="THEORY"
                         android:textColor="@color/type_theory_text"
-                        android:textSize="11sp" />
+                        android:textSize="9sp" />
                 </LinearLayout>
 
                 <TextView
                     android:id="@+id/tv_schedule_subject_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="4dp"
                     android:ellipsize="end"
                     android:fontFamily="sans-serif-bold"
                     android:maxLines="1"
-                    android:textColor="@color/white"
-                    android:textSize="17sp"
-                    android:textStyle="bold"
+                    android:textColor="@color/zen_text_primary"
+                    android:textSize="13sp"
                     tools:text="Operating Systems" />
             </LinearLayout>
 
@@ -95,22 +94,22 @@
 
                 <ImageButton
                     android:id="@+id/btn_edit_schedule"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="Edit"
-                    android:padding="8dp"
+                    android:padding="7dp"
                     android:src="@drawable/ic_edit"
                     app:tint="@color/zen_text_secondary" />
 
                 <ImageButton
                     android:id="@+id/btn_delete_schedule"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_marginStart="4dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="2dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="Delete"
-                    android:padding="8dp"
+                    android:padding="7dp"
                     android:src="@drawable/ic_delete"
                     app:tint="@color/zen_text_secondary" />
             </LinearLayout>
@@ -119,13 +118,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="7dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="14dp"
-                android:layout_height="14dp"
+                android:layout_width="11dp"
+                android:layout_height="11dp"
                 android:contentDescription="Time"
                 android:src="@drawable/ic_schedule"
                 app:tint="@color/zen_accent" />
@@ -134,24 +133,23 @@
                 android:id="@+id/tv_schedule_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
+                android:layout_marginStart="4dp"
                 android:fontFamily="sans-serif"
-                android:textColor="#A0A0A0"
-                android:textSize="14sp"
+                android:textColor="@color/zen_text_primary"
+                android:textSize="10sp"
                 tools:text="11:00 AM - 12:30 PM" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginStart="7dp"
+                android:layout_marginEnd="7dp"
                 android:text="•"
-                android:textColor="@color/zen_text_tertiary"
-                android:textSize="14sp" />
+                android:textColor="@color/zen_text_tertiary" />
 
             <ImageView
-                android:layout_width="14dp"
-                android:layout_height="14dp"
+                android:layout_width="11dp"
+                android:layout_height="11dp"
                 android:contentDescription="Room"
                 android:src="@drawable/ic_room"
                 app:tint="@color/zen_text_secondary" />
@@ -160,20 +158,20 @@
                 android:id="@+id/tv_schedule_room"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
+                android:layout_marginStart="3dp"
                 android:fontFamily="sans-serif"
-                android:textColor="#A0A0A0"
-                android:textSize="14sp"
+                android:textColor="@color/zen_text_secondary"
+                android:textSize="10sp"
                 tools:text="Lab 4" />
 
             <TextView
                 android:id="@+id/tv_schedule_credits"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
+                android:layout_marginStart="7dp"
                 android:fontFamily="sans-serif"
-                android:textColor="#A0A0A0"
-                android:textSize="14sp"
+                android:textColor="@color/zen_text_tertiary"
+                android:textSize="10sp"
                 tools:text="4 Cr" />
         </LinearLayout>
 

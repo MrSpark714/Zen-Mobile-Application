@@ -42,22 +42,20 @@
                 android:id="@+id/tv_header_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-bold"
-                android:letterSpacing="0.04"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.06"
                 android:text="ACTIVITY LOG"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textColor="@color/zen_text_primary"
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/tv_header_subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
                 android:fontFamily="sans-serif"
                 android:text="System events and attendance changes"
-                android:textColor="#A0A0A0"
-                android:textSize="11sp" />
+                android:textColor="@color/zen_text_secondary"
+                android:textSize="10sp" />
         </LinearLayout>
 
         <!-- Clear Logs Option -->

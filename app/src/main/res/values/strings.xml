@@ -23,17 +23,5 @@
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
-
-    <!-- Onboarding Flow -->
-    <string name="onboarding_skip">Skip</string>
-    <string name="onboarding_next">Next</string>
-    <string name="onboarding_slide1_title">Unified Student Workspace</string>
-    <string name="onboarding_slide1_desc">Capture thoughts with markdown notes and stay on top of daily coursework with precise, distraction-free task scheduling.</string>
-    <string name="onboarding_slide2_title">Credit-Weighted Attendance</string>
-    <string name="onboarding_slide2_desc">Track theory and lab courses effortlessly with an automated background auto-marker, analytics, and an editable 7-day attendance ledger.</string>
-    <string name="onboarding_slide3_title">Your Data, Fully Offline</string>
-    <string name="onboarding_slide3_desc">ZEN stores everything locally on your device. Upgrading from an older version or starting brand new?</string>
-    <string name="onboarding_btn_import_backup">Import Legacy Backup</string>
-    <string name="onboarding_btn_start_fresh">Start Fresh</string>
 </resources>
 

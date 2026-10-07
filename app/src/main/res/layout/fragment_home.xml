@@ -38,10 +38,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-black"
-                        android:letterSpacing="0.1"
+                        android:letterSpacing="0.12"
                         android:text="ZEN"
-                        android:textColor="@color/white"
-                        android:textSize="24sp"
+                        android:textColor="@color/zen_text_primary"
+                        android:textSize="26sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -50,11 +50,11 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:fontFamily="sans-serif-medium"
-                        android:letterSpacing="0.12"
+                        android:letterSpacing="0.15"
                         android:text="DASHBOARD &amp; TODAY"
                         android:textAllCaps="true"
-                        android:textColor="#A0A0A0"
-                        android:textSize="11sp" />
+                        android:textColor="@color/zen_text_secondary"
+                        android:textSize="10sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -243,19 +243,18 @@
                         android:fontFamily="sans-serif-bold"
                         android:letterSpacing="0.04"
                         android:text="No classes today"
-                        android:textColor="@color/white"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/zen_text_primary"
+                        android:textSize="17sp" />
 
                     <TextView
                         android:id="@+id/tv_empty_classes_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="6dp"
                         android:fontFamily="sans-serif"
                         android:gravity="center"
                         android:text="No recurring classes scheduled for today. Check your Schedule tab to configure weekly classes."
-                        android:textColor="#A0A0A0"
+                        android:textColor="@color/zen_text_secondary"
                         android:textSize="13sp" />
                 </LinearLayout>
             </LinearLayout>

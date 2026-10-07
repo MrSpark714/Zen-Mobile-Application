@@ -9,8 +9,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingTop="6dp"
-        android:paddingBottom="84dp"
+        android:paddingStart="13dp"
+        android:paddingTop="7dp"
+        android:paddingEnd="13dp"
+        android:paddingBottom="80dp"
         tools:listitem="@layout/item_task" />
 
     <!-- Empty State for Tasks -->
