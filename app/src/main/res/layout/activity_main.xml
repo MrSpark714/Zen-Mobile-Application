@@ -35,10 +35,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-black"
-                    android:letterSpacing="0.12"
+                    android:letterSpacing="0.1"
                     android:text="ZEN"
-                    android:textColor="@color/zen_text_primary"
-                    android:textSize="21sp"
+                    android:textColor="@color/white"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -47,11 +47,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:fontFamily="sans-serif-medium"
-                    android:letterSpacing="0.15"
+                    android:letterSpacing="0.12"
                     android:text="ALL NOTES"
                     android:textAllCaps="true"
-                    android:textColor="@color/zen_text_secondary"
-                    android:textSize="9sp" />
+                    android:textColor="#A0A0A0"
+                    android:textSize="11sp" />
             </LinearLayout>
 
             <LinearLayout

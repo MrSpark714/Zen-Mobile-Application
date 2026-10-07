@@ -31,11 +31,12 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
-                    android:fontFamily="sans-serif-bold"
-                    android:letterSpacing="0.05"
+                    android:fontFamily="sans-serif-black"
+                    android:letterSpacing="0.08"
                     android:text="ZEN ATTENDANCE"
-                    android:textColor="@color/zen_text_primary"
-                    android:textSize="17sp" />
+                    android:textColor="@color/white"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tv_current_date_badge"
@@ -225,12 +226,12 @@
                             android:background="@drawable/bg_chip_selected"
                             android:clickable="true"
                             android:focusable="true"
-                            android:fontFamily="sans-serif-medium"
+                            android:fontFamily="sans-serif-bold"
                             android:gravity="center"
                             android:paddingStart="11dp"
                             android:paddingEnd="11dp"
                             android:text="All Days"
-                            android:textColor="@color/zen_accent"
+                            android:textColor="@color/black"
                             android:textSize="10sp" />
 
                         <TextView

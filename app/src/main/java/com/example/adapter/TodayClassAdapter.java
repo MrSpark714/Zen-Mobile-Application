@@ -2,6 +2,7 @@ package com.example.adapter;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,7 +75,7 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.To
             holder.tvClassType.setTextColor(ContextCompat.getColor(context, R.color.type_lab_text));
         } else {
             holder.tvClassType.setBackgroundResource(R.drawable.bg_type_theory);
-            holder.tvClassType.setTextColor(ContextCompat.getColor(context, R.color.type_theory_text));
+            holder.tvClassType.setTextColor(ContextCompat.getColor(context, R.color.black));
         }
 
         // Timing
@@ -104,11 +105,11 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.To
             switch (currentStatus) {
                 case AttendanceHistory.STATUS_PRESENT:
                     holder.btnPresent.setBackgroundResource(R.drawable.bg_status_present);
-                    holder.btnPresent.setTextColor(ContextCompat.getColor(context, R.color.status_present));
+                    holder.btnPresent.setTextColor(ContextCompat.getColor(context, R.color.black));
                     holder.layoutStatusBadge.setBackgroundResource(R.drawable.bg_badge);
-                    holder.tvStatusText.setTextColor(ContextCompat.getColor(context, R.color.status_present));
-                    holder.ivStatusIcon.setColorFilter(ContextCompat.getColor(context, R.color.status_present));
-                    holder.cardView.setStrokeColor(ContextCompat.getColor(context, R.color.status_present));
+                    holder.tvStatusText.setTextColor(ContextCompat.getColor(context, R.color.zen_accent));
+                    holder.ivStatusIcon.setColorFilter(ContextCompat.getColor(context, R.color.zen_accent));
+                    holder.cardView.setStrokeWidth(0);
                     break;
 
                 case AttendanceHistory.STATUS_ABSENT:
@@ -117,7 +118,7 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.To
                     holder.layoutStatusBadge.setBackgroundResource(R.drawable.bg_status_absent);
                     holder.tvStatusText.setTextColor(ContextCompat.getColor(context, R.color.status_absent));
                     holder.ivStatusIcon.setColorFilter(ContextCompat.getColor(context, R.color.status_absent));
-                    holder.cardView.setStrokeColor(ContextCompat.getColor(context, R.color.status_absent));
+                    holder.cardView.setStrokeWidth(0);
                     break;
 
                 case AttendanceHistory.STATUS_HOLIDAY:
@@ -126,12 +127,12 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.To
                     holder.layoutStatusBadge.setBackgroundResource(R.drawable.bg_status_holiday);
                     holder.tvStatusText.setTextColor(ContextCompat.getColor(context, R.color.status_holiday));
                     holder.ivStatusIcon.setColorFilter(ContextCompat.getColor(context, R.color.status_holiday));
-                    holder.cardView.setStrokeColor(ContextCompat.getColor(context, R.color.status_holiday));
+                    holder.cardView.setStrokeWidth(0);
                     break;
             }
         } else {
             holder.layoutStatusBadge.setVisibility(View.GONE);
-            holder.cardView.setStrokeColor(ContextCompat.getColor(context, R.color.zen_border));
+            holder.cardView.setStrokeWidth(0);
         }
 
         // Action Click Listeners: Grab subject_name, credit_hours, and class_type from selected ClassSchedule
@@ -164,7 +165,7 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.To
     }
 
     private void resetChipStyles(TodayClassViewHolder holder) {
-        int unselectedTextColor = ContextCompat.getColor(context, R.color.zen_text_secondary);
+        int unselectedTextColor = Color.parseColor("#A0A0A0");
         holder.btnPresent.setBackgroundResource(R.drawable.bg_chip_status_unselected);
         holder.btnPresent.setTextColor(unselectedTextColor);
 

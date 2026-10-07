@@ -94,7 +94,7 @@ public class AttendanceHistoryAdapter extends RecyclerView.Adapter<AttendanceHis
 
         if (AttendanceHistory.STATUS_PRESENT.equalsIgnoreCase(status)) {
             holder.tvStatusBadge.setBackgroundResource(R.drawable.bg_status_present);
-            holder.tvStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.status_present));
+            holder.tvStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.black));
         } else if (AttendanceHistory.STATUS_ABSENT.equalsIgnoreCase(status)) {
             holder.tvStatusBadge.setBackgroundResource(R.drawable.bg_status_absent);
             holder.tvStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.status_absent));

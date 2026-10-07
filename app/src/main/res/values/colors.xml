@@ -25,6 +25,8 @@
     <color name="zen_danger">#FF5252</color>
     <color name="zen_chip_bg">#1E1E1E</color>
     <color name="zen_nav_inactive">#71717A</color>
+    <color name="zen_indicator_inactive">#333338</color>
+    <color name="zen_neon_green">#A6FF54</color>
 
     <!-- Attendance Tracker Specific Colors -->
     <color name="status_present">#B9F6CA</color>

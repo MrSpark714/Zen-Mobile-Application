@@ -88,12 +88,12 @@
                 android:background="@drawable/bg_chip_selected"
                 android:clickable="true"
                 android:focusable="true"
-                android:fontFamily="sans-serif-medium"
+                android:fontFamily="sans-serif-bold"
                 android:gravity="center"
                 android:paddingStart="11dp"
                 android:paddingEnd="11dp"
                 android:text="Today"
-                android:textColor="@color/zen_accent"
+                android:textColor="@color/black"
                 android:textSize="10sp" />
 
             <TextView
@@ -181,10 +181,10 @@
             android:background="@drawable/bg_chip_selected"
             android:clickable="true"
             android:focusable="true"
-            android:fontFamily="sans-serif-medium"
+            android:fontFamily="sans-serif-bold"
             android:gravity="center"
             android:text="In Text"
-            android:textColor="@color/zen_accent"
+            android:textColor="@color/black"
             android:textSize="10sp" />
 
         <TextView

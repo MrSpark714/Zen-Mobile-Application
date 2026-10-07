@@ -43,80 +43,92 @@ public class DailyAttendanceWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        Log.d(TAG, "Starting daily attendance auto-marker worker execution...");
-        Context context = getApplicationContext();
-        AppDatabase database = AppDatabase.getInstance(context);
+    Log.d(TAG, "Starting daily attendance auto-marker worker execution...");
+    Context context = getApplicationContext();
+    AppDatabase database = AppDatabase.getInstance(context);
 
-        try {
-            // 1. Determine current day of week and calculate today's epoch timestamp normalized to midnight
-            Calendar calendar = Calendar.getInstance();
-            int dayOfWeekInt = calendar.get(Calendar.DAY_OF_WEEK);
-
-            // Weekends (Saturday / Sunday) have no scheduled classes in the timetable
-            if (dayOfWeekInt == Calendar.SATURDAY || dayOfWeekInt == Calendar.SUNDAY) {
-                Log.d(TAG, "Weekend detected - skipping auto-marker.");
-                return Result.success();
-            }
-
-            String currentDayOfWeek = getDayOfWeekString(dayOfWeekInt);
-            long todayMidnightEpoch = getStartOfDayMillis(calendar);
-
-            // 2. Query database for scheduled classes for today (synchronous execution on worker background thread)
-            List<ClassSchedule> scheduledClasses = database.classScheduleDao().getClassesForDaySync(currentDayOfWeek);
-            if (scheduledClasses == null || scheduledClasses.isEmpty()) {
-                Log.d(TAG, "No classes scheduled for today (" + currentDayOfWeek + ").");
-                return Result.success();
-            }
-
-            // 3. Query database for attendance records already marked for today
-            List<AttendanceHistory> existingHistory = database.attendanceHistoryDao().getRecordsForDateSync(todayMidnightEpoch);
-            Set<String> markedSubjectKeys = new HashSet<>();
-            if (existingHistory != null) {
-                for (AttendanceHistory history : existingHistory) {
-                    if (history.getSubjectName() != null) {
-                        markedSubjectKeys.add(history.getSubjectName().trim().toLowerCase(Locale.ROOT));
-                    }
-                }
-            }
-
-            // 4. Cross-reference scheduled classes with marked records
-            long currentTimestamp = System.currentTimeMillis();
-            for (ClassSchedule schedule : scheduledClasses) {
-                if (schedule == null || schedule.getSubjectName() == null) continue;
-
-                String subjectKey = schedule.getSubjectName().trim().toLowerCase(Locale.ROOT);
-                if (!markedSubjectKeys.contains(subjectKey)) {
-                    // Action A: Insert snapshot AttendanceHistory
-                    int creditHours = schedule.getCreditHours() > 0 ? schedule.getCreditHours() : 1;
-                    String classType = schedule.getClassType() != null ? schedule.getClassType() : "Theory";
-
-                    AttendanceHistory autoHolidayRecord = new AttendanceHistory(
-                            schedule.getSubjectName(),
-                            creditHours,
-                            classType,
-                            todayMidnightEpoch,
-                            AttendanceHistory.STATUS_HOLIDAY
-                    );
-                    database.attendanceHistoryDao().insert(autoHolidayRecord);
-
-                    // Mark as processed in local set to avoid duplicate entries for multiple periods
-                    markedSubjectKeys.add(subjectKey);
-
-                    // Action B: Audit Log entry
-                    String logMessage = "System auto-marked " + schedule.getSubjectName() + " as Holiday due to no user input.";
-                    ActivityLog auditLog = new ActivityLog(currentTimestamp, logMessage);
-                    database.activityLogDao().insert(auditLog);
-
-                    Log.i(TAG, "Auto-marked: " + schedule.getSubjectName() + " as Holiday.");
-                }
-            }
-
+    try {
+        Calendar calendar = Calendar.getInstance();
+        
+        // SAFEGUARD: Ensure it is actually late at night (e.g., >= 11:00 PM)
+        int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+        if (currentHour < 23) {
+            Log.w(TAG, "Worker triggered too early by OS (" + currentHour + "). Aborting and rescheduling.");
+            scheduleDailyAutoMarker(context); // Reschedule correctly
             return Result.success();
-        } catch (Exception e) {
-            Log.e(TAG, "Error executing daily attendance auto-marker", e);
-            return Result.retry();
         }
+
+        int dayOfWeekInt = calendar.get(Calendar.DAY_OF_WEEK);
+
+        // Weekends (Saturday / Sunday) have no scheduled classes
+        if (dayOfWeekInt == Calendar.SATURDAY || dayOfWeekInt == Calendar.SUNDAY) {
+            Log.d(TAG, "Weekend detected - skipping auto-marker.");
+            scheduleDailyAutoMarker(context); // Schedule for next day
+            return Result.success();
+        }
+
+        String currentDayOfWeek = getDayOfWeekString(dayOfWeekInt);
+        long todayMidnightEpoch = getStartOfDayMillis(calendar);
+
+        // Query database for scheduled classes for today
+        List<ClassSchedule> scheduledClasses = database.classScheduleDao().getClassesForDaySync(currentDayOfWeek);
+        if (scheduledClasses == null || scheduledClasses.isEmpty()) {
+            Log.d(TAG, "No classes scheduled for today (" + currentDayOfWeek + ").");
+            scheduleDailyAutoMarker(context); // Schedule for next day
+            return Result.success();
+        }
+
+        // Query database for attendance records already marked for today
+        List<AttendanceHistory> existingHistory = database.attendanceHistoryDao().getRecordsForDateSync(todayMidnightEpoch);
+        Set<String> markedSubjectKeys = new HashSet<>();
+        if (existingHistory != null) {
+            for (AttendanceHistory history : existingHistory) {
+                if (history.getSubjectName() != null) {
+                    markedSubjectKeys.add(history.getSubjectName().trim().toLowerCase(Locale.ROOT));
+                }
+            }
+        }
+
+        // Cross-reference scheduled classes with marked records
+        long currentTimestamp = System.currentTimeMillis();
+        for (ClassSchedule schedule : scheduledClasses) {
+            if (schedule == null || schedule.getSubjectName() == null) continue;
+
+            String subjectKey = schedule.getSubjectName().trim().toLowerCase(Locale.ROOT);
+            if (!markedSubjectKeys.contains(subjectKey)) {
+                // Action A: Insert snapshot AttendanceHistory
+                int creditHours = schedule.getCreditHours() > 0 ? schedule.getCreditHours() : 1;
+                String classType = schedule.getClassType() != null ? schedule.getClassType() : "Theory";
+
+                AttendanceHistory autoHolidayRecord = new AttendanceHistory(
+                        schedule.getSubjectName(),
+                        creditHours,
+                        classType,
+                        todayMidnightEpoch,
+                        AttendanceHistory.STATUS_HOLIDAY
+                );
+                database.attendanceHistoryDao().insert(autoHolidayRecord);
+
+                markedSubjectKeys.add(subjectKey);
+
+                // Action B: Audit Log entry
+                String logMessage = "System auto-marked " + schedule.getSubjectName() + " as Holiday due to no user input.";
+                ActivityLog auditLog = new ActivityLog(currentTimestamp, logMessage);
+                database.activityLogDao().insert(auditLog);
+
+                Log.i(TAG, "Auto-marked: " + schedule.getSubjectName() + " as Holiday.");
+            }
+        }
+
+        // SELF-CHAIN: Schedule tomorrow's worker now that today's is done
+        scheduleDailyAutoMarker(context);
+        
+        return Result.success();
+    } catch (Exception e) {
+        Log.e(TAG, "Error executing daily attendance auto-marker", e);
+        return Result.retry();
     }
+}
 
     /**
      * Calculates the epoch timestamp for 00:00:00.000 (midnight) of the given calendar date.
@@ -154,39 +166,40 @@ public class DailyAttendanceWorker extends Worker {
     /**
      * Helper to schedule the DailyAttendanceWorker via WorkManager targeting ~11:55 PM nightly.
      */
-    public static void scheduleDailyAutoMarker(@NonNull Context context) {
-        Calendar now = Calendar.getInstance();
+public static void scheduleDailyAutoMarker(@NonNull Context context) {
+    Calendar now = Calendar.getInstance();
 
-        // Target 11:55 PM today
-        Calendar targetTime = Calendar.getInstance();
-        targetTime.set(Calendar.HOUR_OF_DAY, 23);
-        targetTime.set(Calendar.MINUTE, 55);
-        targetTime.set(Calendar.SECOND, 0);
-        targetTime.set(Calendar.MILLISECOND, 0);
+    // Target 11:55 PM today
+    Calendar targetTime = Calendar.getInstance();
+    targetTime.set(Calendar.HOUR_OF_DAY, 23);
+    targetTime.set(Calendar.MINUTE, 55);
+    targetTime.set(Calendar.SECOND, 0);
+    targetTime.set(Calendar.MILLISECOND, 0);
 
-        // If current time is already past 11:55 PM, schedule for tomorrow 11:55 PM
-        if (now.after(targetTime)) {
-            targetTime.add(Calendar.DAY_OF_YEAR, 1);
-        }
-
-        long initialDelayMillis = targetTime.getTimeInMillis() - now.getTimeInMillis();
-
-        Constraints constraints = new Constraints.Builder()
-                .build();
-
-        PeriodicWorkRequest periodicWorkRequest =
-                new PeriodicWorkRequest.Builder(DailyAttendanceWorker.class, 24, TimeUnit.HOURS)
-                        .setInitialDelay(initialDelayMillis, TimeUnit.MILLISECONDS)
-                        .setConstraints(constraints)
-                        .build();
-
-        WorkManager.getInstance(context.getApplicationContext()).enqueueUniquePeriodicWork(
-                WORK_NAME,
-                ExistingPeriodicWorkPolicy.KEEP,
-                periodicWorkRequest
-        );
-
-        Log.d(TAG, "Enqueued periodic WorkManager auto-marker with initial delay of " +
-                (initialDelayMillis / 1000 / 60) + " minutes.");
+    // If current time is already past 11:55 PM, schedule for tomorrow 11:55 PM
+    if (now.after(targetTime)) {
+        targetTime.add(Calendar.DAY_OF_YEAR, 1);
     }
+
+    long initialDelayMillis = targetTime.getTimeInMillis() - now.getTimeInMillis();
+
+    Constraints constraints = new Constraints.Builder().build();
+
+    // Changed from PeriodicWorkRequest to OneTimeWorkRequest
+    androidx.work.OneTimeWorkRequest oneTimeWorkRequest = 
+            new androidx.work.OneTimeWorkRequest.Builder(DailyAttendanceWorker.class)
+                    .setInitialDelay(initialDelayMillis, TimeUnit.MILLISECONDS)
+                    .setConstraints(constraints)
+                    .build();
+
+    // Changed to enqueueUniqueWork with REPLACE policy
+    WorkManager.getInstance(context.getApplicationContext()).enqueueUniqueWork(
+            WORK_NAME,
+            androidx.work.ExistingWorkPolicy.REPLACE,
+            oneTimeWorkRequest
+    );
+
+    Log.d(TAG, "Enqueued OneTime WorkManager auto-marker with delay of " +
+            (initialDelayMillis / 1000 / 60) + " minutes.");
+}
 }
