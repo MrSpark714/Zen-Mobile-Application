@@ -86,7 +86,7 @@ public class WeeklyScheduleAdapter extends RecyclerView.Adapter<WeeklyScheduleAd
             holder.tvTypeBadge.setTextColor(ContextCompat.getColor(context, R.color.type_lab_text));
         } else {
             holder.tvTypeBadge.setBackgroundResource(R.drawable.bg_type_theory);
-            holder.tvTypeBadge.setTextColor(ContextCompat.getColor(context, R.color.type_theory_text));
+            holder.tvTypeBadge.setTextColor(ContextCompat.getColor(context, R.color.black));
         }
 
         // Timing

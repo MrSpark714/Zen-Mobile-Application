@@ -35,7 +35,7 @@
                     android:fontFamily="sans-serif-black"
                     android:letterSpacing="0.1"
                     android:text="HISTORY"
-                    android:textColor="@color/zen_text_primary"
+                    android:textColor="@color/white"
                     android:textSize="22sp"
                     android:textStyle="bold" />
 
@@ -47,8 +47,8 @@
                     android:letterSpacing="0.12"
                     android:text="ATTENDANCE LEDGER &amp; ANALYTICS"
                     android:textAllCaps="true"
-                    android:textColor="@color/zen_text_secondary"
-                    android:textSize="10.5sp" />
+                    android:textColor="#A0A0A0"
+                    android:textSize="11sp" />
             </LinearLayout>
 
             <TextView
@@ -108,17 +108,18 @@
                 android:fontFamily="sans-serif-bold"
                 android:letterSpacing="0.04"
                 android:text="No analytics available"
-                android:textColor="@color/zen_text_primary"
-                android:textSize="17sp" />
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="4dp"
                 android:fontFamily="sans-serif"
                 android:gravity="center"
                 android:text="Configure your class schedule and mark attendance from the Home tab to build your analytics ledger."
-                android:textColor="@color/zen_text_secondary"
+                android:textColor="#A0A0A0"
                 android:textSize="13sp" />
         </LinearLayout>
     </FrameLayout>

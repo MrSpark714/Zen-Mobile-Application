@@ -17,6 +17,8 @@
 
     <!-- Base ZEN Dark Theme -->
     <style name="Theme.ZEN" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="fontFamily">@font/inter</item>
         <item name="android:windowBackground">@color/zen_background</item>
         <item name="android:colorBackground">@color/zen_background</item>
         <item name="android:statusBarColor">@color/zen_background</item>

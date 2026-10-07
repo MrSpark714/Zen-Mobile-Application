@@ -119,7 +119,12 @@ public class BackupActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
+        findViewById(R.id.btn_back).setOnClickListener(v -> {
+            if (isTaskRoot()) {
+                startActivity(new Intent(BackupActivity.this, MainActivity.class));
+            }
+            finish();
+        });
         progressIndicator = findViewById(R.id.progress_indicator);
         tvCountNotes = findViewById(R.id.tv_count_notes);
         tvCountTasks = findViewById(R.id.tv_count_tasks);
@@ -659,5 +664,13 @@ public class BackupActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isTaskRoot()) {
+            startActivity(new Intent(BackupActivity.this, MainActivity.class));
+        }
+        super.onBackPressed();
     }
 }

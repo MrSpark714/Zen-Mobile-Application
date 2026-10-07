@@ -39,7 +39,7 @@
                         android:fontFamily="sans-serif-black"
                         android:letterSpacing="0.1"
                         android:text="SCHEDULE"
-                        android:textColor="@color/zen_text_primary"
+                        android:textColor="@color/white"
                         android:textSize="22sp"
                         android:textStyle="bold" />
 
@@ -51,8 +51,8 @@
                         android:letterSpacing="0.12"
                         android:text="WEEKLY TIMETABLE"
                         android:textAllCaps="true"
-                        android:textColor="@color/zen_text_secondary"
-                        android:textSize="10.5sp" />
+                        android:textColor="#A0A0A0"
+                        android:textSize="11sp" />
                 </LinearLayout>
 
                 <TextView
@@ -100,7 +100,7 @@
                         android:paddingStart="14dp"
                         android:paddingEnd="14dp"
                         android:text="All Days"
-                        android:textColor="@color/zen_accent"
+                        android:textColor="@color/black"
                         android:textSize="12sp" />
 
                     <TextView
@@ -224,17 +224,18 @@
                     android:fontFamily="sans-serif-bold"
                     android:letterSpacing="0.04"
                     android:text="No classes scheduled"
-                    android:textColor="@color/zen_text_primary"
-                    android:textSize="17sp" />
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="4dp"
                     android:fontFamily="sans-serif"
                     android:gravity="center"
                     android:text="Tap the '+' button below to configure recurring classes for Monday through Friday."
-                    android:textColor="@color/zen_text_secondary"
+                    android:textColor="#A0A0A0"
                     android:textSize="13sp" />
             </LinearLayout>
         </FrameLayout>

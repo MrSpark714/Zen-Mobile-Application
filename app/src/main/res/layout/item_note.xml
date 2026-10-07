@@ -7,23 +7,21 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="4dp"
     android:layout_marginBottom="4dp"
-    app:cardBackgroundColor="@color/zen_surface"
-    app:cardCornerRadius="13dp"
-    app:cardElevation="0dp"
-    app:strokeColor="@color/zen_border"
-    app:strokeWidth="1dp">
+    app:cardBackgroundColor="@color/surfaceDark"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="13dp">
+        android:padding="12dp">
 
         <!-- Optional Top Badges Row (Important / Date) -->
         <LinearLayout
             android:id="@+id/layout_badges_row"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="7dp"
+            android:layout_marginBottom="4dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:visibility="gone"
@@ -38,7 +36,7 @@
                 android:id="@+id/badge_important"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
+                android:layout_marginEnd="6dp"
                 android:background="@drawable/bg_badge"
                 android:gravity="center_vertical"
                 android:paddingStart="7dp"
@@ -61,11 +59,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="3dp"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="sans-serif-bold"
                     android:letterSpacing="0.05"
                     android:text="IMPORTANT"
                     android:textColor="@color/zen_accent"
-                    android:textSize="8sp" />
+                    android:textSize="9sp" />
             </LinearLayout>
 
             <!-- Target Date Badge -->
@@ -94,9 +92,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="3dp"
-                    android:fontFamily="monospace"
-                    android:textColor="@color/zen_text_secondary"
-                    android:textSize="8sp"
+                    android:fontFamily="sans-serif"
+                    android:textColor="#A0A0A0"
+                    android:textSize="9sp"
                     tools:text="Aug 25, 2026" />
             </LinearLayout>
         </LinearLayout>
@@ -107,10 +105,11 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="7dp"
             android:ellipsize="end"
-            android:fontFamily="sans-serif-medium"
+            android:fontFamily="sans-serif-bold"
             android:maxLines="1"
-            android:textColor="@color/zen_text_primary"
-            android:textSize="13sp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/btn_delete_note"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layout_badges_row"
@@ -118,8 +117,8 @@
 
         <ImageButton
             android:id="@+id/btn_delete_note"
-            android:layout_width="26dp"
-            android:layout_height="26dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/delete"
             android:padding="5dp"
@@ -133,13 +132,13 @@
             android:id="@+id/tv_note_preview"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="3dp"
             android:ellipsize="end"
             android:fontFamily="sans-serif"
             android:lineSpacingExtra="2dp"
             android:maxLines="3"
-            android:textColor="@color/zen_text_secondary"
-            android:textSize="10sp"
+            android:textColor="#A0A0A0"
+            android:textSize="13sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_note_title"
@@ -149,10 +148,10 @@
             android:id="@+id/tv_note_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:fontFamily="monospace"
-            android:textColor="@color/zen_text_tertiary"
-            android:textSize="9sp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif"
+            android:textColor="#A0A0A0"
+            android:textSize="13sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_note_preview"
             tools:text="OCT 24 • 10:30 AM" />

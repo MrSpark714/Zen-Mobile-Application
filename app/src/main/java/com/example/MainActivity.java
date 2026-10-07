@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements
     public static final int TAB_NOTES = 0;
     public static final int TAB_TASKS = 1;
     public static final int TAB_ATTENDANCE = 2;
+    public static final String KEY_ONBOARDING_COMPLETED = "key_onboarding_completed";
     private int currentTab = TAB_NOTES;
 
     // Attendance Sub-Tab States
@@ -172,6 +173,15 @@ public class MainActivity extends AppCompatActivity implements
         // Handle splash screen transition using AndroidX SplashScreen API
         SplashScreen.installSplashScreen(this);
 
+        // Check if first-time interactive onboarding has been completed
+        SharedPreferences prefs = getSharedPreferences("zen_prefs", Context.MODE_PRIVATE);
+        if (!prefs.getBoolean(KEY_ONBOARDING_COMPLETED, false)) {
+            startActivity(new Intent(this, OnboardingActivity.class));
+            finish();
+            super.onCreate(savedInstanceState);
+            return;
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -201,37 +211,6 @@ public class MainActivity extends AppCompatActivity implements
 
         // Schedule nightly attendance auto-marker via WorkManager (runs around 11:55 PM daily)
         com.example.worker.DailyAttendanceWorker.scheduleDailyAutoMarker(this);
-
-        checkMigrationDialog();
-    }
-
-    /**
-     * Checks if the user is launching the app for the first time following the v9.3
-     * database architecture migration. If so, prompts the user to import their legacy backup.
-     */
-    private void checkMigrationDialog() {
-        SharedPreferences prefs = getSharedPreferences("zen_prefs", Context.MODE_PRIVATE);
-        SharedPreferences defaultPrefs = android.preference.PreferenceManager.getDefaultSharedPreferences(this);
-        boolean isFirstLaunch = prefs.getBoolean("is_first_launch_v9_3_migration", true)
-                && defaultPrefs.getBoolean("is_first_launch_v9_3_migration", true);
-
-        if (isFirstLaunch) {
-            new MaterialAlertDialogBuilder(this)
-                    .setTitle("Welcome to the New ZEN!")
-                    .setMessage("We have completely upgraded the database architecture to prevent future data loss. If you created a backup in the older version, please import it now using the Smart Import feature.")
-                    .setPositiveButton("Import Data", (dialog, which) -> {
-                        prefs.edit().putBoolean("is_first_launch_v9_3_migration", false).apply();
-                        defaultPrefs.edit().putBoolean("is_first_launch_v9_3_migration", false).apply();
-                        Intent intent = new Intent(MainActivity.this, BackupActivity.class);
-                        startActivity(intent);
-                    })
-                    .setNegativeButton("Start Fresh", (dialog, which) -> {
-                        prefs.edit().putBoolean("is_first_launch_v9_3_migration", false).apply();
-                        defaultPrefs.edit().putBoolean("is_first_launch_v9_3_migration", false).apply();
-                        dialog.dismiss();
-                    })
-                    .show();
-        }
     }
 
     @Override

@@ -1,0 +1,40 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="64dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+    <!-- Local Storage Drive / Vault Cylinder Base -->
+    <path
+        android:fillColor="#242426"
+        android:pathData="M16,16 C16,11.58 23.16,8 32,8 C40.84,8 48,11.58 48,16 L48,46 C48,50.42 40.84,54 32,54 C23.16,54 16,50.42 16,46 Z" />
+    <path
+        android:strokeColor="#71717A"
+        android:strokeWidth="2"
+        android:strokeLineJoin="round"
+        android:pathData="M16,16 C16,11.58 23.16,8 32,8 C40.84,8 48,11.58 48,16 L48,46 C48,50.42 40.84,54 32,54 C23.16,54 16,50.42 16,46 Z" />
+    <!-- Disk Platters lines -->
+    <path
+        android:strokeColor="#3A3A3E"
+        android:strokeWidth="1.5"
+        android:pathData="M16,28 C16,32 23.16,35 32,35 C40.84,35 48,32 48,28" />
+    <path
+        android:strokeColor="#3A3A3E"
+        android:strokeWidth="1.5"
+        android:pathData="M16,40 C16,44 23.16,47 32,47 C40.84,47 48,44 48,40" />
+    <!-- Offline Lock / Local Shield Badge -->
+    <path
+        android:fillColor="#1A281E"
+        android:pathData="M32,24 L44,28 L44,38 C44,45 32,50 32,50 C32,50 20,45 20,38 L20,28 Z" />
+    <path
+        android:strokeColor="#A6FF54"
+        android:strokeWidth="2.5"
+        android:strokeLineJoin="round"
+        android:pathData="M32,24 L44,28 L44,38 C44,45 32,50 32,50 C32,50 20,45 20,38 L20,28 Z" />
+    <!-- Secure Check / Keyhole in shield -->
+    <path
+        android:strokeColor="#A6FF54"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M27,37 L30,40 L37,33" />
+</vector>

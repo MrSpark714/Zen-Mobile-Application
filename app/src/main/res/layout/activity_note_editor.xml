@@ -10,21 +10,25 @@
     <!-- Top Action Bar -->
     <LinearLayout
         android:id="@+id/top_bar"
-        android:layout_width="match_parent"
-        android:layout_height="46dp"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="10dp"
+        android:paddingStart="4dp"
         android:paddingEnd="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
             android:id="@+id/btn_back"
-            android:layout_width="33dp"
-            android:layout_height="33dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Back"
-            android:padding="7dp"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:padding="12dp"
             android:src="@drawable/ic_back"
             app:tint="@color/zen_text_primary" />
 
@@ -32,7 +36,7 @@
             android:id="@+id/tv_editor_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="7dp"
+            android:layout_marginStart="4dp"
             android:layout_weight="1"
             android:fontFamily="sans-serif-light"
             android:letterSpacing="0.15"
@@ -43,35 +47,38 @@
         <!-- Important / Star Tag Button -->
         <ImageButton
             android:id="@+id/btn_toggle_important"
-            android:layout_width="33dp"
-            android:layout_height="33dp"
-            android:layout_marginEnd="2dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Mark Important"
-            android:padding="7dp"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:padding="12dp"
             android:src="@drawable/ic_star_outline"
             app:tint="@color/zen_text_secondary" />
 
         <!-- Share Note Button -->
         <ImageButton
             android:id="@+id/btn_share_note"
-            android:layout_width="33dp"
-            android:layout_height="33dp"
-            android:layout_marginEnd="2dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Share Note"
-            android:padding="7dp"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:padding="12dp"
             android:src="@drawable/ic_share"
             app:tint="@color/zen_text_secondary" />
 
         <ImageButton
             android:id="@+id/btn_delete_editor_note"
-            android:layout_width="33dp"
-            android:layout_height="33dp"
-            android:layout_marginEnd="5dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/delete"
-            android:padding="7dp"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:padding="12dp"
             android:src="@drawable/ic_delete"
             android:visibility="gone"
             app:tint="@color/zen_danger"
@@ -80,11 +87,12 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_save_note"
             android:layout_width="wrap_content"
-            android:layout_height="32dp"
+            android:layout_height="wrap_content"
             android:backgroundTint="@color/zen_accent"
             android:fontFamily="sans-serif-medium"
             android:insetTop="0dp"
             android:insetBottom="0dp"
+            android:minHeight="48dp"
             android:text="@string/save"
             android:textColor="@color/zen_on_accent"
             android:textSize="11sp"
@@ -94,30 +102,35 @@
     <!-- Rich Text Formatting Bar -->
     <LinearLayout
         android:id="@+id/formatting_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="38dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:background="@color/zen_surface"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="11dp"
         android:paddingEnd="11dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/top_bar">
 
         <!-- Bold Tool -->
         <LinearLayout
             android:id="@+id/btn_format_bold"
             android:layout_width="wrap_content"
-            android:layout_height="26dp"
+            android:layout_height="wrap_content"
             android:background="@drawable/bg_format_btn"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp">
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
 
             <ImageView
-                android:layout_width="13dp"
-                android:layout_height="13dp"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
                 android:contentDescription="Bold"
                 android:src="@drawable/ic_bold"
                 app:tint="@color/zen_text_primary" />
@@ -129,25 +142,27 @@
                 android:fontFamily="sans-serif-bold"
                 android:text="Bold"
                 android:textColor="@color/zen_text_primary"
-                android:textSize="10sp" />
+                android:textSize="11sp" />
         </LinearLayout>
 
         <!-- Color Palette Tool -->
         <LinearLayout
             android:id="@+id/btn_format_color"
             android:layout_width="wrap_content"
-            android:layout_height="26dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="7dp"
             android:background="@drawable/bg_format_btn"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp">
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
 
             <ImageView
-                android:layout_width="13dp"
-                android:layout_height="13dp"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
                 android:contentDescription="Color"
                 android:src="@drawable/ic_palette"
                 app:tint="@color/zen_accent" />
@@ -159,25 +174,27 @@
                 android:fontFamily="sans-serif-medium"
                 android:text="Color"
                 android:textColor="@color/zen_text_primary"
-                android:textSize="10sp" />
+                android:textSize="11sp" />
         </LinearLayout>
 
         <!-- Date Insert Tool -->
         <LinearLayout
             android:id="@+id/btn_insert_date"
             android:layout_width="wrap_content"
-            android:layout_height="26dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="7dp"
             android:background="@drawable/bg_format_btn"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp">
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
 
             <ImageView
-                android:layout_width="13dp"
-                android:layout_height="13dp"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
                 android:contentDescription="Add Date"
                 android:src="@drawable/ic_calendar"
                 app:tint="@color/zen_accent" />
@@ -189,7 +206,7 @@
                 android:fontFamily="sans-serif-medium"
                 android:text="Add Date"
                 android:textColor="@color/zen_text_primary"
-                android:textSize="10sp" />
+                android:textSize="11sp" />
         </LinearLayout>
 
     </LinearLayout>
@@ -197,14 +214,17 @@
     <!-- Horizontal Color Picker Strip (Toggleable) -->
     <LinearLayout
         android:id="@+id/color_picker_strip"
-        android:layout_width="match_parent"
-        android:layout_height="36dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:background="@color/zen_surface_variant"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="13dp"
         android:paddingEnd="13dp"
         android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/formatting_toolbar"
         tools:visibility="visible">
 
@@ -217,65 +237,114 @@
             android:textColor="@color/zen_text_secondary"
             android:textSize="10sp" />
 
-        <!-- Color Circle Chips -->
-        <View
+        <!-- Color Circle Chips with 48dp touch targets -->
+        <FrameLayout
             android:id="@+id/color_mint"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/bg_color_item"
-            android:backgroundTint="#B9F6CA"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
-            android:focusable="true" />
+            android:focusable="true"
+            android:minWidth="48dp"
+            android:minHeight="48dp">
 
-        <View
+            <View
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_color_item"
+                android:backgroundTint="#B9F6CA" />
+        </FrameLayout>
+
+        <FrameLayout
             android:id="@+id/color_gold"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/bg_color_item"
-            android:backgroundTint="#FFE082"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
-            android:focusable="true" />
+            android:focusable="true"
+            android:minWidth="48dp"
+            android:minHeight="48dp">
 
-        <View
+            <View
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_color_item"
+                android:backgroundTint="#FFE082" />
+        </FrameLayout>
+
+        <FrameLayout
             android:id="@+id/color_coral"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/bg_color_item"
-            android:backgroundTint="#FF8A80"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
-            android:focusable="true" />
+            android:focusable="true"
+            android:minWidth="48dp"
+            android:minHeight="48dp">
 
-        <View
+            <View
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_color_item"
+                android:backgroundTint="#FF8A80" />
+        </FrameLayout>
+
+        <FrameLayout
             android:id="@+id/color_blue"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/bg_color_item"
-            android:backgroundTint="#80D8FF"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
-            android:focusable="true" />
+            android:focusable="true"
+            android:minWidth="48dp"
+            android:minHeight="48dp">
 
-        <View
+            <View
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_color_item"
+                android:backgroundTint="#80D8FF" />
+        </FrameLayout>
+
+        <FrameLayout
             android:id="@+id/color_lavender"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/bg_color_item"
-            android:backgroundTint="#EA80FC"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
-            android:focusable="true" />
+            android:focusable="true"
+            android:minWidth="48dp"
+            android:minHeight="48dp">
 
-        <View
+            <View
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_color_item"
+                android:backgroundTint="#EA80FC" />
+        </FrameLayout>
+
+        <FrameLayout
             android:id="@+id/color_white"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:background="@drawable/bg_color_item"
-            android:backgroundTint="#F5F5F5"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
-            android:focusable="true" />
+            android:focusable="true"
+            android:minWidth="48dp"
+            android:minHeight="48dp">
+
+            <View
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_color_item"
+                android:backgroundTint="#F5F5F5" />
+        </FrameLayout>
     </LinearLayout>
 
     <!-- Target Date Chip (if set) -->
@@ -290,7 +359,7 @@
         android:orientation="horizontal"
         android:paddingStart="8dp"
         android:paddingTop="3dp"
-        android:paddingEnd="8dp"
+        android:paddingEnd="4dp"
         android:paddingBottom="3dp"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
@@ -316,20 +385,25 @@
 
         <ImageView
             android:id="@+id/btn_remove_date"
-            android:layout_width="13dp"
-            android:layout_height="13dp"
-            android:layout_marginStart="5dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Remove Date"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:padding="16dp"
             android:src="@drawable/ic_close"
             app:tint="@color/zen_text_secondary" />
     </LinearLayout>
 
     <!-- Scrollable Editor Area -->
     <ScrollView
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
         app:layout_constraintBottom_toTopOf="@id/bottom_status_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/layout_target_date_badge">
 
         <LinearLayout
@@ -383,14 +457,16 @@
     <!-- Bottom Status Bar -->
     <LinearLayout
         android:id="@+id/bottom_status_bar"
-        android:layout_width="match_parent"
-        android:layout_height="33dp"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
         android:background="@color/zen_surface"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <TextView
             android:id="@+id/tv_editor_date"

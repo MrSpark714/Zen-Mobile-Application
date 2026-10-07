@@ -42,9 +42,7 @@ public class DailyAttendanceWorker extends Worker {
 
     @NonNull
     @Override
-    @NonNull
-@Override
-public Result doWork() {
+    public Result doWork() {
     Log.d(TAG, "Starting daily attendance auto-marker worker execution...");
     Context context = getApplicationContext();
     AppDatabase database = AppDatabase.getInstance(context);
