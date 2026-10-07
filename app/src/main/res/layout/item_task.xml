@@ -2,18 +2,23 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_task"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="3dp"
-    android:layout_marginBottom="3dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="5dp"
     app:cardBackgroundColor="@color/surfaceDark"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="0dp">
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/zen_border"
+    app:strokeWidth="1dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp">
+        android:padding="16dp">
 
         <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/cb_task_status"
@@ -23,14 +28,15 @@
             android:minHeight="0dp"
             android:padding="0dp"
             app:buttonTint="@color/zen_accent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="7dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="8dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/btn_delete_task"
@@ -53,14 +59,14 @@
                 android:id="@+id/layout_task_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="5dp"
                 android:background="@drawable/bg_badge"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="7dp"
-                android:paddingTop="2dp"
-                android:paddingEnd="7dp"
-                android:paddingBottom="2dp"
+                android:paddingStart="8dp"
+                android:paddingTop="3dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="3dp"
                 android:visibility="gone"
                 tools:visibility="visible">
 
@@ -68,7 +74,6 @@
                     android:id="@+id/iv_time_icon"
                     android:layout_width="12dp"
                     android:layout_height="12dp"
-                    android:contentDescription="Time"
                     android:src="@drawable/ic_schedule"
                     app:tint="@color/zen_accent" />
 
@@ -77,27 +82,26 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
-                    android:fontFamily="sans-serif"
-                    android:textColor="#A0A0A0"
-                    android:textSize="13sp"
-                    tools:text="9:00 AM → 12:00 PM (In 3 hrs)" />
+                    android:fontFamily="sans-serif-bold"
+                    android:letterSpacing="0.04"
+                    android:textColor="@color/zen_accent"
+                    android:textSize="11sp"
+                    tools:text="10:00 AM • 45m" />
             </LinearLayout>
-
         </LinearLayout>
 
         <ImageButton
             android:id="@+id/btn_delete_task"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/delete"
-            android:padding="5dp"
-            android:scaleType="fitCenter"
+            android:contentDescription="Delete Task"
+            android:padding="8dp"
             android:src="@drawable/ic_delete"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/zen_text_tertiary" />
+            app:tint="@color/zen_text_secondary" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

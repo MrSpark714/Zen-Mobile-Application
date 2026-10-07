@@ -102,14 +102,18 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.To
             holder.layoutStatusBadge.setVisibility(View.VISIBLE);
             holder.tvStatusText.setText("Marked: " + currentStatus);
 
+            int strokeWidthPx = (int) (1.2f * context.getResources().getDisplayMetrics().density);
+            int baseStrokeWidthPx = (int) (1f * context.getResources().getDisplayMetrics().density);
+
             switch (currentStatus) {
                 case AttendanceHistory.STATUS_PRESENT:
                     holder.btnPresent.setBackgroundResource(R.drawable.bg_status_present);
-                    holder.btnPresent.setTextColor(ContextCompat.getColor(context, R.color.black));
+                    holder.btnPresent.setTextColor(ContextCompat.getColor(context, R.color.zen_accent));
                     holder.layoutStatusBadge.setBackgroundResource(R.drawable.bg_badge);
                     holder.tvStatusText.setTextColor(ContextCompat.getColor(context, R.color.zen_accent));
                     holder.ivStatusIcon.setColorFilter(ContextCompat.getColor(context, R.color.zen_accent));
-                    holder.cardView.setStrokeWidth(0);
+                    holder.cardView.setStrokeColor(ContextCompat.getColor(context, R.color.zen_accent));
+                    holder.cardView.setStrokeWidth(strokeWidthPx);
                     break;
 
                 case AttendanceHistory.STATUS_ABSENT:
@@ -118,7 +122,8 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.To
                     holder.layoutStatusBadge.setBackgroundResource(R.drawable.bg_status_absent);
                     holder.tvStatusText.setTextColor(ContextCompat.getColor(context, R.color.status_absent));
                     holder.ivStatusIcon.setColorFilter(ContextCompat.getColor(context, R.color.status_absent));
-                    holder.cardView.setStrokeWidth(0);
+                    holder.cardView.setStrokeColor(ContextCompat.getColor(context, R.color.status_absent));
+                    holder.cardView.setStrokeWidth(strokeWidthPx);
                     break;
 
                 case AttendanceHistory.STATUS_HOLIDAY:
@@ -127,12 +132,14 @@ public class TodayClassAdapter extends RecyclerView.Adapter<TodayClassAdapter.To
                     holder.layoutStatusBadge.setBackgroundResource(R.drawable.bg_status_holiday);
                     holder.tvStatusText.setTextColor(ContextCompat.getColor(context, R.color.status_holiday));
                     holder.ivStatusIcon.setColorFilter(ContextCompat.getColor(context, R.color.status_holiday));
-                    holder.cardView.setStrokeWidth(0);
+                    holder.cardView.setStrokeColor(ContextCompat.getColor(context, R.color.status_holiday));
+                    holder.cardView.setStrokeWidth(strokeWidthPx);
                     break;
             }
         } else {
             holder.layoutStatusBadge.setVisibility(View.GONE);
-            holder.cardView.setStrokeWidth(0);
+            holder.cardView.setStrokeColor(ContextCompat.getColor(context, R.color.zen_border));
+            holder.cardView.setStrokeWidth((int) (1f * context.getResources().getDisplayMetrics().density));
         }
 
         // Action Click Listeners: Grab subject_name, credit_hours, and class_type from selected ClassSchedule

@@ -9,10 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingStart="13dp"
-        android:paddingTop="7dp"
-        android:paddingEnd="13dp"
-        android:paddingBottom="80dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="84dp"
         tools:listitem="@layout/item_note" />
 
     <!-- Empty State for Notes -->

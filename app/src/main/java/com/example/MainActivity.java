@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements
     public static final int TAB_NOTES = 0;
     public static final int TAB_TASKS = 1;
     public static final int TAB_ATTENDANCE = 2;
-    public static final String KEY_ONBOARDING_COMPLETED = "key_onboarding_completed";
     private int currentTab = TAB_NOTES;
 
     // Attendance Sub-Tab States
@@ -173,15 +172,6 @@ public class MainActivity extends AppCompatActivity implements
         // Handle splash screen transition using AndroidX SplashScreen API
         SplashScreen.installSplashScreen(this);
 
-        // Check if first-time interactive onboarding has been completed
-        SharedPreferences prefs = getSharedPreferences("zen_prefs", Context.MODE_PRIVATE);
-        if (!prefs.getBoolean(KEY_ONBOARDING_COMPLETED, false)) {
-            startActivity(new Intent(this, OnboardingActivity.class));
-            finish();
-            super.onCreate(savedInstanceState);
-            return;
-        }
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -204,13 +194,42 @@ public class MainActivity extends AppCompatActivity implements
 
         observeDatabase("");
 
-        // Automated background check for in-app updates on app launch
-        if (UpdateManager.isAutoUpdateEnabled(this)) {
-            UpdateManager.checkForUpdates(this);
-        }
+        // Check for in-app updates in background
+        UpdateManager.checkForUpdates(this);
 
         // Schedule nightly attendance auto-marker via WorkManager (runs around 11:55 PM daily)
         com.example.worker.DailyAttendanceWorker.scheduleDailyAutoMarker(this);
+
+        checkMigrationDialog();
+    }
+
+    /**
+     * Checks if the user is launching the app for the first time following the v9.3
+     * database architecture migration. If so, prompts the user to import their legacy backup.
+     */
+    private void checkMigrationDialog() {
+        SharedPreferences prefs = getSharedPreferences("zen_prefs", Context.MODE_PRIVATE);
+        SharedPreferences defaultPrefs = android.preference.PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isFirstLaunch = prefs.getBoolean("is_first_launch_v9_3_migration", true)
+                && defaultPrefs.getBoolean("is_first_launch_v9_3_migration", true);
+
+        if (isFirstLaunch) {
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("Welcome to the New ZEN!")
+                    .setMessage("We have completely upgraded the database architecture to prevent future data loss. If you created a backup in the older version, please import it now using the Smart Import feature.")
+                    .setPositiveButton("Import Data", (dialog, which) -> {
+                        prefs.edit().putBoolean("is_first_launch_v9_3_migration", false).apply();
+                        defaultPrefs.edit().putBoolean("is_first_launch_v9_3_migration", false).apply();
+                        Intent intent = new Intent(MainActivity.this, BackupActivity.class);
+                        startActivity(intent);
+                    })
+                    .setNegativeButton("Start Fresh", (dialog, which) -> {
+                        prefs.edit().putBoolean("is_first_launch_v9_3_migration", false).apply();
+                        defaultPrefs.edit().putBoolean("is_first_launch_v9_3_migration", false).apply();
+                        dialog.dismiss();
+                    })
+                    .show();
+        }
     }
 
     @Override
@@ -800,36 +819,6 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         public int getItemCount() {
             return 3;
-        }
-    }
-
-    public void onTasksFragmentAttached(com.example.fragment.TasksFragment fragment) {
-        if (fragment != null) {
-            this.rvTasks = fragment.getRecyclerView();
-            this.layoutEmptyTasks = fragment.getEmptyView();
-            if (this.rvTasks != null && this.taskAdapter != null) {
-                this.rvTasks.setAdapter(this.taskAdapter);
-                updateTasksList(this.currentTasks);
-            }
-        }
-    }
-
-    public void onNotesFragmentAttached(com.example.fragment.NotesFragment fragment) {
-        if (fragment != null) {
-            this.rvNotes = fragment.getRecyclerView();
-            this.layoutEmptyNotes = fragment.getEmptyView();
-            if (this.rvNotes != null && this.noteAdapter != null) {
-                this.rvNotes.setAdapter(this.noteAdapter);
-                updateNotesList(this.currentNotes);
-            }
-        }
-    }
-
-    public void onClassesFragmentAttached(View view) {
-        if (view != null) {
-            attendanceViewHolder = new AttendanceViewHolder(view);
-            attendanceViewHolder.setup();
-            observeAttendanceData();
         }
     }
 
@@ -1753,6 +1742,40 @@ public class MainActivity extends AppCompatActivity implements
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
+    public void onClassesFragmentAttached(View view) {
+        if (view != null && attendanceViewHolder == null) {
+            attendanceViewHolder = new AttendanceViewHolder(view);
+            attendanceViewHolder.setup();
+            observeAttendanceData();
+        }
+    }
+
+    public void onTasksFragmentAttached(com.example.fragment.TasksFragment fragment) {
+        if (fragment != null) {
+            rvTasks = fragment.getRecyclerView();
+            layoutEmptyTasks = fragment.getEmptyView();
+            if (rvTasks != null) {
+                rvTasks.setAdapter(taskAdapter);
+                rvTasks.clearOnScrollListeners();
+                rvTasks.addOnScrollListener(verticalScrollStateListener);
+            }
+            updateTasksList(currentTasks);
+        }
+    }
+
+    public void onNotesFragmentAttached(com.example.fragment.NotesFragment fragment) {
+        if (fragment != null) {
+            rvNotes = fragment.getRecyclerView();
+            layoutEmptyNotes = fragment.getEmptyView();
+            if (rvNotes != null) {
+                rvNotes.setAdapter(noteAdapter);
+                rvNotes.clearOnScrollListeners();
+                rvNotes.addOnScrollListener(verticalScrollStateListener);
+            }
+            updateNotesList(currentNotes);
         }
     }
 }
