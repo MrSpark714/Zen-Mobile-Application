@@ -32,7 +32,7 @@
             android:layout_marginTop="2dp"
             android:fontFamily="sans-serif"
             android:textColor="@color/zen_text_secondary"
-            android:textSize="10sp"
+            android:textSize="11sp"
             tools:text="Regular Class Session" />
     </LinearLayout>
 
@@ -56,7 +56,7 @@
         android:paddingBottom="6dp"
         android:text="PRESENT"
         android:textColor="@color/status_present"
-        android:textSize="9sp"
+        android:textSize="11sp"
         tools:text="PRESENT" />
 
 </RelativeLayout>

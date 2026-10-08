@@ -68,7 +68,7 @@
         android:letterSpacing="0.05"
         android:text="COMPLETION TIME &amp; DURATION"
         android:textColor="@color/zen_text_secondary"
-        android:textSize="9sp" />
+        android:textSize="11sp" />
 
     <!-- Horizontal Scrollable Duration Presets -->
     <HorizontalScrollView
@@ -226,7 +226,7 @@
             android:fontFamily="sans-serif"
             android:text="🔔 Notification will pull to status bar when due"
             android:textColor="@color/zen_accent"
-            android:textSize="9sp" />
+            android:textSize="11sp" />
     </LinearLayout>
 
     <!-- Action Buttons -->

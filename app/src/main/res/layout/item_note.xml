@@ -50,8 +50,8 @@
 
                 <ImageView
                     android:id="@+id/iv_badge_important_star"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
                     android:contentDescription="Important"
                     android:src="@drawable/ic_star_filled"
                     app:tint="@color/zen_accent" />
@@ -60,12 +60,14 @@
                     android:id="@+id/tv_badge_important_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="3dp"
+                    android:layout_marginStart="4dp"
                     android:fontFamily="sans-serif-medium"
+                    android:gravity="center_vertical"
+                    android:includeFontPadding="false"
                     android:letterSpacing="0.05"
                     android:text="IMPORTANT"
                     android:textColor="@color/zen_accent"
-                    android:textSize="8sp" />
+                    android:textSize="11sp" />
             </LinearLayout>
 
             <!-- Target Date Badge -->
@@ -83,8 +85,8 @@
                 tools:visibility="visible">
 
                 <ImageView
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
                     android:contentDescription="Date"
                     android:src="@drawable/ic_calendar"
                     app:tint="@color/zen_text_secondary" />
@@ -93,10 +95,12 @@
                     android:id="@+id/tv_badge_date_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="3dp"
+                    android:layout_marginStart="4dp"
                     android:fontFamily="monospace"
+                    android:gravity="center_vertical"
+                    android:includeFontPadding="false"
                     android:textColor="@color/zen_text_secondary"
-                    android:textSize="8sp"
+                    android:textSize="11sp"
                     tools:text="Aug 25, 2026" />
             </LinearLayout>
         </LinearLayout>
@@ -105,12 +109,13 @@
             android:id="@+id/tv_note_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="7dp"
+            android:layout_marginEnd="8dp"
             android:ellipsize="end"
             android:fontFamily="sans-serif-medium"
+            android:includeFontPadding="false"
             android:maxLines="1"
             android:textColor="@color/zen_text_primary"
-            android:textSize="13sp"
+            android:textSize="15sp"
             app:layout_constraintEnd_toStartOf="@id/btn_delete_note"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layout_badges_row"
@@ -125,8 +130,9 @@
             android:padding="5dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_delete"
+            app:layout_constraintBottom_toBottomOf="@id/tv_note_title"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_note_title"
             app:tint="@color/zen_text_tertiary" />
 
         <TextView
@@ -136,10 +142,11 @@
             android:layout_marginTop="5dp"
             android:ellipsize="end"
             android:fontFamily="sans-serif"
+            android:includeFontPadding="false"
             android:lineSpacingExtra="2dp"
             android:maxLines="3"
             android:textColor="@color/zen_text_secondary"
-            android:textSize="10sp"
+            android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_note_title"
@@ -151,8 +158,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:fontFamily="monospace"
+            android:includeFontPadding="false"
             android:textColor="@color/zen_text_tertiary"
-            android:textSize="9sp"
+            android:textSize="11sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_note_preview"
             tools:text="OCT 24 • 10:30 AM" />

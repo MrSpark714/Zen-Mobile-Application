@@ -44,11 +44,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:fontFamily="sans-serif-medium"
+                    android:includeFontPadding="false"
                     android:letterSpacing="0.12"
                     android:text="ATTENDANCE LEDGER &amp; ANALYTICS"
                     android:textAllCaps="true"
                     android:textColor="@color/zen_text_secondary"
-                    android:textSize="10.5sp" />
+                    android:textSize="11sp" />
             </LinearLayout>
 
             <TextView
@@ -59,6 +60,8 @@
                 android:layout_centerVertical="true"
                 android:background="@drawable/bg_badge"
                 android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:includeFontPadding="false"
                 android:letterSpacing="0.04"
                 android:paddingStart="12dp"
                 android:paddingTop="5dp"
@@ -66,7 +69,7 @@
                 android:paddingBottom="5dp"
                 android:text="0 subjects"
                 android:textColor="@color/zen_accent"
-                android:textSize="11.5sp" />
+                android:textSize="12sp" />
         </RelativeLayout>
     </LinearLayout>
 

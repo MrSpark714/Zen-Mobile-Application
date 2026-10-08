@@ -120,7 +120,9 @@ public class MainActivity extends AppCompatActivity implements
     // View References - Navigation & Pager
     private ViewPager2 viewPager;
     private View bottomNavContainer;
-    private View navSlidingIndicator;
+    private View pillNavNotes;
+    private View pillNavTasks;
+    private View pillNavAttendance;
     private View btnNavNotes;
     private View btnNavTasks;
     private View btnNavAttendance;
@@ -345,7 +347,9 @@ public class MainActivity extends AppCompatActivity implements
 
         viewPager = findViewById(R.id.view_pager);
         bottomNavContainer = findViewById(R.id.bottom_nav_container);
-        navSlidingIndicator = findViewById(R.id.nav_sliding_indicator);
+        pillNavNotes = findViewById(R.id.pill_nav_notes);
+        pillNavTasks = findViewById(R.id.pill_nav_tasks);
+        pillNavAttendance = findViewById(R.id.pill_nav_attendance);
         btnNavNotes = findViewById(R.id.btn_nav_notes);
         btnNavTasks = findViewById(R.id.btn_nav_tasks);
         btnNavAttendance = findViewById(R.id.btn_nav_attendance);
@@ -425,7 +429,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels);
-                slideNavIndicator(position, positionOffset);
+                updatePillsOnScroll(position, positionOffset);
             }
 
             @Override
@@ -437,41 +441,91 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void setupNavigation() {
-        btnNavNotes.setOnClickListener(v -> viewPager.setCurrentItem(TAB_NOTES, true));
-        btnNavTasks.setOnClickListener(v -> viewPager.setCurrentItem(TAB_TASKS, true));
-        btnNavAttendance.setOnClickListener(v -> viewPager.setCurrentItem(TAB_ATTENDANCE, true));
+        int accentColor = ThemeHelper.getAccentColor(this);
+        if (pillNavNotes != null) pillNavNotes.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
+        if (pillNavTasks != null) pillNavTasks.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
+        if (pillNavAttendance != null) pillNavAttendance.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
 
-        if (bottomNavContainer != null) {
-            bottomNavContainer.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-                if (right - left != oldRight - oldLeft) {
-                    initSlidingIndicator();
-                }
-            });
-            bottomNavContainer.post(this::initSlidingIndicator);
+        btnNavNotes.setOnClickListener(v -> selectTabDirectly(TAB_NOTES));
+        btnNavTasks.setOnClickListener(v -> selectTabDirectly(TAB_TASKS));
+        btnNavAttendance.setOnClickListener(v -> selectTabDirectly(TAB_ATTENDANCE));
+
+        updatePillStates(currentTab, false);
+    }
+
+    private void selectTabDirectly(int tab) {
+        if (viewPager != null && currentTab != tab) {
+            viewPager.setCurrentItem(tab, false);
         }
     }
 
-    private void initSlidingIndicator() {
-        if (bottomNavContainer == null || navSlidingIndicator == null) return;
-        int innerWidth = bottomNavContainer.getWidth() - bottomNavContainer.getPaddingLeft() - bottomNavContainer.getPaddingRight();
-        if (innerWidth > 0) {
-            int tabWidth = innerWidth / 3;
-            ViewGroup.LayoutParams lp = navSlidingIndicator.getLayoutParams();
-            lp.width = tabWidth;
-            navSlidingIndicator.setLayoutParams(lp);
-
-            int current = viewPager != null ? viewPager.getCurrentItem() : 0;
-            navSlidingIndicator.setTranslationX(current * tabWidth);
+    private void updatePillsOnScroll(int position, float positionOffset) {
+        if (viewPager == null || viewPager.getScrollState() == ViewPager2.SCROLL_STATE_IDLE) {
+            return;
         }
+
+        float alpha0 = 0f, alpha1 = 0f, alpha2 = 0f;
+        if (position == 0) {
+            alpha0 = 1.0f - positionOffset;
+            alpha1 = positionOffset;
+            alpha2 = 0f;
+        } else if (position == 1) {
+            alpha0 = 0f;
+            alpha1 = 1.0f - positionOffset;
+            alpha2 = positionOffset;
+        } else if (position >= 2) {
+            alpha2 = 1.0f;
+        }
+
+        applyPillProgress(pillNavNotes, ivNavNotesIcon, tvNavNotesText, alpha0);
+        applyPillProgress(pillNavTasks, ivNavTasksIcon, tvNavTasksText, alpha1);
+        applyPillProgress(pillNavAttendance, ivNavAttendanceIcon, tvNavAttendanceText, alpha2);
     }
 
-    private void slideNavIndicator(int position, float positionOffset) {
-        if (bottomNavContainer == null || navSlidingIndicator == null) return;
-        int innerWidth = bottomNavContainer.getWidth() - bottomNavContainer.getPaddingLeft() - bottomNavContainer.getPaddingRight();
-        if (innerWidth > 0) {
-            float tabWidth = innerWidth / 3.0f;
-            navSlidingIndicator.setTranslationX((position + positionOffset) * tabWidth);
+    private void applyPillProgress(View pill, ImageView icon, TextView text, float progress) {
+        if (pill == null) return;
+        pill.setAlpha(progress);
+        float scale = 0.88f + 0.12f * progress;
+        pill.setScaleX(scale);
+        pill.setScaleY(scale);
+
+        boolean isActive = progress >= 0.5f;
+        int accentColor = ThemeHelper.getAccentColor(this);
+        int onAccentColor = ThemeHelper.getOnAccentColor(accentColor);
+        int inactiveColor = ContextCompat.getColor(this, R.color.zen_text_secondary);
+        updateTabItemVisuals(icon, text, isActive, onAccentColor, inactiveColor);
+    }
+
+    private void updatePillStates(int activeTab, boolean animate) {
+        animateTabPill(pillNavNotes, ivNavNotesIcon, tvNavNotesText, activeTab == TAB_NOTES, animate);
+        animateTabPill(pillNavTasks, ivNavTasksIcon, tvNavTasksText, activeTab == TAB_TASKS, animate);
+        animateTabPill(pillNavAttendance, ivNavAttendanceIcon, tvNavAttendanceText, activeTab == TAB_ATTENDANCE, animate);
+    }
+
+    private void animateTabPill(View pill, ImageView icon, TextView text, boolean isActive, boolean animate) {
+        if (pill == null) return;
+        float targetAlpha = isActive ? 1.0f : 0.0f;
+        float targetScale = isActive ? 1.0f : 0.88f;
+
+        if (animate) {
+            pill.animate()
+                    .alpha(targetAlpha)
+                    .scaleX(targetScale)
+                    .scaleY(targetScale)
+                    .setDuration(220)
+                    .setInterpolator(new android.view.animation.DecelerateInterpolator())
+                    .start();
+        } else {
+            pill.animate().cancel();
+            pill.setAlpha(targetAlpha);
+            pill.setScaleX(targetScale);
+            pill.setScaleY(targetScale);
         }
+
+        int accentColor = ThemeHelper.getAccentColor(this);
+        int onAccentColor = ThemeHelper.getOnAccentColor(accentColor);
+        int inactiveColor = ContextCompat.getColor(this, R.color.zen_text_secondary);
+        updateTabItemVisuals(icon, text, isActive, onAccentColor, inactiveColor);
     }
 
     private void onTabChanged(int tab) {
@@ -479,17 +533,7 @@ public class MainActivity extends AppCompatActivity implements
         String query = etSearch.getText().toString().trim();
 
         int accentColor = ThemeHelper.getAccentColor(this);
-        int onAccentColor = ThemeHelper.getOnAccentColor(accentColor);
-        int inactiveColor = ContextCompat.getColor(this, R.color.zen_text_secondary);
-
-        if (navSlidingIndicator != null) {
-            navSlidingIndicator.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
-        }
-        slideNavIndicator(tab, 0f);
-
-        updateTabItemVisuals(ivNavNotesIcon, tvNavNotesText, tab == TAB_NOTES, onAccentColor, inactiveColor);
-        updateTabItemVisuals(ivNavTasksIcon, tvNavTasksText, tab == TAB_TASKS, onAccentColor, inactiveColor);
-        updateTabItemVisuals(ivNavAttendanceIcon, tvNavAttendanceText, tab == TAB_ATTENDANCE, onAccentColor, inactiveColor);
+        updatePillStates(tab, true);
 
         if (tab == TAB_NOTES) {
             tvHeaderTitle.setText("ZEN");
@@ -538,16 +582,17 @@ public class MainActivity extends AppCompatActivity implements
         ThemeHelper.applyAccentToFab(fabAdd, accentColor);
         ThemeHelper.applyAccentToBadge(tvItemCountBadge, accentColor);
 
-        int onAccentColor = ThemeHelper.getOnAccentColor(accentColor);
-        int inactiveColor = ContextCompat.getColor(this, R.color.zen_text_secondary);
-
-        if (navSlidingIndicator != null) {
-            navSlidingIndicator.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
+        if (pillNavNotes != null) {
+            pillNavNotes.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
+        }
+        if (pillNavTasks != null) {
+            pillNavTasks.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
+        }
+        if (pillNavAttendance != null) {
+            pillNavAttendance.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
         }
 
-        updateTabItemVisuals(ivNavNotesIcon, tvNavNotesText, currentTab == TAB_NOTES, onAccentColor, inactiveColor);
-        updateTabItemVisuals(ivNavTasksIcon, tvNavTasksText, currentTab == TAB_TASKS, onAccentColor, inactiveColor);
-        updateTabItemVisuals(ivNavAttendanceIcon, tvNavAttendanceText, currentTab == TAB_ATTENDANCE, onAccentColor, inactiveColor);
+        updatePillStates(currentTab, false);
 
         if (attendanceViewHolder != null) {
             attendanceViewHolder.refreshThemeAccent(accentColor);

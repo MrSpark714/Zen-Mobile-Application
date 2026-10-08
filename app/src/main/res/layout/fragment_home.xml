@@ -38,6 +38,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-black"
+                        android:includeFontPadding="false"
                         android:letterSpacing="0.12"
                         android:text="ZEN"
                         android:textColor="@color/zen_text_primary"
@@ -50,11 +51,12 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:fontFamily="sans-serif-medium"
+                        android:includeFontPadding="false"
                         android:letterSpacing="0.15"
                         android:text="DASHBOARD &amp; TODAY"
                         android:textAllCaps="true"
                         android:textColor="@color/zen_text_secondary"
-                        android:textSize="10sp" />
+                        android:textSize="11sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -71,6 +73,8 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_badge"
                         android:fontFamily="sans-serif-medium"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
                         android:letterSpacing="0.04"
                         android:paddingStart="12dp"
                         android:paddingTop="5dp"
@@ -78,14 +82,14 @@
                         android:paddingBottom="5dp"
                         android:text="0 classes"
                         android:textColor="@color/zen_accent"
-                        android:textSize="11.5sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
             </RelativeLayout>
 
             <!-- Mode Selector Pills: Today's Classes / Notes / Tasks -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="38dp"
+                android:layout_height="40dp"
                 android:layout_marginTop="14dp"
                 android:background="@drawable/bg_floating_bottom_nav"
                 android:orientation="horizontal"
@@ -101,6 +105,7 @@
                     android:focusable="true"
                     android:fontFamily="sans-serif-bold"
                     android:gravity="center"
+                    android:includeFontPadding="false"
                     android:letterSpacing="0.05"
                     android:text="TODAY"
                     android:textColor="@color/zen_on_accent"
@@ -116,6 +121,7 @@
                     android:focusable="true"
                     android:fontFamily="sans-serif-medium"
                     android:gravity="center"
+                    android:includeFontPadding="false"
                     android:letterSpacing="0.05"
                     android:text="TASKS"
                     android:textColor="@color/zen_text_secondary"
@@ -131,6 +137,7 @@
                     android:focusable="true"
                     android:fontFamily="sans-serif-medium"
                     android:gravity="center"
+                    android:includeFontPadding="false"
                     android:letterSpacing="0.05"
                     android:text="NOTES"
                     android:textColor="@color/zen_text_secondary"
@@ -165,13 +172,16 @@
                     android:layout_weight="1"
                     android:background="@null"
                     android:fontFamily="sans-serif"
+                    android:gravity="center_vertical"
                     android:hint="Search…"
                     android:imeOptions="actionSearch"
+                    android:includeFontPadding="false"
                     android:inputType="text"
                     android:maxLines="1"
+                    android:padding="0dp"
                     android:textColor="@color/zen_text_primary"
                     android:textColorHint="@color/zen_text_secondary"
-                    android:textSize="13.5sp" />
+                    android:textSize="14sp" />
 
                 <ImageView
                     android:id="@+id/btn_home_clear_search"
@@ -207,8 +217,9 @@
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="6dp"
                     android:fontFamily="sans-serif"
+                    android:includeFontPadding="false"
                     android:textColor="@color/zen_text_secondary"
-                    android:textSize="12.5sp"
+                    android:textSize="12sp"
                     tools:text="Showing classes scheduled for today" />
 
                 <androidx.recyclerview.widget.RecyclerView

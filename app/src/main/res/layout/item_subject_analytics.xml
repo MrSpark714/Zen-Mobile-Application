@@ -86,7 +86,7 @@
                 android:layout_centerVertical="true"
                 android:fontFamily="sans-serif"
                 android:textColor="@color/zen_text_secondary"
-                android:textSize="10sp"
+                android:textSize="11sp"
                 tools:text="6 Present • 1 Absent • 1 Holiday" />
 
             <TextView
@@ -98,7 +98,7 @@
                 android:letterSpacing="0.05"
                 android:text="HISTORY ›"
                 android:textColor="@color/zen_accent"
-                android:textSize="9sp" />
+                android:textSize="11sp" />
         </RelativeLayout>
 
     </LinearLayout>

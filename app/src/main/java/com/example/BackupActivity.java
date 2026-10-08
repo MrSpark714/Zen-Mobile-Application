@@ -62,7 +62,6 @@ public class BackupActivity extends AppCompatActivity {
     private TextView tvCountClasses;
     private TextView tvCountAttendance;
     private TextView tvDbStatsHeader;
-    private TextView tvThemeAppliedHint;
     private RadioGroup rgBackupOptions;
     private RadioButton rbFullBackup;
     private RadioButton rbNotesAttendance;
@@ -76,11 +75,6 @@ public class BackupActivity extends AppCompatActivity {
     // App Updates components
     private MaterialSwitch switchAutoUpdate;
     private MaterialButton btnCheckUpdatesManual;
-
-    // Theme selector components
-    private FrameLayout frameMint, frameTeal, frameCyan, frameSage, frameLime;
-    private View ringMint, ringTeal, ringCyan, ringSage, ringLime;
-    private ImageView checkMint, checkTeal, checkCyan, checkSage, checkLime;
 
     // In-memory cache of serialized backup payload awaiting SAF write callback
     private String pendingExportJson = null;
@@ -100,7 +94,6 @@ public class BackupActivity extends AppCompatActivity {
 
         database = AppDatabase.getInstance(this);
         initViews();
-        setupThemeSelector();
         setupListeners();
         loadLocalDatabaseStats();
 
@@ -126,7 +119,6 @@ public class BackupActivity extends AppCompatActivity {
         tvCountClasses = findViewById(R.id.tv_count_classes);
         tvCountAttendance = findViewById(R.id.tv_count_attendance);
         tvDbStatsHeader = findViewById(R.id.tv_db_stats_header);
-        tvThemeAppliedHint = findViewById(R.id.tv_theme_applied_hint);
         rgBackupOptions = findViewById(R.id.rg_backup_options);
         rbFullBackup = findViewById(R.id.rb_full_backup);
         rbNotesAttendance = findViewById(R.id.rb_notes_attendance);
@@ -138,76 +130,6 @@ public class BackupActivity extends AppCompatActivity {
         ivCohortIcon = findViewById(R.id.iv_cohort_icon);
         switchAutoUpdate = findViewById(R.id.switch_auto_update);
         btnCheckUpdatesManual = findViewById(R.id.btn_check_updates_manual);
-
-        frameMint = findViewById(R.id.frame_color_mint);
-        frameTeal = findViewById(R.id.frame_color_teal);
-        frameCyan = findViewById(R.id.frame_color_cyan);
-        frameSage = findViewById(R.id.frame_color_sage);
-        frameLime = findViewById(R.id.frame_color_lime);
-
-        ringMint = findViewById(R.id.ring_color_mint);
-        ringTeal = findViewById(R.id.ring_color_teal);
-        ringCyan = findViewById(R.id.ring_color_cyan);
-        ringSage = findViewById(R.id.ring_color_sage);
-        ringLime = findViewById(R.id.ring_color_lime);
-
-        checkMint = findViewById(R.id.check_color_mint);
-        checkTeal = findViewById(R.id.check_color_teal);
-        checkCyan = findViewById(R.id.check_color_cyan);
-        checkSage = findViewById(R.id.check_color_sage);
-        checkLime = findViewById(R.id.check_color_lime);
-    }
-
-    private void setupThemeSelector() {
-        updateThemeSelectionIndicators(ThemeHelper.getAccentColorHex(this));
-
-        if (frameMint != null) {
-            frameMint.setOnClickListener(v -> selectThemeColor(ThemeHelper.COLOR_MINT_DEFAULT));
-        }
-        if (frameTeal != null) {
-            frameTeal.setOnClickListener(v -> selectThemeColor(ThemeHelper.COLOR_NEON_TEAL));
-        }
-        if (frameCyan != null) {
-            frameCyan.setOnClickListener(v -> selectThemeColor(ThemeHelper.COLOR_CYAN_BLUE));
-        }
-        if (frameSage != null) {
-            frameSage.setOnClickListener(v -> selectThemeColor(ThemeHelper.COLOR_SAGE_GREEN));
-        }
-        if (frameLime != null) {
-            frameLime.setOnClickListener(v -> selectThemeColor(ThemeHelper.COLOR_ELECTRIC_LIME));
-        }
-    }
-
-    private void selectThemeColor(String hexColor) {
-        ThemeHelper.setAccentColor(this, hexColor);
-        int newColor = ThemeHelper.getAccentColor(this);
-        updateThemeSelectionIndicators(hexColor);
-        applyDynamicTheme(newColor);
-        Toast.makeText(this, "Theme accent updated", Toast.LENGTH_SHORT).show();
-    }
-
-    private void updateThemeSelectionIndicators(String selectedHex) {
-        String hex = (selectedHex != null) ? selectedHex.toLowerCase(Locale.ROOT) : ThemeHelper.COLOR_MINT_DEFAULT;
-        boolean isMint = hex.equalsIgnoreCase(ThemeHelper.COLOR_MINT_DEFAULT);
-        boolean isTeal = hex.equalsIgnoreCase(ThemeHelper.COLOR_NEON_TEAL);
-        boolean isCyan = hex.equalsIgnoreCase(ThemeHelper.COLOR_CYAN_BLUE);
-        boolean isSage = hex.equalsIgnoreCase(ThemeHelper.COLOR_SAGE_GREEN);
-        boolean isLime = hex.equalsIgnoreCase(ThemeHelper.COLOR_ELECTRIC_LIME);
-
-        if (ringMint != null) ringMint.setVisibility(isMint ? View.VISIBLE : View.GONE);
-        if (checkMint != null) checkMint.setVisibility(isMint ? View.VISIBLE : View.GONE);
-
-        if (ringTeal != null) ringTeal.setVisibility(isTeal ? View.VISIBLE : View.GONE);
-        if (checkTeal != null) checkTeal.setVisibility(isTeal ? View.VISIBLE : View.GONE);
-
-        if (ringCyan != null) ringCyan.setVisibility(isCyan ? View.VISIBLE : View.GONE);
-        if (checkCyan != null) checkCyan.setVisibility(isCyan ? View.VISIBLE : View.GONE);
-
-        if (ringSage != null) ringSage.setVisibility(isSage ? View.VISIBLE : View.GONE);
-        if (checkSage != null) checkSage.setVisibility(isSage ? View.VISIBLE : View.GONE);
-
-        if (ringLime != null) ringLime.setVisibility(isLime ? View.VISIBLE : View.GONE);
-        if (checkLime != null) checkLime.setVisibility(isLime ? View.VISIBLE : View.GONE);
     }
 
     /**

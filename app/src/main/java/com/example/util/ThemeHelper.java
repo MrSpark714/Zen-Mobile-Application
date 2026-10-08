@@ -26,47 +26,33 @@ public class ThemeHelper {
     private static final String PREF_NAME = "zen_theme_preferences";
     private static final String KEY_SELECTED_ACCENT = "selected_accent_color";
 
-    // Supported palette
+    // Default single accent color
     public static final String COLOR_MINT_DEFAULT = "#a7ff67";
-    public static final String COLOR_NEON_TEAL = "#00f6ac";
-    public static final String COLOR_CYAN_BLUE = "#07B7DC";
-    public static final String COLOR_SAGE_GREEN = "#BDD0B8";
-    public static final String COLOR_ELECTRIC_LIME = "#D0FF00";
+    public static final String COLOR_DEFAULT = COLOR_MINT_DEFAULT;
 
     public static final String[] PALETTE = {
-            COLOR_MINT_DEFAULT,
-            COLOR_NEON_TEAL,
-            COLOR_CYAN_BLUE,
-            COLOR_SAGE_GREEN,
-            COLOR_ELECTRIC_LIME
+            COLOR_DEFAULT
     };
 
     /**
-     * Retrieves the currently active accent color from SharedPreferences as an integer.
+     * Retrieves the default accent color as an integer.
      */
     public static int getAccentColor(Context context) {
-        String hex = getAccentColorHex(context);
-        try {
-            return Color.parseColor(hex);
-        } catch (Exception e) {
-            return Color.parseColor(COLOR_MINT_DEFAULT);
-        }
+        return Color.parseColor(COLOR_DEFAULT);
     }
 
     /**
-     * Retrieves the currently active accent color string (HEX) from SharedPreferences.
+     * Retrieves the default accent color string (HEX).
      */
     public static String getAccentColorHex(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return prefs.getString(KEY_SELECTED_ACCENT, COLOR_MINT_DEFAULT);
+        return COLOR_DEFAULT;
     }
 
     /**
-     * Persists the selected accent hex string in SharedPreferences.
+     * No-op: the app uses a single default accent color.
      */
     public static void setAccentColor(Context context, String hexColor) {
-        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        prefs.edit().putString(KEY_SELECTED_ACCENT, hexColor).apply();
+        // App has only one default accent color
     }
 
     /**
