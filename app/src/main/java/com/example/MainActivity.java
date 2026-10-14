@@ -175,6 +175,12 @@ public class MainActivity extends AppCompatActivity implements
         SplashScreen.installSplashScreen(this);
 
         super.onCreate(savedInstanceState);
+
+        // Check if first-launch onboarding is required before inflating the main dashboard
+        if (checkAndLaunchOnboarding()) {
+            return;
+        }
+
         setContentView(R.layout.activity_main);
 
         database = AppDatabase.getInstance(this);
@@ -203,37 +209,27 @@ public class MainActivity extends AppCompatActivity implements
 
         // Schedule nightly attendance auto-marker via WorkManager (runs around 11:55 PM daily)
         com.example.worker.DailyAttendanceWorker.scheduleDailyAutoMarker(this);
-
-        checkMigrationDialog();
     }
 
     /**
      * Checks if the user is launching the app for the first time following the v9.3
-     * database architecture migration. If so, prompts the user to import their legacy backup.
+     * database architecture migration. If so, redirects to the dedicated OnboardingActivity.
+     *
+     * @return true if onboarding was launched and MainActivity should terminate.
      */
-    private void checkMigrationDialog() {
+    private boolean checkAndLaunchOnboarding() {
         SharedPreferences prefs = getSharedPreferences("zen_prefs", Context.MODE_PRIVATE);
         SharedPreferences defaultPrefs = android.preference.PreferenceManager.getDefaultSharedPreferences(this);
         boolean isFirstLaunch = prefs.getBoolean("is_first_launch_v9_3_migration", true)
                 && defaultPrefs.getBoolean("is_first_launch_v9_3_migration", true);
 
         if (isFirstLaunch) {
-            new MaterialAlertDialogBuilder(this)
-                    .setTitle("Welcome to the New ZEN!")
-                    .setMessage("We have completely upgraded the database architecture to prevent future data loss. If you created a backup in the older version, please import it now using the Smart Import feature.")
-                    .setPositiveButton("Import Data", (dialog, which) -> {
-                        prefs.edit().putBoolean("is_first_launch_v9_3_migration", false).apply();
-                        defaultPrefs.edit().putBoolean("is_first_launch_v9_3_migration", false).apply();
-                        Intent intent = new Intent(MainActivity.this, BackupActivity.class);
-                        startActivity(intent);
-                    })
-                    .setNegativeButton("Start Fresh", (dialog, which) -> {
-                        prefs.edit().putBoolean("is_first_launch_v9_3_migration", false).apply();
-                        defaultPrefs.edit().putBoolean("is_first_launch_v9_3_migration", false).apply();
-                        dialog.dismiss();
-                    })
-                    .show();
+            Intent intent = new Intent(this, OnboardingActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
         }
+        return false;
     }
 
     @Override

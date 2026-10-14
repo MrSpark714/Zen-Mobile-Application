@@ -1,0 +1,6 @@
+{
+  "summary": "Implementation plan for converting the 'Welcome to the New ZEN!' popup into a dedicated full-screen OnboardingActivity. Covers navigation flow, visual design, stacked action buttons, and preference handling.",
+  "updatedAt": "2026-10-14T13:40:58.035568505Z",
+  "requestFeedback": true,
+  "userFacing": true
+}

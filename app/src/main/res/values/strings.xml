@@ -23,5 +23,9 @@
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
+    <string name="onboarding_welcome_title">Welcome to the New ZEN!</string>
+    <string name="onboarding_welcome_desc">We have completely upgraded the database architecture to prevent future data loss. If you created a backup in the older version, please import it now using the Smart Import feature.</string>
+    <string name="onboarding_btn_import">Import Data</string>
+    <string name="onboarding_btn_fresh">Start Fresh</string>
 </resources>
 
