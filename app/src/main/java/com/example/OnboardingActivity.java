@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.util.SecureProfileStore;
 import com.google.android.material.button.MaterialButton;
 
 /**
@@ -59,12 +60,18 @@ public class OnboardingActivity extends AppCompatActivity {
 
     /**
      * User chose to start fresh with a clean database.
-     * Transitions straight to the primary MainActivity dashboard.
+     * Routes to ProfileSetupActivity on first launch (skippable) or MainActivity if already configured.
      */
     private void handleStartFresh() {
         markOnboardingCompleted();
-        Intent mainIntent = new Intent(this, MainActivity.class);
-        startActivity(mainIntent);
+        if (!SecureProfileStore.hasSeenProfileSetup(this)) {
+            Intent profileIntent = new Intent(this, ProfileSetupActivity.class);
+            profileIntent.putExtra(ProfileSetupActivity.EXTRA_IS_FIRST_LAUNCH, true);
+            startActivity(profileIntent);
+        } else {
+            Intent mainIntent = new Intent(this, MainActivity.class);
+            startActivity(mainIntent);
+        }
         finish();
     }
 }

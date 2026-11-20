@@ -1,0 +1,218 @@
+<!DOCTYPE html><html class="dark" lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><meta content="mobile_tab" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "on-secondary-fixed": "#001e2c", "primary-container": "#bef264", "on-surface-variant": "#c3c9b2", "surface-container-lowest": "#0e0e0e", "background": "#131313", "surface": "#131313", "on-primary-fixed": "#131f00", "surface-container": "#201f1f", "tertiary-fixed": "#f0dbff", "error": "#ffb4ab", "primary-fixed-dim": "#a4d64c", "on-error": "#690005", "on-tertiary": "#490081", "on-background": "#e5e2e1", "on-tertiary-container": "#8046ba", "surface-dim": "#131313", "on-primary-fixed-variant": "#354e00", "surface-container-high": "#2a2a2a", "surface-bright": "#393939", "on-tertiary-fixed-variant": "#62259b", "secondary-fixed": "#c4e7ff", "surface-container-highest": "#353534", "on-primary-container": "#4b6e00", "inverse-primary": "#476800", "tertiary-fixed-dim": "#ddb8ff", "secondary-container": "#00a6e0", "surface-container-low": "#1c1b1b", "on-secondary-fixed-variant": "#004c69", "on-primary": "#233600", "primary": "#fefff1", "error-container": "#93000a", "on-error-container": "#ffdad6", "secondary-fixed-dim": "#7bd0ff", "inverse-surface": "#e5e2e1", "surface-tint": "#a4d64c", "outline": "#8d937e", "secondary": "#7bd0ff", "on-secondary-container": "#00374d", "on-secondary": "#00354a", "on-surface": "#e5e2e1", "inverse-on-surface": "#313030", "surface-variant": "#353534", "primary-fixed": "#bff365", "on-tertiary-fixed": "#2c0051", "tertiary-container": "#efd9ff", "outline-variant": "#434938", "tertiary": "#fffdff" }, borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" }, spacing: { "margin": "1rem", "space-md": "1rem", "gutter": "1rem", "space-lg": "1.5rem", "space-xl": "2rem", "space-sm": "0.5rem", "space-xs": "0.25rem" }, fontFamily: { "body-lg": ["Inter"], "label-md": ["Inter"], "label-sm": ["Inter"], "label-lg": ["Inter"], "title-sm": ["Inter"], "headline-md": ["Inter"], "headline-lg": ["Inter"], "body-md": ["Inter"], "headline-sm": ["Inter"], "body-sm": ["Inter"], "title-md": ["Inter"] }, fontSize: { "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "600" }], "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "700" }], "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "700" }], "title-sm": ["14px", { "lineHeight": "20px", "fontWeight": "600" }], "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }], "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }], "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "600" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-surface text-on-surface font-body-md text-body-md flex flex-col min-h-screen selection:bg-primary-container selection:text-on-primary-fixed"><header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.4)]"><div class="h-16 px-margin flex items-center justify-between"><div class="flex items-center gap-space-sm"><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface">ZEN</span><div class="flex items-center justify-center p-space-xs text-on-surface-variant/80" title="Offline storage active"><span class="material-symbols-outlined text-[18px]">cloud_off</span></div></div><div class="flex items-center gap-space-xs px-space-sm py-space-xs rounded-full bg-surface-container-high"><span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></span><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">LOCAL</span></div></div><div class="flex items-center gap-space-xs"><a aria-label="Settings" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" data-path="app-settings" href="#"><span class="material-symbols-outlined text-[22px]">settings</span></a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-space-xs"></div></div></div></header><main class="flex flex-col relative w-full px-margin pt-16 pb-28 bg-surface min-h-screen"><div class="flex flex-col w-full pb-8 select-none"><!-- Top Greeting & Context Ribbon -->
+<section class="flex flex-col gap-space-sm pt-space-xs mb-space-md">
+<div class="flex items-start justify-between">
+<div>
+<p class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant flex items-center gap-1.5">
+<span>Monday, Nov 16</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="text-primary-container font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">offline_pin</span> Local Synced
+        </span>
+</p>
+<h1 class="font-headline-md text-headline-md font-bold tracking-tight text-on-surface mt-0.5">Good Morning, Alex</h1>
+</div>
+<div class="p-2 rounded-2xl bg-surface-container-high text-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">electric_bolt</span>
+</div>
+</div>
+<!-- Quick Glance Chips Row (Snippet 1) -->
+<div class="flex items-center gap-space-sm overflow-x-auto py-0.5 no-scrollbar">
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container text-on-surface">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span class="font-label-md text-label-md font-medium">11 Enrolled Courses</span>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-high text-primary-container">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="font-label-md text-label-md font-semibold">3 Scheduled Today</span>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant">
+<span class="material-symbols-outlined text-[15px]">timer</span>
+<span class="font-label-md text-label-md">Next: 08:30 AM</span>
+</div>
+</div>
+</section>
+<!-- Hero Card: Next Class (Snippet 2/3 style) -->
+<section class="flex flex-col gap-2.5 mb-space-lg">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Immediate Focus</span>
+</div>
+<div class="flex flex-col p-4 rounded-3xl bg-surface-container-high shadow-lg transition-all duration-200">
+<div class="flex items-start justify-between mb-3">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="font-title-sm text-title-sm font-bold text-on-surface tracking-tight">Computer Architecture</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary/15 text-secondary font-label-sm text-label-sm tracking-wide">THEORY</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-primary-container">schedule</span> 08:30 - 10:20 AM
+          </span>
+<span>•</span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">room</span> Room # A3 (2 Cr)
+          </span>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-primary-container/20 text-primary-container font-label-sm text-label-sm font-bold">NEXT UP</span>
+</div>
+<!-- Compact Quick Attendance Pill Toggle -->
+<div class="flex items-center justify-between bg-surface-container-lowest p-1 rounded-2xl gap-1">
+<button class="flex-1 py-2 rounded-xl font-label-md text-label-md flex items-center justify-center gap-1.5 transition-all text-on-surface-variant hover:text-on-surface" onclick="setAttendance(this, 'present')" type="button">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Present</span>
+</button>
+<button class="flex-1 py-2 rounded-xl font-label-md text-label-md flex items-center justify-center gap-1.5 transition-all text-on-surface-variant hover:text-on-surface" onclick="setAttendance(this, 'absent')" type="button">
+<span class="material-symbols-outlined text-[16px]">cancel</span>
+<span>Absent</span>
+</button>
+<button class="flex-1 py-2 rounded-xl font-label-md text-label-md flex items-center justify-center gap-1.5 transition-all bg-surface-container-high text-on-surface font-semibold shadow-sm" onclick="setAttendance(this, 'holiday')" type="button">
+<span class="material-symbols-outlined text-[16px] text-secondary">beach_access</span>
+<span>Holiday</span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2 text-center">Marked as <strong class="text-secondary font-semibold">Holiday</strong> (Faculty off-duty)</p>
+</div>
+</section>
+<!-- Monday Schedule Section (Snippet 2) -->
+<section class="flex flex-col gap-3 mb-space-lg">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<h2 class="font-title-md text-title-md font-bold text-on-surface tracking-tight">Monday Schedule</h2>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">3 classes</span>
+</div>
+
+</div>
+<div class="flex flex-col gap-2">
+<!-- Class 2: Operating System -->
+<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container hover:bg-surface-container-high transition-colors">
+<div class="flex flex-col gap-0.5">
+<div class="flex items-center gap-2">
+<span class="font-title-sm text-title-sm font-semibold text-on-surface">Operating System</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary/15 text-secondary font-label-sm text-label-sm">THEORY</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1.5 mt-0.5">
+<span>11:50 AM - 01:30 PM</span>
+<span>•</span>
+<span>Room # A1 (2 Cr)</span>
+</p>
+</div>
+<span class="px-2 py-1 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">In 3h</span>
+</div>
+<!-- Class 3: Intro to HCI -->
+<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container hover:bg-surface-container-high transition-colors">
+<div class="flex flex-col gap-0.5">
+<div class="flex items-center gap-2">
+<span class="font-title-sm text-title-sm font-semibold text-on-surface">Intro to HCI</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary/15 text-secondary font-label-sm text-label-sm">THEORY</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1.5 mt-0.5">
+<span>03:10 PM - 04:00 PM</span>
+<span>•</span>
+<span>Room # B9 (1 Cr)</span>
+</p>
+</div>
+<span class="px-2 py-1 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">In 6h</span>
+</div>
+</div>
+</section>
+<!-- Section: Calm Glance (Standing & Priority Work) -->
+<section class="flex flex-col gap-3 mb-20">
+<div class="flex items-center justify-between">
+<h2 class="font-title-md text-title-md font-bold text-on-surface tracking-tight">Quick Overview</h2>
+<a class="font-label-sm text-label-sm text-primary-container font-semibold hover:underline" href="#">View Tasks</a>
+</div>
+<!-- 2-Card Clean Glance Row -->
+<div class="grid grid-cols-1 gap-space-sm">
+<!-- Overall Standing Minimal Card -->
+<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary-container/20 text-primary-container flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[20px]">verified</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-baseline gap-1.5">
+<span class="font-title-md text-title-md font-bold text-on-surface">88.4% Overall</span>
+<span class="font-label-sm text-label-sm text-primary-container font-medium">Good Standing</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">All attendance thresholds met</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant/60 text-[20px]">chevron_right</span>
+</div>
+<!-- Priority Task Minimal Card -->
+<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container group cursor-pointer" onclick="toggleTask(this)">
+<div class="flex items-center gap-3">
+<button class="w-6 h-6 rounded-lg bg-surface-container-highest flex items-center justify-center text-transparent transition-all group-hover:bg-primary-container/20 task-checkbox" type="button">
+<span class="material-symbols-outlined text-[16px] text-on-primary-fixed">check</span>
+</button>
+<div class="flex flex-col">
+<p class="font-title-sm text-title-sm font-semibold text-on-surface truncate task-title">Complete HCI Diagram Assignment</p>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Due Today • 5:00 PM</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant/60 text-[20px]">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Tactile Floating Action Button (FAB) -->
+<div class="fixed right-5 bottom-24 z-40">
+
+</div></div>
+<script>
+  function setAttendance(btn, type) {
+    const parent = btn.parentElement;
+    const buttons = parent.querySelectorAll('button');
+    
+    buttons.forEach(b => {
+      b.className = 'flex-1 py-2.5 rounded-xl font-label-md text-label-md flex items-center justify-center gap-1.5 transition-all text-on-surface-variant hover:text-on-surface';
+      const icon = b.querySelector('.material-symbols-outlined');
+      if (icon) icon.className = 'material-symbols-outlined text-[16px]';
+    });
+
+    if (type === 'present') {
+      btn.className = 'flex-1 py-2.5 rounded-xl font-label-md text-label-md flex items-center justify-center gap-1.5 transition-all bg-primary-container text-on-primary-fixed font-bold shadow-md';
+      btn.querySelector('.material-symbols-outlined').className = 'material-symbols-outlined text-[16px] text-on-primary-fixed';
+    } else if (type === 'absent') {
+      btn.className = 'flex-1 py-2.5 rounded-xl font-label-md text-label-md flex items-center justify-center gap-1.5 transition-all bg-error-container text-on-error-container font-bold shadow-md';
+      btn.querySelector('.material-symbols-outlined').className = 'material-symbols-outlined text-[16px] text-on-error-container';
+    } else if (type === 'holiday') {
+      btn.className = 'flex-1 py-2.5 rounded-xl font-label-md text-label-md flex items-center justify-center gap-1.5 transition-all bg-surface-container-high text-on-surface font-semibold shadow-sm';
+      btn.querySelector('.material-symbols-outlined').className = 'material-symbols-outlined text-[16px] text-secondary';
+    }
+  }
+
+  function toggleTask(container) {
+    const checkbox = container.querySelector('.task-checkbox');
+    const title = container.querySelector('.task-title');
+    const isDone = checkbox.classList.contains('bg-primary-container');
+
+    if (isDone) {
+      checkbox.classList.remove('bg-primary-container', 'text-on-primary-fixed');
+      checkbox.classList.add('bg-surface-container-highest', 'text-transparent');
+      title.classList.remove('line-through', 'text-on-surface-variant');
+      title.classList.add('text-on-surface');
+    } else {
+      checkbox.classList.remove('bg-surface-container-highest', 'text-transparent');
+      checkbox.classList.add('bg-primary-container', 'text-on-primary-fixed');
+      title.classList.add('line-through', 'text-on-surface-variant');
+      title.classList.remove('text-on-surface');
+    }
+  }
+
+  function quickLogAction() {
+    // Subtle tactile notification ripple or feedback
+    const fab = document.querySelector('button[aria-label="Log quick entry"]');
+    fab.classList.add('rotate-45');
+    setTimeout(() => {
+      fab.classList.remove('rotate-45');
+    }, 200);
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe pointer-events-none" data-active-classes="bg-primary-container text-on-primary-fixed"><div class="px-margin pb-space-sm pt-space-xs"></div></nav>
+
+</body></html>

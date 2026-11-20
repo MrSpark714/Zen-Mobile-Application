@@ -26,8 +26,8 @@ public class ThemeHelper {
     private static final String PREF_NAME = "zen_theme_preferences";
     private static final String KEY_SELECTED_ACCENT = "selected_accent_color";
 
-    // Default single accent color
-    public static final String COLOR_MINT_DEFAULT = "#a7ff67";
+    // Default single accent color (Zen Dark Minimalist primary-container)
+    public static final String COLOR_MINT_DEFAULT = "#BEF264";
     public static final String COLOR_DEFAULT = COLOR_MINT_DEFAULT;
 
     public static final String[] PALETTE = {
@@ -126,7 +126,7 @@ public class ThemeHelper {
     public static int getOnAccentColor(int color) {
         // Luminance calculation
         double luminance = (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255;
-        return (luminance > 0.5) ? Color.parseColor("#121212") : Color.WHITE;
+        return (luminance > 0.5) ? Color.parseColor("#131F00") : Color.WHITE;
     }
 
     /**
@@ -245,5 +245,40 @@ public class ThemeHelper {
                 Color.parseColor("#71717A")
         };
         return new ColorStateList(states, colors);
+    }
+
+    public static boolean isHapticEnabled(Context context) {
+        if (context == null) return true;
+        SharedPreferences prefs = context.getSharedPreferences("zen_prefs", Context.MODE_PRIVATE);
+        return prefs.getBoolean("haptic_feedback_enabled", true);
+    }
+
+    public static void setHapticEnabled(Context context, boolean enabled) {
+        if (context == null) return;
+        context.getSharedPreferences("zen_prefs", Context.MODE_PRIVATE)
+                .edit()
+                .putBoolean("haptic_feedback_enabled", enabled)
+                .apply();
+    }
+
+    public static void performHaptic(View view) {
+        if (view == null) return;
+        if (isHapticEnabled(view.getContext())) {
+            view.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY);
+        }
+    }
+
+    public static long getLastBackupMillis(Context context) {
+        if (context == null) return 0L;
+        return context.getSharedPreferences("zen_prefs", Context.MODE_PRIVATE)
+                .getLong("last_backup_timestamp_ms", 0L);
+    }
+
+    public static void recordLastBackupNow(Context context) {
+        if (context == null) return;
+        context.getSharedPreferences("zen_prefs", Context.MODE_PRIVATE)
+                .edit()
+                .putLong("last_backup_timestamp_ms", System.currentTimeMillis())
+                .apply();
     }
 }

@@ -10,485 +10,575 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:overScrollMode="never">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingStart="16dp"
-            android:paddingTop="13dp"
+            android:paddingTop="12dp"
             android:paddingEnd="16dp"
-            android:paddingBottom="33dp">
+            android:paddingBottom="32dp">
 
             <!-- Top Header Bar -->
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-                <ImageView
+                <FrameLayout
                     android:id="@+id/btn_back"
-                    android:layout_width="33dp"
-                    android:layout_height="33dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="-4dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
                     android:contentDescription="Back"
-                    android:padding="7dp"
-                    android:src="@drawable/ic_back"
-                    app:tint="@color/zen_text_primary" />
+                    android:focusable="true">
+
+                    <FrameLayout
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/bg_circle_surface_high">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="Back"
+                            android:src="@drawable/ic_back"
+                            app:tint="@color/zen_text_primary" />
+                    </FrameLayout>
+                </FrameLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="10dp"
-                    android:layout_toEndOf="@id/btn_back"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
-                        android:letterSpacing="0.08"
-                        android:text="SETTINGS &amp; DATA"
+                        android:fontFamily="@font/inter"
+                        android:includeFontPadding="false"
+                        android:letterSpacing="-0.02"
+                        android:text="Settings &amp; Storage"
                         android:textColor="@color/zen_text_primary"
-                        android:textSize="15sp" />
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif"
-                        android:letterSpacing="0.03"
-                        android:text="Preferences, Updates &amp; Offline Sync"
-                        android:textColor="@color/zen_text_secondary"
-                        android:textSize="10sp" />
+                        android:layout_marginTop="2dp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:text="Local Data, Snapshots &amp; Security"
+                        android:textColor="@color/zen_text_tertiary"
+                        android:textSize="11sp" />
                 </LinearLayout>
-            </RelativeLayout>
+
+                <!-- 100% Offline Vault Pill -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_pill_recommended"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingTop="6dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="6dp">
+
+                    <View
+                        android:layout_width="6dp"
+                        android:layout_height="6dp"
+                        android:background="@drawable/bg_dot_lime" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:fontFamily="@font/inter"
+                        android:includeFontPadding="false"
+                        android:text="100% Offline Vault"
+                        android:textColor="@color/zen_accent"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
 
             <!-- Loading / Progress Indicator -->
             <com.google.android.material.progressindicator.LinearProgressIndicator
                 android:id="@+id/progress_indicator"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="13dp"
+                android:layout_marginTop="10dp"
                 android:indeterminate="true"
                 android:visibility="gone"
                 app:indicatorColor="@color/zen_accent"
                 app:trackColor="@color/zen_surface_highlight" />
 
-
-
-            <!-- SECTION: APP UPDATES -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:fontFamily="sans-serif-medium"
-                android:letterSpacing="0.1"
-                android:text="APP UPDATES"
-                android:textAllCaps="true"
-                android:textColor="@color/zen_text_secondary"
-                android:textSize="10sp" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_auto_updates"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:cardBackgroundColor="@color/zen_surface"
-                app:cardCornerRadius="13dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/zen_border"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="13dp">
-
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switch_auto_update"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="Enable Auto-Update Checks"
-                        android:textColor="@color/zen_text_primary"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:id="@+id/tv_auto_update_disclaimer"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="7dp"
-                        android:fontFamily="sans-serif"
-                        android:lineSpacingExtra="2dp"
-                        android:text="(Recommend to &apos;ON&apos;) This option does not send any of your personal information to any server or cloud storage."
-                        android:textColor="@color/zen_text_secondary"
-                        android:textSize="10sp" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_check_updates_manual"
-                        style="@style/Widget.Material3.Button.TextButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="7dp"
-                        android:fontFamily="sans-serif-medium"
-                        android:letterSpacing="0.04"
-                        android:paddingStart="0dp"
-                        android:text="Check for updates now"
-                        android:textColor="@color/zen_accent"
-                        android:textSize="10sp"
-                        app:icon="@drawable/ic_download"
-                        app:iconPadding="5dp"
-                        app:iconSize="13dp"
-                        app:iconTint="@color/zen_accent" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- SECTION 2: DATABASE & BACKUP -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:fontFamily="sans-serif-medium"
-                android:letterSpacing="0.1"
-                android:text="CURRENT LOCAL DATABASE"
-                android:textColor="@color/zen_text_secondary"
-                android:textSize="10sp" />
-
-            <!-- Database Summary Stats Card -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:cardBackgroundColor="@color/zen_surface"
-                app:cardCornerRadius="13dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/zen_border"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="13dp">
-
-                    <TextView
-                        android:id="@+id/tv_db_stats_header"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
-                        android:letterSpacing="0.12"
-                        android:text="LOCAL STORAGE SUMMARY"
-                        android:textAllCaps="true"
-                        android:textColor="@color/zen_accent"
-                        android:textSize="9sp" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:gravity="center"
-                        android:orientation="horizontal"
-                        android:weightSum="4">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/tv_count_notes"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="sans-serif-bold"
-                                android:text="0"
-                                android:textColor="@color/zen_text_primary"
-                                android:textSize="15sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:fontFamily="sans-serif"
-                                android:text="Notes"
-                                android:textColor="@color/zen_text_secondary"
-                                android:textSize="9sp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/tv_count_tasks"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="sans-serif-bold"
-                                android:text="0"
-                                android:textColor="@color/zen_text_primary"
-                                android:textSize="15sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:fontFamily="sans-serif"
-                                android:text="Tasks"
-                                android:textColor="@color/zen_text_secondary"
-                                android:textSize="9sp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/tv_count_classes"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="sans-serif-bold"
-                                android:text="0"
-                                android:textColor="@color/zen_text_primary"
-                                android:textSize="15sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:fontFamily="sans-serif"
-                                android:text="Classes"
-                                android:textColor="@color/zen_text_secondary"
-                                android:textSize="9sp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/tv_count_attendance"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="sans-serif-bold"
-                                android:text="0"
-                                android:textColor="@color/zen_text_primary"
-                                android:textSize="15sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:fontFamily="sans-serif"
-                                android:text="Logs"
-                                android:textColor="@color/zen_text_secondary"
-                                android:textSize="9sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Backup Scope & Options Section -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:fontFamily="sans-serif-medium"
-                android:letterSpacing="0.1"
-                android:text="BACKUP SCOPE"
-                android:textColor="@color/zen_text_secondary"
-                android:textSize="10sp" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:cardBackgroundColor="@color/zen_surface"
-                app:cardCornerRadius="13dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/zen_border"
-                app:strokeWidth="1dp">
-
-                <RadioGroup
-                    android:id="@+id/rg_backup_options"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="10dp">
-
-                    <!-- Option 1: Mode A - Full Backup -->
-                    <RadioButton
-                        android:id="@+id/rb_full_backup"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:buttonTint="@color/zen_accent"
-                        android:checked="true"
-                        android:fontFamily="sans-serif-medium"
-                        android:padding="5dp"
-                        android:text="Full Backup"
-                        android:textColor="@color/zen_text_primary"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="32dp"
-                        android:layout_marginTop="-2dp"
-                        android:layout_marginBottom="8dp"
-                        android:fontFamily="sans-serif"
-                        android:text="Serializes Notes, Tasks, Class Schedules &amp; Attendance History"
-                        android:textColor="@color/zen_text_secondary"
-                        android:textSize="10sp" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="32dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="7dp"
-                        android:background="@color/zen_divider" />
-
-                    <!-- Option 2: Mode B - History Only Backup -->
-                    <RadioButton
-                        android:id="@+id/rb_attendance_only"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:buttonTint="@color/zen_accent"
-                        android:fontFamily="sans-serif-medium"
-                        android:padding="5dp"
-                        android:text="History Only Backup"
-                        android:textColor="@color/zen_text_primary"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="32dp"
-                        android:layout_marginTop="-2dp"
-                        android:layout_marginBottom="8dp"
-                        android:fontFamily="sans-serif"
-                        android:text="Strictly serializes Attendance History ledger (leaves schedules, notes, and tasks empty to avoid timetable overwrites)"
-                        android:textColor="@color/zen_text_secondary"
-                        android:textSize="10sp" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="32dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="7dp"
-                        android:background="@color/zen_divider" />
-
-                    <!-- Option 3: Notes & Attendance -->
-                    <RadioButton
-                        android:id="@+id/rb_notes_attendance"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:buttonTint="@color/zen_accent"
-                        android:fontFamily="sans-serif-medium"
-                        android:padding="5dp"
-                        android:text="Notes &amp; Attendance"
-                        android:textColor="@color/zen_text_primary"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="32dp"
-                        android:layout_marginTop="-2dp"
-                        android:fontFamily="sans-serif"
-                        android:text="Includes Notes, Class Schedules &amp; Attendance History (Excludes Tasks)"
-                        android:textColor="@color/zen_text_secondary"
-                        android:textSize="10sp" />
-                </RadioGroup>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Export and Import Action Buttons -->
+            <!-- SECTION 1: LOCAL STORAGE HEALTH -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="13dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_export_backup"
+                <TextView
+                    android:id="@+id/tv_db_stats_header"
                     android:layout_width="0dp"
-                    android:layout_height="43dp"
-                    android:layout_marginEnd="7dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:backgroundTint="@color/zen_accent"
-                    android:fontFamily="sans-serif-bold"
-                    android:letterSpacing="0.05"
-                    android:text="Export Backup"
-                    android:textColor="@color/zen_on_accent"
+                    android:fontFamily="@font/inter"
+                    android:includeFontPadding="false"
+                    android:letterSpacing="0.08"
+                    android:text="LOCAL STORAGE HEALTH"
+                    android:textAllCaps="true"
+                    android:textColor="@color/zen_text_secondary"
                     android:textSize="11sp"
-                    app:cornerRadius="11dp"
-                    app:icon="@drawable/ic_upload"
-                    app:iconGravity="textStart"
-                    app:iconPadding="7dp"
-                    app:iconTint="@color/zen_on_accent" />
+                    android:textStyle="bold" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_import_backup"
-                    android:layout_width="0dp"
-                    android:layout_height="43dp"
-                    android:layout_marginStart="7dp"
-                    android:layout_weight="1"
-                    android:backgroundTint="@color/zen_surface"
-                    android:fontFamily="sans-serif-bold"
-                    android:letterSpacing="0.05"
-                    android:text="Import Backup"
-                    android:textColor="@color/zen_text_primary"
-                    android:textSize="11sp"
-                    app:cornerRadius="11dp"
-                    app:icon="@drawable/ic_download"
-                    app:iconGravity="textStart"
-                    app:iconPadding="7dp"
-                    app:iconTint="@color/zen_text_primary"
-                    app:strokeColor="@color/zen_border"
-                    app:strokeWidth="1dp" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_pill_recommended"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="4dp">
+
+                    <ImageView
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:contentDescription="Optimal"
+                        android:src="@drawable/ic_check"
+                        app:tint="@color/zen_accent" />
+
+                    <TextView
+                        android:id="@+id/tv_health_status_pill"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:fontFamily="@font/inter"
+                        android:includeFontPadding="false"
+                        android:text="Status: Optimal"
+                        android:textColor="@color/zen_accent"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
             </LinearLayout>
 
-            <!-- Highlighted Cohort Sharing Section -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="23dp"
-                android:fontFamily="sans-serif-medium"
-                android:letterSpacing="0.1"
-                android:text="COHORT SHARING"
-                android:textColor="@color/zen_text_secondary"
-                android:textSize="10sp" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_cohort_sharing"
+            <!-- Local Storage Hero Card -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:cardBackgroundColor="@color/zen_accent_container"
-                app:cardCornerRadius="15dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/zen_accent"
-                app:strokeWidth="1.5dp">
+                android:background="@drawable/bg_card_hero"
+                android:orientation="vertical"
+                android:padding="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="15dp">
+                    android:gravity="top"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="bottom"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tv_storage_size_value"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/inter"
+                                android:fontFeatureSettings="tnum"
+                                android:includeFontPadding="false"
+                                android:textColor="@color/zen_text_primary"
+                                android:textSize="26sp"
+                                android:textStyle="bold"
+                                tools:text="4.2" />
+
+                            <TextView
+                                android:id="@+id/tv_storage_size_unit"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:layout_marginBottom="3dp"
+                                android:fontFamily="@font/inter"
+                                android:includeFontPadding="false"
+                                android:letterSpacing="0.04"
+                                android:textColor="@color/zen_text_secondary"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                tools:text="KB USED" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:text="Encrypted SQLite DB in sandbox storage"
+                            android:textColor="@color/zen_text_tertiary"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_items_indexed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter"
+                            android:fontFeatureSettings="tnum"
+                            android:includeFontPadding="false"
+                            android:textColor="@color/zen_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            tools:text="6 Items Indexed" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:text="Zero Cloud Telemetry"
+                            android:textColor="@color/zen_text_tertiary"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Segmented Storage Proportion Bar -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/bg_pill_highest"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="1dp">
+
+                    <View
+                        android:id="@+id/seg_classes"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="2dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_segment_lime" />
+
+                    <View
+                        android:id="@+id/seg_logs"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="2dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_segment_cyan" />
+
+                    <View
+                        android:id="@+id/seg_tasks"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="2dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_segment_violet" />
+
+                    <View
+                        android:id="@+id/seg_notes"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_segment_zinc" />
+                </LinearLayout>
+
+                <!-- 4 Metric Breakdown Cards -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <!-- Box 1: Classes -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_metric_box"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <View
+                                android:layout_width="6dp"
+                                android:layout_height="6dp"
+                                android:background="@drawable/bg_dot_lime" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:fontFamily="@font/inter"
+                                android:includeFontPadding="false"
+                                android:text="Classes"
+                                android:textColor="@color/zen_text_secondary"
+                                android:textSize="10sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tv_count_classes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:fontFamily="@font/inter"
+                            android:fontFeatureSettings="tnum"
+                            android:includeFontPadding="false"
+                            android:text="0"
+                            android:textColor="@color/zen_text_primary"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Box 2: Logs -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_metric_box"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <View
+                                android:layout_width="6dp"
+                                android:layout_height="6dp"
+                                android:background="@drawable/bg_dot_cyan" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:fontFamily="@font/inter"
+                                android:includeFontPadding="false"
+                                android:text="Logs"
+                                android:textColor="@color/zen_text_secondary"
+                                android:textSize="10sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tv_count_attendance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:fontFamily="@font/inter"
+                            android:fontFeatureSettings="tnum"
+                            android:includeFontPadding="false"
+                            android:text="0"
+                            android:textColor="@color/zen_text_primary"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Box 3: Tasks -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_metric_box"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <View
+                                android:layout_width="6dp"
+                                android:layout_height="6dp"
+                                android:background="@drawable/bg_dot_violet" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:fontFamily="@font/inter"
+                                android:includeFontPadding="false"
+                                android:text="Tasks"
+                                android:textColor="@color/zen_text_secondary"
+                                android:textSize="10sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tv_count_tasks"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:fontFamily="@font/inter"
+                            android:fontFeatureSettings="tnum"
+                            android:includeFontPadding="false"
+                            android:text="0"
+                            android:textColor="@color/zen_text_primary"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Box 4: Notes -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_metric_box"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <View
+                                android:layout_width="6dp"
+                                android:layout_height="6dp"
+                                android:background="@drawable/bg_dot_zinc" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:fontFamily="@font/inter"
+                                android:includeFontPadding="false"
+                                android:text="Notes"
+                                android:textColor="@color/zen_text_secondary"
+                                android:textSize="10sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tv_count_notes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:fontFamily="@font/inter"
+                            android:fontFeatureSettings="tnum"
+                            android:includeFontPadding="false"
+                            android:text="0"
+                            android:textColor="@color/zen_text_primary"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- SECTION 2: BACKUP & SNAPSHOT SCOPE -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/inter"
+                    android:includeFontPadding="false"
+                    android:letterSpacing="0.08"
+                    android:text="BACKUP &amp; SNAPSHOT SCOPE"
+                    android:textAllCaps="true"
+                    android:textColor="@color/zen_text_secondary"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_last_backup_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter"
+                    android:includeFontPadding="false"
+                    android:text="Last backup: Never"
+                    android:textColor="@color/zen_text_tertiary"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <!-- Scope Card 1: Full Vault Snapshot -->
+            <LinearLayout
+                android:id="@+id/card_scope_full"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_card_scope_selected"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="top"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <View
+                    android:id="@+id/radio_scope_full"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginTop="1dp"
+                    android:background="@drawable/bg_radio_selected" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -496,160 +586,399 @@
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
-                        <ImageView
-                            android:id="@+id/iv_cohort_icon"
-                            android:layout_width="23dp"
-                            android:layout_height="23dp"
-                            android:contentDescription="Cohort Sharing"
-                            android:src="@drawable/ic_groups"
-                            app:tint="@color/zen_accent" />
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:text="Full Vault Snapshot"
+                            android:textColor="@color/zen_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:fontFamily="sans-serif-bold"
-                            android:letterSpacing="0.04"
-                            android:text="Share Class Timetable"
-                            android:textColor="@color/zen_text_primary"
-                            android:textSize="13sp" />
+                            android:background="@drawable/bg_pill_recommended"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:letterSpacing="0.06"
+                            android:paddingStart="8dp"
+                            android:paddingTop="3dp"
+                            android:paddingEnd="8dp"
+                            android:paddingBottom="3dp"
+                            android:text="RECOMMENDED"
+                            android:textColor="@color/zen_accent"
+                            android:textSize="9sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="7dp"
-                        android:fontFamily="sans-serif"
+                        android:layout_marginTop="5dp"
+                        android:fontFamily="@font/inter"
+                        android:includeFontPadding="false"
                         android:lineSpacingExtra="2dp"
-                        android:text="Export your weekly schedule as a portable JSON package and share directly via WhatsApp, Telegram, or Email with classmates. Classmates can tap the file to instantly load the timetable."
+                        android:text="Serializes Notes, Tasks, Schedules &amp; Attendance ledger history into a single payload."
                         android:textColor="@color/zen_text_secondary"
-                        android:textSize="10sp" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_share_timetable"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="11dp"
-                        android:backgroundTint="@color/zen_accent"
-                        android:fontFamily="sans-serif-bold"
-                        android:letterSpacing="0.06"
-                        android:text="Share Class Timetable"
-                        android:textColor="@color/zen_on_accent"
-                        android:textSize="11sp"
-                        app:cornerRadius="10dp"
-                        app:icon="@drawable/ic_share"
-                        app:iconGravity="textStart"
-                        app:iconPadding="7dp"
-                        app:iconTint="@color/zen_on_accent" />
+                        android:textSize="11sp" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
 
-            <!-- SECTION: ACTIVITY LOG -->
+            <!-- Scope Card 2: Attendance History Only -->
+            <LinearLayout
+                android:id="@+id/card_scope_attendance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_card_scope_unselected"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="top"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <View
+                    android:id="@+id/radio_scope_attendance"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginTop="1dp"
+                    android:background="@drawable/bg_radio_unselected" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:text="Attendance History Only"
+                            android:textColor="@color/zen_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_scope_attendance_size"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter"
+                            android:fontFeatureSettings="tnum"
+                            android:includeFontPadding="false"
+                            android:text="~1 KB"
+                            android:textColor="@color/zen_text_tertiary"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:fontFamily="@font/inter"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Strictly preserves attendance entries without touching timetables or personal notes."
+                        android:textColor="@color/zen_text_secondary"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Scope Card 3: Notes & Schedules -->
+            <LinearLayout
+                android:id="@+id/card_scope_notes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_card_scope_unselected"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="top"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <View
+                    android:id="@+id/radio_scope_notes"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginTop="1dp"
+                    android:background="@drawable/bg_radio_unselected" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:text="Notes &amp; Schedules"
+                            android:textColor="@color/zen_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_scope_notes_size"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter"
+                            android:fontFeatureSettings="tnum"
+                            android:includeFontPadding="false"
+                            android:text="~2 KB"
+                            android:textColor="@color/zen_text_tertiary"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:fontFamily="@font/inter"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Exports class routines and notebooks while excluding active task checklists."
+                        android:textColor="@color/zen_text_secondary"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Export Vault & Import Vault Action Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_export_backup"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/inter"
+                    android:includeFontPadding="false"
+                    android:stateListAnimator="@null"
+                    android:text="Export Vault"
+                    android:textColor="@color/zen_on_accent"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/zen_accent"
+                    app:cornerRadius="14dp"
+                    app:icon="@drawable/ic_upload"
+                    app:iconGravity="textStart"
+                    app:iconPadding="8dp"
+                    app:iconSize="18dp"
+                    app:iconTint="@color/zen_on_accent" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_import_backup"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/inter"
+                    android:includeFontPadding="false"
+                    android:stateListAnimator="@null"
+                    android:text="Import Vault"
+                    android:textColor="@color/zen_text_primary"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/zen_surface"
+                    app:cornerRadius="14dp"
+                    app:icon="@drawable/ic_download"
+                    app:iconGravity="textStart"
+                    app:iconPadding="8dp"
+                    app:iconSize="18dp"
+                    app:iconTint="@color/zen_text_primary"
+                    app:strokeColor="@color/zen_border"
+                    app:strokeWidth="1dp" />
+            </LinearLayout>
+
+            <!-- SECTION 3: PREFERENCES & SECURITY -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:fontFamily="sans-serif-medium"
-                android:letterSpacing="0.1"
-                android:text="LOGS &amp; DIAGNOSTICS"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/inter"
+                android:includeFontPadding="false"
+                android:letterSpacing="0.08"
+                android:text="PREFERENCES &amp; SECURITY"
                 android:textAllCaps="true"
                 android:textColor="@color/zen_text_secondary"
-                android:textSize="10sp" />
+                android:textSize="11sp"
+                android:textStyle="bold" />
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_settings_activity_log"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:cardBackgroundColor="@color/zen_surface"
-                app:cardCornerRadius="13dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/zen_border"
-                app:strokeWidth="1dp">
+                android:background="@drawable/bg_card_container"
+                android:orientation="vertical"
+                android:padding="16dp">
 
+                <!-- Preference 1: Auto-Check GitHub Releases -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="13dp">
-
-                    <ImageView
-                        android:layout_width="23dp"
-                        android:layout_height="23dp"
-                        android:contentDescription="Activity Log"
-                        android:src="@drawable/ic_history"
-                        app:tint="@color/zen_accent" />
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="11dp"
+                        android:layout_marginEnd="12dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/inter"
+                                android:includeFontPadding="false"
+                                android:text="Auto-Check GitHub Releases"
+                                android:textColor="@color/zen_text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <View
+                                android:layout_width="6dp"
+                                android:layout_height="6dp"
+                                android:layout_marginStart="6dp"
+                                android:background="@drawable/bg_dot_lime" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tv_auto_update_disclaimer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="2dp"
+                            android:text="Queries latest release tags without transmitting personal user identifiers."
+                            android:textColor="@color/zen_text_secondary"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switch_auto_update"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:contentDescription="Toggle auto check GitHub releases" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginBottom="14dp"
+                    android:background="@color/zen_divider" />
+
+                <!-- Preference 2: Haptic Feedback on Actions -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="12dp"
                         android:layout_weight="1"
                         android:orientation="vertical">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif-bold"
-                            android:letterSpacing="0.02"
-                            android:text="Activity Log"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:text="Haptic Feedback on Actions"
                             android:textColor="@color/zen_text_primary"
-                            android:textSize="12sp" />
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:fontFamily="sans-serif"
-                            android:text="View event history, attendance marks &amp; system actions"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="2dp"
+                            android:text="Subtle tactile click when logging attendances and triggering backups."
                             android:textColor="@color/zen_text_secondary"
-                            android:textSize="10sp" />
+                            android:textSize="11sp" />
                     </LinearLayout>
 
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:rotation="180"
-                        android:src="@drawable/ic_back"
-                        app:tint="@color/zen_text_tertiary" />
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switch_haptic_feedback"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:contentDescription="Toggle haptic feedback on actions" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
 
-            <!-- SECTION: GITHUB & VERSION FOOTER -->
+            <!-- SECTION 4: PEER COLLABORATION -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:fontFamily="sans-serif-medium"
-                android:letterSpacing="0.1"
-                android:text="ABOUT &amp; COMMUNITY"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/inter"
+                android:includeFontPadding="false"
+                android:letterSpacing="0.08"
+                android:text="PEER COLLABORATION"
                 android:textAllCaps="true"
                 android:textColor="@color/zen_text_secondary"
-                android:textSize="10sp" />
+                android:textSize="11sp"
+                android:textStyle="bold" />
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_settings_footer_backup"
+                android:id="@+id/card_cohort_sharing"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:cardBackgroundColor="@color/zen_surface"
-                app:cardCornerRadius="13dp"
+                app:cardBackgroundColor="#181F12"
+                app:cardCornerRadius="20dp"
                 app:cardElevation="0dp"
-                app:strokeColor="@color/zen_border"
-                app:strokeWidth="1dp">
+                app:strokeColor="@color/zen_outline_variant"
+                app:strokeWidth="1.5dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="13dp">
+                    android:padding="16dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -657,83 +986,425 @@
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
-                        <ImageView
-                            android:layout_width="23dp"
-                            android:layout_height="23dp"
-                            android:contentDescription="GitHub"
-                            android:src="@drawable/ic_github"
-                            app:tint="@color/zen_text_primary" />
+                        <FrameLayout
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_rounded_xl_accent_soft">
+
+                            <ImageView
+                                android:id="@+id/iv_cohort_icon"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:contentDescription="Cohort Sharing"
+                                android:src="@drawable/ic_share"
+                                app:tint="@color/zen_accent" />
+                        </FrameLayout>
 
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginEnd="8dp"
                             android:layout_weight="1"
                             android:orientation="vertical">
 
                             <TextView
-                                android:id="@+id/tv_settings_version_backup"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="sans-serif-bold"
-                                android:letterSpacing="0.04"
+                                android:fontFamily="@font/inter"
+                                android:includeFontPadding="false"
+                                android:text="Cohort Timetable Package"
                                 android:textColor="@color/zen_text_primary"
-                                android:textSize="12sp" />
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="1dp"
-                                android:fontFamily="sans-serif"
-                                android:text="Open-Source Offline Productivity"
+                                android:layout_marginTop="2dp"
+                                android:fontFamily="@font/inter"
+                                android:includeFontPadding="false"
+                                android:text="Portable zero-dependency class payload"
                                 android:textColor="@color/zen_text_secondary"
-                                android:textSize="10sp" />
+                                android:textSize="11sp" />
                         </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_pill_recommended"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:paddingStart="9dp"
+                            android:paddingTop="4dp"
+                            android:paddingEnd="9dp"
+                            android:paddingBottom="4dp"
+                            android:text="Instant Sync"
+                            android:textColor="@color/zen_accent"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <TextView
-                        android:id="@+id/tv_settings_github_subtitle_backup"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:fontFamily="sans-serif"
-                        android:lineSpacingExtra="2dp"
-                        android:text="Support the project by starring the repository on GitHub!"
+                        android:layout_marginTop="12dp"
+                        android:fontFamily="@font/inter"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="3dp"
+                        android:text="Share your weekly slot definitions directly via Nearby Share, WhatsApp or Telegram. Classmates can tap the file to immediately populate their schedule without setting up classes manually."
                         android:textColor="@color/zen_text_secondary"
-                        android:textSize="10sp" />
+                        android:textSize="12sp" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_open_github_backup"
-                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:id="@+id/btn_share_timetable"
                         android:layout_width="match_parent"
-                        android:layout_height="36dp"
-                        android:layout_marginTop="10dp"
-                        android:fontFamily="sans-serif-medium"
-                        android:letterSpacing="0.04"
-                        android:text="Star on GitHub"
-                        android:textColor="@color/zen_text_primary"
-                        android:textSize="10sp"
-                        app:cornerRadius="8dp"
-                        app:icon="@drawable/ic_github"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="14dp"
+                        android:fontFamily="@font/inter"
+                        android:includeFontPadding="false"
+                        android:stateListAnimator="@null"
+                        android:text="Export Timetable Package"
+                        android:textColor="@color/zen_on_accent"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        app:backgroundTint="@color/zen_accent"
+                        app:cornerRadius="14dp"
+                        app:icon="@drawable/ic_upload"
                         app:iconGravity="textStart"
-                        app:iconPadding="7dp"
-                        app:iconSize="15dp"
-                        app:iconTint="@color/zen_text_primary" />
+                        app:iconPadding="8dp"
+                        app:iconSize="18dp"
+                        app:iconTint="@color/zen_on_accent" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Status / Information Note -->
+            <!-- SECTION 5: SYSTEM & COMMUNITY -->
             <TextView
-                android:id="@+id/tv_status_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/inter"
+                android:includeFontPadding="false"
+                android:letterSpacing="0.08"
+                android:text="SYSTEM &amp; COMMUNITY"
+                android:textAllCaps="true"
+                android:textColor="@color/zen_text_secondary"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:fontFamily="sans-serif"
-                android:gravity="center"
-                android:lineSpacingExtra="2dp"
-                android:text="ZEN is 100% offline-first. Your data is stored strictly on your local device and never transmitted to external cloud servers without your explicit action."
-                android:textColor="@color/zen_text_tertiary"
-                android:textSize="10sp" />
+                android:background="@drawable/bg_card_container"
+                android:orientation="vertical"
+                android:paddingStart="14dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="14dp"
+                android:paddingBottom="14dp">
+
+                <!-- Row 1: Activity Log -->
+                <LinearLayout
+                    android:id="@+id/card_settings_activity_log"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:minHeight="56dp"
+                    android:orientation="horizontal"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp">
+
+                    <FrameLayout
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_rounded_xl_accent_soft">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="Activity Log"
+                            android:src="@drawable/ic_history"
+                            app:tint="@color/zen_accent" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:text="Activity Log"
+                            android:textColor="@color/zen_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:text="View attendance events, backups &amp; triggers"
+                            android:textColor="@color/zen_text_secondary"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:contentDescription="Open Activity Log"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="@color/zen_text_tertiary" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/zen_divider" />
+
+                <!-- Row 2: Database Integrity Check -->
+                <LinearLayout
+                    android:id="@+id/btn_db_integrity_check"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:minHeight="56dp"
+                    android:orientation="horizontal"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp">
+
+                    <FrameLayout
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_rounded_xl_cyan_soft">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="Database Integrity Check"
+                            android:src="@drawable/ic_shield_check"
+                            app:tint="@color/zen_secondary" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:text="Database Integrity Check"
+                            android:textColor="@color/zen_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:text="PRAGMA verify index and table coherence"
+                            android:textColor="@color/zen_text_secondary"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_integrity_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter"
+                        android:includeFontPadding="false"
+                        android:text="Pass"
+                        android:textColor="@color/zen_accent"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/zen_divider" />
+
+                <!-- Row 3: ZEN Academic Offline + Version Badge + GitHub & Update Actions -->
+                <LinearLayout
+                    android:id="@+id/card_settings_footer_backup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <FrameLayout
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:background="@drawable/bg_circle_surface_high">
+
+                            <ImageView
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_gravity="center"
+                                android:contentDescription="GitHub"
+                                android:src="@drawable/ic_github"
+                                app:tint="@color/zen_text_primary" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/inter"
+                                android:includeFontPadding="false"
+                                android:text="ZEN Academic Offline"
+                                android:textColor="@color/zen_text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="3dp"
+                                android:fontFamily="@font/inter"
+                                android:includeFontPadding="false"
+                                android:text="Open-Source Productivity"
+                                android:textColor="@color/zen_text_secondary"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tv_settings_version_backup"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_pill_recommended"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:paddingStart="10dp"
+                            android:paddingTop="4dp"
+                            android:paddingEnd="10dp"
+                            android:paddingBottom="4dp"
+                            android:text="V0.9.2"
+                            android:textColor="@color/zen_accent"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_open_github_backup"
+                            android:layout_width="0dp"
+                            android:layout_height="44dp"
+                            android:layout_marginEnd="6dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:stateListAnimator="@null"
+                            android:text="Star on GitHub"
+                            android:textColor="@color/zen_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            app:backgroundTint="@color/zen_surface_variant"
+                            app:cornerRadius="12dp"
+                            app:icon="@drawable/ic_star_filled"
+                            app:iconGravity="textStart"
+                            app:iconPadding="6dp"
+                            app:iconSize="16dp"
+                            app:iconTint="@color/status_warning" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_check_updates_manual"
+                            android:layout_width="0dp"
+                            android:layout_height="44dp"
+                            android:layout_marginStart="6dp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:stateListAnimator="@null"
+                            android:text="Check Updates"
+                            android:textColor="@color/zen_text_primary"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            app:backgroundTint="@color/zen_surface_variant"
+                            app:cornerRadius="12dp"
+                            app:icon="@drawable/ic_upload"
+                            app:iconGravity="textStart"
+                            app:iconPadding="6dp"
+                            app:iconSize="16dp"
+                            app:iconTint="@color/zen_text_primary" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Footer Local Vault Note (Also triggers 7-tap Easter Egg) -->
+            <LinearLayout
+                android:id="@+id/tv_status_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:minHeight="48dp"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp">
+
+                <ImageView
+                    android:layout_width="13dp"
+                    android:layout_height="13dp"
+                    android:contentDescription="Strictly Local"
+                    android:src="@drawable/ic_lock"
+                    app:tint="@color/zen_text_tertiary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:fontFamily="@font/inter"
+                    android:includeFontPadding="false"
+                    android:text="Data is stored strictly locally. No tracking or telemetry."
+                    android:textColor="@color/zen_text_tertiary"
+                    android:textSize="11sp" />
+            </LinearLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

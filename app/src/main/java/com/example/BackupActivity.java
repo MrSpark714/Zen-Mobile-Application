@@ -1,27 +1,23 @@
 package com.example;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.format.DateUtils;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.example.database.AppDatabase;
 import com.example.model.AttendanceHistory;
@@ -33,7 +29,6 @@ import com.example.util.BackupHelper;
 import com.example.util.ThemeHelper;
 import com.example.util.UpdateManager;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
@@ -43,13 +38,17 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 /**
- * BackupActivity manages offline JSON export, restore, cohort timetable sharing,
- * and dynamic accent theme customization in one unified Settings & Data screen.
+ * BackupActivity manages the Settings & Storage vault experience:
+ * local SQLite health metrics, modular offline JSON export/restore,
+ * cohort timetable package sharing, haptic/update preferences,
+ * and PRAGMA database integrity verification.
  */
 public class BackupActivity extends AppCompatActivity {
 
@@ -57,24 +56,52 @@ public class BackupActivity extends AppCompatActivity {
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private LinearProgressIndicator progressIndicator;
-    private TextView tvCountNotes;
-    private TextView tvCountTasks;
+
+    // Local Storage Health UI
+    private TextView tvHealthStatusPill;
+    private TextView tvStorageSizeValue;
+    private TextView tvStorageSizeUnit;
+    private TextView tvItemsIndexed;
+    private View segClasses;
+    private View segLogs;
+    private View segTasks;
+    private View segNotes;
     private TextView tvCountClasses;
     private TextView tvCountAttendance;
-    private TextView tvDbStatsHeader;
-    private RadioGroup rgBackupOptions;
-    private RadioButton rbFullBackup;
-    private RadioButton rbNotesAttendance;
-    private RadioButton rbAttendanceOnly;
+    private TextView tvCountTasks;
+    private TextView tvCountNotes;
+
+    // Backup & Snapshot Scope UI
+    private TextView tvLastBackupTime;
+    private View cardScopeFull;
+    private View cardScopeAttendance;
+    private View cardScopeNotes;
+    private View radioScopeFull;
+    private View radioScopeAttendance;
+    private View radioScopeNotes;
+    private TextView tvScopeAttendanceSize;
+    private TextView tvScopeNotesSize;
     private MaterialButton btnExportBackup;
     private MaterialButton btnImportBackup;
-    private MaterialButton btnShareTimetable;
-    private MaterialCardView cardCohortSharing;
-    private ImageView ivCohortIcon;
 
-    // App Updates components
+    // Preferences & Security UI
     private MaterialSwitch switchAutoUpdate;
+    private MaterialSwitch switchHapticFeedback;
+
+    // Peer Collaboration UI
+    private MaterialButton btnShareTimetable;
+
+    // System & Community UI
+    private View btnDbIntegrityCheck;
+    private TextView tvIntegrityStatus;
+    private MaterialButton btnOpenGitHubBackup;
     private MaterialButton btnCheckUpdatesManual;
+
+    private String selectedScope = ZenBackupPayload.TYPE_FULL;
+    private int countClasses = 0;
+    private int countLogs = 0;
+    private int countTasks = 0;
+    private int countNotes = 0;
 
     // In-memory cache of serialized backup payload awaiting SAF write callback
     private String pendingExportJson = null;
@@ -95,12 +122,12 @@ public class BackupActivity extends AppCompatActivity {
         database = AppDatabase.getInstance(this);
         initViews();
         setupListeners();
+        selectBackupScope(ZenBackupPayload.TYPE_FULL, null);
+        updateLastBackupLabel();
         loadLocalDatabaseStats();
+        runDatabaseIntegrityCheck(false);
 
-        // Apply saved accent theme
         applyDynamicTheme(ThemeHelper.getAccentColor(this));
-
-        // Handle incoming shared file (from WhatsApp, Email, File Manager, etc.)
         handleIncomingIntent(getIntent());
     }
 
@@ -112,44 +139,52 @@ public class BackupActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
+        findViewById(R.id.btn_back).setOnClickListener(v -> {
+            ThemeHelper.performHaptic(v);
+            finish();
+        });
+
         progressIndicator = findViewById(R.id.progress_indicator);
-        tvCountNotes = findViewById(R.id.tv_count_notes);
-        tvCountTasks = findViewById(R.id.tv_count_tasks);
+
+        tvHealthStatusPill = findViewById(R.id.tv_health_status_pill);
+        tvStorageSizeValue = findViewById(R.id.tv_storage_size_value);
+        tvStorageSizeUnit = findViewById(R.id.tv_storage_size_unit);
+        tvItemsIndexed = findViewById(R.id.tv_items_indexed);
+        segClasses = findViewById(R.id.seg_classes);
+        segLogs = findViewById(R.id.seg_logs);
+        segTasks = findViewById(R.id.seg_tasks);
+        segNotes = findViewById(R.id.seg_notes);
         tvCountClasses = findViewById(R.id.tv_count_classes);
         tvCountAttendance = findViewById(R.id.tv_count_attendance);
-        tvDbStatsHeader = findViewById(R.id.tv_db_stats_header);
-        rgBackupOptions = findViewById(R.id.rg_backup_options);
-        rbFullBackup = findViewById(R.id.rb_full_backup);
-        rbNotesAttendance = findViewById(R.id.rb_notes_attendance);
-        rbAttendanceOnly = findViewById(R.id.rb_attendance_only);
+        tvCountTasks = findViewById(R.id.tv_count_tasks);
+        tvCountNotes = findViewById(R.id.tv_count_notes);
+
+        tvLastBackupTime = findViewById(R.id.tv_last_backup_time);
+        cardScopeFull = findViewById(R.id.card_scope_full);
+        cardScopeAttendance = findViewById(R.id.card_scope_attendance);
+        cardScopeNotes = findViewById(R.id.card_scope_notes);
+        radioScopeFull = findViewById(R.id.radio_scope_full);
+        radioScopeAttendance = findViewById(R.id.radio_scope_attendance);
+        radioScopeNotes = findViewById(R.id.radio_scope_notes);
+        tvScopeAttendanceSize = findViewById(R.id.tv_scope_attendance_size);
+        tvScopeNotesSize = findViewById(R.id.tv_scope_notes_size);
+
         btnExportBackup = findViewById(R.id.btn_export_backup);
         btnImportBackup = findViewById(R.id.btn_import_backup);
         btnShareTimetable = findViewById(R.id.btn_share_timetable);
-        cardCohortSharing = findViewById(R.id.card_cohort_sharing);
-        ivCohortIcon = findViewById(R.id.iv_cohort_icon);
+
         switchAutoUpdate = findViewById(R.id.switch_auto_update);
+        switchHapticFeedback = findViewById(R.id.switch_haptic_feedback);
+
+        btnDbIntegrityCheck = findViewById(R.id.btn_db_integrity_check);
+        tvIntegrityStatus = findViewById(R.id.tv_integrity_status);
+        btnOpenGitHubBackup = findViewById(R.id.btn_open_github_backup);
         btnCheckUpdatesManual = findViewById(R.id.btn_check_updates_manual);
     }
 
-    /**
-     * Applies dynamic accent theme across the Backup & Cohort sharing screen components.
-     */
     private void applyDynamicTheme(int accentColor) {
         if (progressIndicator != null) {
             progressIndicator.setIndicatorColor(accentColor);
-        }
-        if (tvDbStatsHeader != null) {
-            tvDbStatsHeader.setTextColor(accentColor);
-        }
-        if (rbFullBackup != null) {
-            ThemeHelper.applyAccentToRadioButton(rbFullBackup, accentColor);
-        }
-        if (rbNotesAttendance != null) {
-            ThemeHelper.applyAccentToRadioButton(rbNotesAttendance, accentColor);
-        }
-        if (rbAttendanceOnly != null) {
-            ThemeHelper.applyAccentToRadioButton(rbAttendanceOnly, accentColor);
         }
         if (btnExportBackup != null) {
             ThemeHelper.applyAccentToPrimaryButton(btnExportBackup, accentColor);
@@ -157,37 +192,75 @@ public class BackupActivity extends AppCompatActivity {
         if (btnShareTimetable != null) {
             ThemeHelper.applyAccentToPrimaryButton(btnShareTimetable, accentColor);
         }
-        if (cardCohortSharing != null) {
-            cardCohortSharing.setStrokeColor(accentColor);
-            cardCohortSharing.setCardBackgroundColor(ThemeHelper.getAccentContainerColor(accentColor));
-        }
-        if (ivCohortIcon != null) {
-            ivCohortIcon.setColorFilter(accentColor);
-        }
-        if (btnCheckUpdatesManual != null) {
-            btnCheckUpdatesManual.setTextColor(accentColor);
-            btnCheckUpdatesManual.setIconTint(ColorStateList.valueOf(accentColor));
-        }
         if (switchAutoUpdate != null) {
             ThemeHelper.applyAccentToSwitch(switchAutoUpdate, accentColor);
+        }
+        if (switchHapticFeedback != null) {
+            ThemeHelper.applyAccentToSwitch(switchHapticFeedback, accentColor);
         }
     }
 
     private void setupListeners() {
-        btnExportBackup.setOnClickListener(v -> startExportFlow());
-        btnImportBackup.setOnClickListener(v -> startImportFlow());
-        btnShareTimetable.setOnClickListener(v -> startCohortShareFlow());
+        if (cardScopeFull != null) {
+            cardScopeFull.setOnClickListener(v -> selectBackupScope(ZenBackupPayload.TYPE_FULL, v));
+        }
+        if (cardScopeAttendance != null) {
+            cardScopeAttendance.setOnClickListener(v -> selectBackupScope(ZenBackupPayload.TYPE_ATTENDANCE_ONLY, v));
+        }
+        if (cardScopeNotes != null) {
+            cardScopeNotes.setOnClickListener(v -> selectBackupScope(ZenBackupPayload.TYPE_NOTES_ATTENDANCE, v));
+        }
+
+        if (btnExportBackup != null) {
+            btnExportBackup.setOnClickListener(v -> {
+                ThemeHelper.performHaptic(v);
+                startExportFlow();
+            });
+        }
+        if (btnImportBackup != null) {
+            btnImportBackup.setOnClickListener(v -> {
+                ThemeHelper.performHaptic(v);
+                startImportFlow();
+            });
+        }
+        if (btnShareTimetable != null) {
+            btnShareTimetable.setOnClickListener(v -> {
+                ThemeHelper.performHaptic(v);
+                startCohortShareFlow();
+            });
+        }
 
         if (switchAutoUpdate != null) {
             switchAutoUpdate.setChecked(UpdateManager.isAutoUpdateEnabled(this));
             switchAutoUpdate.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 UpdateManager.setAutoUpdateEnabled(this, isChecked);
-                Toast.makeText(this, isChecked ? "Auto-update checks enabled" : "Auto-update checks disabled", Toast.LENGTH_SHORT).show();
+                ThemeHelper.performHaptic(buttonView);
+                Toast.makeText(this,
+                        isChecked ? "Auto-update checks enabled" : "Auto-update checks disabled",
+                        Toast.LENGTH_SHORT).show();
+            });
+        }
+
+        if (switchHapticFeedback != null) {
+            switchHapticFeedback.setChecked(ThemeHelper.isHapticEnabled(this));
+            switchHapticFeedback.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                ThemeHelper.setHapticEnabled(this, isChecked);
+                if (isChecked) {
+                    ThemeHelper.performHaptic(buttonView);
+                }
+            });
+        }
+
+        if (btnDbIntegrityCheck != null) {
+            btnDbIntegrityCheck.setOnClickListener(v -> {
+                ThemeHelper.performHaptic(v);
+                runDatabaseIntegrityCheck(true);
             });
         }
 
         if (btnCheckUpdatesManual != null) {
             btnCheckUpdatesManual.setOnClickListener(v -> {
+                ThemeHelper.performHaptic(v);
                 UpdateManager.checkForUpdates(this, UpdateManager.DEFAULT_UPDATE_URL, true);
             });
         }
@@ -197,37 +270,63 @@ public class BackupActivity extends AppCompatActivity {
             statusInfo.setOnClickListener(v -> handleEasterEggTap());
         }
 
-        // GitHub & Version Footer
         TextView tvVersion = findViewById(R.id.tv_settings_version_backup);
         if (tvVersion != null) {
-            tvVersion.setText("ZEN v" + BuildConfig.VERSION_NAME);
+            tvVersion.setText(String.format(Locale.getDefault(), "V%s", BuildConfig.VERSION_NAME));
         }
 
-        View.OnClickListener openGitHubListener = v -> {
-            try {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("https://github.com/MrSpark714/Zen-Mobile-Application"));
-                startActivity(browserIntent);
-            } catch (Exception e) {
-                Toast.makeText(this, "Could not open browser: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        };
-        View cardFooter = findViewById(R.id.card_settings_footer_backup);
-        if (cardFooter != null) {
-            cardFooter.setOnClickListener(openGitHubListener);
-        }
-        View btnGitHub = findViewById(R.id.btn_open_github_backup);
-        if (btnGitHub != null) {
-            btnGitHub.setOnClickListener(openGitHubListener);
+        if (btnOpenGitHubBackup != null) {
+            btnOpenGitHubBackup.setOnClickListener(v -> {
+                ThemeHelper.performHaptic(v);
+                try {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("https://github.com/MrSpark714/Zen-Mobile-Application"));
+                    startActivity(browserIntent);
+                } catch (Exception e) {
+                    Toast.makeText(this, "Could not open browser: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
-        // Activity Log navigation
         View cardActivityLog = findViewById(R.id.card_settings_activity_log);
         if (cardActivityLog != null) {
             cardActivityLog.setOnClickListener(v -> {
+                ThemeHelper.performHaptic(v);
                 Intent logIntent = new Intent(this, LogActivity.class);
                 startActivity(logIntent);
             });
+        }
+    }
+
+    private void selectBackupScope(String scope, View hapticSource) {
+        selectedScope = scope;
+        if (hapticSource != null) {
+            ThemeHelper.performHaptic(hapticSource);
+        }
+
+        boolean isFull = ZenBackupPayload.TYPE_FULL.equals(scope);
+        boolean isAttendance = ZenBackupPayload.TYPE_ATTENDANCE_ONLY.equals(scope);
+        boolean isNotes = ZenBackupPayload.TYPE_NOTES_ATTENDANCE.equals(scope);
+
+        if (cardScopeFull != null) {
+            cardScopeFull.setBackgroundResource(isFull ? R.drawable.bg_card_scope_selected : R.drawable.bg_card_scope_unselected);
+        }
+        if (radioScopeFull != null) {
+            radioScopeFull.setBackgroundResource(isFull ? R.drawable.bg_radio_selected : R.drawable.bg_radio_unselected);
+        }
+
+        if (cardScopeAttendance != null) {
+            cardScopeAttendance.setBackgroundResource(isAttendance ? R.drawable.bg_card_scope_selected : R.drawable.bg_card_scope_unselected);
+        }
+        if (radioScopeAttendance != null) {
+            radioScopeAttendance.setBackgroundResource(isAttendance ? R.drawable.bg_radio_selected : R.drawable.bg_radio_unselected);
+        }
+
+        if (cardScopeNotes != null) {
+            cardScopeNotes.setBackgroundResource(isNotes ? R.drawable.bg_card_scope_selected : R.drawable.bg_card_scope_unselected);
+        }
+        if (radioScopeNotes != null) {
+            radioScopeNotes.setBackgroundResource(isNotes ? R.drawable.bg_radio_selected : R.drawable.bg_radio_unselected);
         }
     }
 
@@ -253,7 +352,7 @@ public class BackupActivity extends AppCompatActivity {
     }
 
     private void showEasterEggWatermark() {
-        String watermark = "ZEN v0.9.2 — Architected and Built by Muhammad Sohaib";
+        String watermark = "ZEN v" + BuildConfig.VERSION_NAME + " — Architected and Built by Muhammad Sohaib";
         Toast.makeText(this, watermark, Toast.LENGTH_LONG).show();
 
         new MaterialAlertDialogBuilder(this, R.style.Theme_ZEN)
@@ -265,31 +364,159 @@ public class BackupActivity extends AppCompatActivity {
     }
 
     /**
-     * Loads live counts of notes, tasks, classes, and attendance logs for display.
+     * Loads live counts of classes, attendance logs, tasks, notes, and local SQLite size.
      */
     private void loadLocalDatabaseStats() {
         database.noteDao().getAllNotes().observe(this, notes -> {
-            if (notes != null) {
-                tvCountNotes.setText(String.valueOf(notes.size()));
+            countNotes = notes != null ? notes.size() : 0;
+            if (tvCountNotes != null) {
+                tvCountNotes.setText(String.valueOf(countNotes));
             }
+            updateStorageSummary();
         });
 
         database.taskDao().getAllTasks().observe(this, tasks -> {
-            if (tasks != null) {
-                tvCountTasks.setText(String.valueOf(tasks.size()));
+            countTasks = tasks != null ? tasks.size() : 0;
+            if (tvCountTasks != null) {
+                tvCountTasks.setText(String.valueOf(countTasks));
             }
+            updateStorageSummary();
         });
 
         database.classScheduleDao().getAllSchedules().observe(this, schedules -> {
-            if (schedules != null) {
-                tvCountClasses.setText(String.valueOf(schedules.size()));
+            countClasses = schedules != null ? schedules.size() : 0;
+            if (tvCountClasses != null) {
+                tvCountClasses.setText(String.valueOf(countClasses));
             }
+            updateStorageSummary();
         });
 
         AppDatabase.databaseWriteExecutor.execute(() -> {
             List<AttendanceHistory> records = database.attendanceHistoryDao().getAllRecordsSync();
             int count = records != null ? records.size() : 0;
-            mainHandler.post(() -> tvCountAttendance.setText(String.valueOf(count)));
+            long dbBytes = computeDatabaseBytes();
+            mainHandler.post(() -> {
+                countLogs = count;
+                if (tvCountAttendance != null) {
+                    tvCountAttendance.setText(String.valueOf(countLogs));
+                }
+                applyDatabaseSizeText(dbBytes);
+                updateStorageSummary();
+            });
+        });
+    }
+
+    private long computeDatabaseBytes() {
+        long total = 0L;
+        File dbFile = getDatabasePath("zen_database.db");
+        if (dbFile != null) {
+            if (dbFile.exists()) total += dbFile.length();
+            File wal = new File(dbFile.getPath() + "-wal");
+            if (wal.exists()) total += wal.length();
+            File shm = new File(dbFile.getPath() + "-shm");
+            if (shm.exists()) total += shm.length();
+        }
+        return total;
+    }
+
+    private void applyDatabaseSizeText(long totalBytes) {
+        if (tvStorageSizeValue == null || tvStorageSizeUnit == null) return;
+        if (totalBytes >= 1024L * 1024L) {
+            double mb = totalBytes / (1024.0 * 1024.0);
+            tvStorageSizeValue.setText(String.format(Locale.getDefault(), "%.1f", mb));
+            tvStorageSizeUnit.setText("MB USED");
+        } else {
+            double kb = Math.max(1.0, totalBytes / 1024.0);
+            tvStorageSizeValue.setText(String.format(Locale.getDefault(), "%.1f", kb));
+            tvStorageSizeUnit.setText("KB USED");
+        }
+    }
+
+    private void updateStorageSummary() {
+        int totalItems = countClasses + countLogs + countTasks + countNotes;
+        if (tvItemsIndexed != null) {
+            tvItemsIndexed.setText(String.format(Locale.getDefault(), "%d Items Indexed", totalItems));
+        }
+
+        if (totalItems <= 0) {
+            setSegmentWeight(segClasses, 1f);
+            setSegmentWeight(segLogs, 1f);
+            setSegmentWeight(segTasks, 1f);
+            setSegmentWeight(segNotes, 1f);
+        } else {
+            setSegmentWeight(segClasses, Math.max(0.25f, (float) countClasses));
+            setSegmentWeight(segLogs, Math.max(0.25f, (float) countLogs));
+            setSegmentWeight(segTasks, Math.max(0.25f, (float) countTasks));
+            setSegmentWeight(segNotes, Math.max(0.25f, (float) countNotes));
+        }
+
+        if (tvScopeAttendanceSize != null) {
+            long estKb = Math.max(1L, Math.round((countLogs * 180L + 512L) / 1024.0));
+            tvScopeAttendanceSize.setText(String.format(Locale.getDefault(), "~%d KB", estKb));
+        }
+        if (tvScopeNotesSize != null) {
+            long estKb = Math.max(1L, Math.round((countNotes * 640L + countClasses * 280L + 768L) / 1024.0));
+            tvScopeNotesSize.setText(String.format(Locale.getDefault(), "~%d KB", estKb));
+        }
+    }
+
+    private void setSegmentWeight(View segment, float weight) {
+        if (segment == null) return;
+        if (segment.getLayoutParams() instanceof LinearLayout.LayoutParams) {
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) segment.getLayoutParams();
+            params.weight = weight;
+            segment.setLayoutParams(params);
+        }
+    }
+
+    private void updateLastBackupLabel() {
+        if (tvLastBackupTime == null) return;
+        long millis = ThemeHelper.getLastBackupMillis(this);
+        if (millis <= 0L) {
+            tvLastBackupTime.setText("Last backup: Never");
+            return;
+        }
+        if (DateUtils.isToday(millis)) {
+            SimpleDateFormat timeFmt = new SimpleDateFormat("h:mm a", Locale.getDefault());
+            tvLastBackupTime.setText("Last backup: Today, " + timeFmt.format(new Date(millis)));
+        } else {
+            SimpleDateFormat dateFmt = new SimpleDateFormat("MMM d, h:mm a", Locale.getDefault());
+            tvLastBackupTime.setText("Last backup: " + dateFmt.format(new Date(millis)));
+        }
+    }
+
+    private void runDatabaseIntegrityCheck(boolean userTriggered) {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            boolean passed = false;
+            try {
+                SupportSQLiteDatabase db = database.getOpenHelper().getReadableDatabase();
+                try (Cursor cursor = db.query("PRAGMA quick_check")) {
+                    if (cursor.moveToFirst()) {
+                        String result = cursor.getString(0);
+                        passed = "ok".equalsIgnoreCase(result != null ? result.trim() : "");
+                    }
+                }
+            } catch (Exception ignored) {
+                passed = false;
+            }
+            final boolean isOk = passed;
+            mainHandler.post(() -> {
+                if (tvIntegrityStatus != null) {
+                    tvIntegrityStatus.setText(isOk ? "Pass" : "Issue");
+                    tvIntegrityStatus.setTextColor(getColor(isOk ? R.color.zen_accent : R.color.zen_danger));
+                }
+                if (tvHealthStatusPill != null) {
+                    tvHealthStatusPill.setText(isOk ? "Status: Optimal" : "Status: Attention");
+                    tvHealthStatusPill.setTextColor(getColor(isOk ? R.color.zen_accent : R.color.zen_danger));
+                }
+                if (userTriggered) {
+                    if (isOk) {
+                        showSuccessSnackbar("Database integrity verified: PRAGMA quick_check OK");
+                    } else {
+                        Toast.makeText(this, "Database integrity check reported an issue", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
         });
     }
 
@@ -298,15 +525,7 @@ public class BackupActivity extends AppCompatActivity {
     // ==========================================
 
     private void startExportFlow() {
-        String backupType;
-        if (rbAttendanceOnly.isChecked()) {
-            backupType = ZenBackupPayload.TYPE_ATTENDANCE_ONLY;
-        } else if (rbNotesAttendance.isChecked()) {
-            backupType = ZenBackupPayload.TYPE_NOTES_ATTENDANCE;
-        } else {
-            backupType = ZenBackupPayload.TYPE_FULL;
-        }
-
+        final String backupType = selectedScope;
         showProgress(true);
 
         AppDatabase.databaseWriteExecutor.execute(() -> {
@@ -317,13 +536,10 @@ public class BackupActivity extends AppCompatActivity {
                 List<AttendanceHistory> records = database.attendanceHistoryDao().getAllRecordsSync();
 
                 if (backupType.equals(ZenBackupPayload.TYPE_FULL)) {
-                    // Mode A (Full Backup): Query and serialize all tables: notes, tasks, class_schedules, attendance_history
                     notes = database.noteDao().getAllNotesSync();
                     tasks = database.taskDao().getAllTasksSync();
                     schedules = database.classScheduleDao().getAllSchedulesSync();
                 } else if (backupType.equals(ZenBackupPayload.TYPE_ATTENDANCE_ONLY)) {
-                    // Mode B (History Only Backup): Strictly attendance_history.
-                    // Leave schedules, notes, and tasks arrays empty/null to prevent overwriting current timetable.
                     notes = new ArrayList<>();
                     tasks = new ArrayList<>();
                     schedules = new ArrayList<>();
@@ -368,9 +584,12 @@ public class BackupActivity extends AppCompatActivity {
                     BackupHelper.writeStringToStream(outputStream, jsonToWrite);
                 }
 
+                ThemeHelper.recordLastBackupNow(this);
+
                 mainHandler.post(() -> {
                     showProgress(false);
-                    showSuccessSnackbar("Backup file successfully exported!");
+                    updateLastBackupLabel();
+                    showSuccessSnackbar("Vault snapshot successfully exported!");
                 });
             } catch (Exception e) {
                 mainHandler.post(() -> {
@@ -428,6 +647,7 @@ public class BackupActivity extends AppCompatActivity {
         int recordCount = payload.getAttendanceRecords().size();
 
         String message = String.format(
+                Locale.getDefault(),
                 "Found in backup package:\n\n• %d Notes\n• %d Tasks\n• %d Class Schedules\n• %d Attendance Logs\n\nMerge these items into your local database?",
                 noteCount, taskCount, scheduleCount, recordCount
         );
@@ -458,9 +678,12 @@ public class BackupActivity extends AppCompatActivity {
                     database.attendanceHistoryDao().insertAll(payload.getAttendanceRecords());
                 }
 
+                long dbBytes = computeDatabaseBytes();
                 mainHandler.post(() -> {
                     showProgress(false);
+                    applyDatabaseSizeText(dbBytes);
                     loadLocalDatabaseStats();
+                    runDatabaseIntegrityCheck(false);
                     showSuccessSnackbar("Restore completed successfully!");
                 });
             } catch (Exception e) {
@@ -492,7 +715,6 @@ public class BackupActivity extends AppCompatActivity {
 
                 String json = BackupHelper.serializeSchedulesForCohort(schedules);
 
-                // Write to cache directory for FileProvider sharing
                 File cacheDir = new File(getCacheDir(), "shared");
                 if (!cacheDir.exists()) {
                     cacheDir.mkdirs();
@@ -540,7 +762,7 @@ public class BackupActivity extends AppCompatActivity {
             intent.removeExtra("ACTION_MODE");
             mainHandler.postDelayed(() -> {
                 if ("EXPORT_FULL".equals(actionMode)) {
-                    if (rbFullBackup != null) rbFullBackup.setChecked(true);
+                    selectBackupScope(ZenBackupPayload.TYPE_FULL, null);
                     startExportFlow();
                 } else if ("IMPORT".equals(actionMode)) {
                     startImportFlow();

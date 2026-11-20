@@ -28,6 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -116,6 +117,13 @@ public class NoteEditorActivity extends AppCompatActivity {
         setupListeners();
         setupFormattingToolbar();
         setupTextWatchers();
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                saveNoteAndFinish();
+            }
+        });
     }
 
     private void initViews() {
@@ -670,10 +678,5 @@ public class NoteEditorActivity extends AppCompatActivity {
         });
 
         dialog.show();
-    }
-
-    @Override
-    public void onBackPressed() {
-        saveNoteAndFinish();
     }
 }

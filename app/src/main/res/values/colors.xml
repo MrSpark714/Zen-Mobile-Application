@@ -1,47 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- ZEN Elegant Dark Palette -->
-    <color name="zen_background">#121212</color>
-    <color name="zen_surface">#1E1E1E</color>
-    <color name="surfaceDark">#1E1E1E</color>
-    <color name="zen_surface_variant">#242426</color>
-    <color name="zen_surface_highlight">#2D2D30</color>
+    <!-- Zen Dark Minimalist Palette (from DESIGN_9dbd9583.md & code_9d4a206c.html) -->
+    <color name="zen_background">#131313</color>
+    <color name="zen_surface_lowest">#0E0E0E</color>
+    <color name="zen_surface_low">#1C1B1B</color>
+    <color name="zen_surface">#201F1F</color>
+    <color name="surfaceDark">#201F1F</color>
+    <color name="zen_surface_variant">#2A2A2A</color>
+    <color name="zen_surface_highlight">#353534</color>
     <color name="zen_border">#27272A</color>
-    
-    <!-- Accent Colors (Vibrant Neon Mint/Lime) -->
-    <color name="zen_accent">#a7ff67</color>
-    <color name="zen_accent_light">#E0E0E0</color>
-    <color name="zen_accent_container">#1F331A</color>
-    <color name="zen_on_accent">#121212</color>
-    
+    <color name="zen_outline_variant">#434938</color>
+
+    <!-- Primary & Accent Colors -->
+    <color name="zen_primary">#FEFFF1</color>
+    <color name="zen_accent">#BEF264</color>
+    <color name="zen_accent_light">#E5E2E1</color>
+    <color name="zen_accent_container">#33BEF264</color>
+    <color name="zen_on_accent">#131F00</color>
+
+    <!-- Secondary / Semantic Tones -->
+    <color name="zen_secondary">#7BD0FF</color>
+    <color name="zen_secondary_dot">#00A6E0</color>
+    <color name="zen_tertiary_light">#DDB8FF</color>
+
     <!-- Text and Icon Colors -->
-    <color name="zen_text_primary">#E0E0E0</color>
-    <color name="zen_text_secondary">#71717A</color>
-    <color name="zen_text_tertiary">#52525B</color>
-    <color name="zen_text_completed">#52525B</color>
-    
+    <color name="zen_text_primary">#E5E2E1</color>
+    <color name="zen_text_secondary">#C3C9B2</color>
+    <color name="zen_text_tertiary">#8D937E</color>
+    <color name="zen_text_completed">#71717A</color>
+
     <!-- Functional / Status Colors -->
     <color name="zen_divider">#27272A</color>
-    <color name="zen_danger">#FF5252</color>
-    <color name="zen_chip_bg">#1E1E1E</color>
-    <color name="zen_nav_inactive">#71717A</color>
+    <color name="zen_danger">#FFB4AB</color>
+    <color name="zen_error_container">#93000A</color>
+    <color name="zen_on_error_container">#FFDAD6</color>
+    <color name="zen_chip_bg">#201F1F</color>
+    <color name="zen_nav_inactive">#C3C9B2</color>
 
     <!-- Attendance Tracker Specific Colors -->
-    <color name="status_present">#B9F6CA</color>
-    <color name="status_present_bg">#1A3322</color>
-    <color name="status_absent">#FF5252</color>
-    <color name="status_absent_bg">#361C1C</color>
-    <color name="status_holiday">#FFE082</color>
-    <color name="status_holiday_bg">#36301A</color>
+    <color name="status_present">#BEF264</color>
+    <color name="status_present_bg">#26BEF264</color>
+    <color name="status_absent">#FFB4AB</color>
+    <color name="status_absent_bg">#93000A</color>
+    <color name="status_holiday">#7BD0FF</color>
+    <color name="status_holiday_bg">#267BD0FF</color>
+    <color name="status_warning">#F59E0B</color>
 
-    <color name="type_theory_text">#80D8FF</color>
-    <color name="type_theory_bg">#162736</color>
-    <color name="type_lab_text">#EA80FC</color>
-    <color name="type_lab_bg">#2E1838</color>
-    
+    <color name="type_theory_text">#7BD0FF</color>
+    <color name="type_theory_bg">#267BD0FF</color>
+    <color name="type_lab_text">#DDB8FF</color>
+    <color name="type_lab_bg">#26DDB8FF</color>
+
     <!-- Standard compatibility colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="transparent">#00000000</color>
 </resources>
-

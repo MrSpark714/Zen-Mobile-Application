@@ -1,28 +1,33 @@
 package com.example;
 
 import android.Manifest;
-import android.app.AlertDialog;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.Dialog;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Outline;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -31,25 +36,26 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.splashscreen.SplashScreen;
+import androidx.core.widget.NestedScrollView;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.adapter.AttendanceHistoryAdapter;
 import com.example.adapter.NoteAdapter;
 import com.example.adapter.SubjectAnalyticsAdapter;
 import com.example.adapter.TaskAdapter;
-import com.example.adapter.TodayClassAdapter;
 import com.example.adapter.WeeklyScheduleAdapter;
 import com.example.database.AppDatabase;
 import com.example.model.AttendanceHistory;
@@ -58,17 +64,18 @@ import com.example.model.ClassWithTodayStatus;
 import com.example.model.Note;
 import com.example.model.SubjectStats;
 import com.example.model.Task;
+import com.example.model.UserProfile;
 import com.example.util.NotificationHelper;
+import com.example.util.SecureProfileStore;
 import com.example.util.ThemeHelper;
 import com.example.util.UpdateManager;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
 
@@ -78,9 +85,11 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * MainActivity is the core screen of the ZEN minimalist dark-themed productivity application.
@@ -88,20 +97,20 @@ import java.util.Map;
  * Modules:
  * 1. Notes (Zen minimalist note taking)
  * 2. Tasks (Scheduled task management with precise alarms)
- * 3. Attendance Tracker (Today's classes, Mon-Fri schedule config, relational percentage analytics, 5-min alarms)
+ * 3. Classes Dashboard & Attendance Tracker (Immediate focus, daily schedule, Mon-Fri config, analytics)
  */
-// Triger Sync
 public class MainActivity extends AppCompatActivity implements
         NoteAdapter.OnNoteClickListener,
         TaskAdapter.OnTaskActionListener,
-        TodayClassAdapter.OnAttendanceActionListener,
         WeeklyScheduleAdapter.OnScheduleActionListener,
         SubjectAnalyticsAdapter.OnSubjectClickListener {
+
+    private static final String PREFS_ZEN = "zen_prefs";
 
     public static final int TAB_NOTES = 0;
     public static final int TAB_TASKS = 1;
     public static final int TAB_ATTENDANCE = 2;
-    private int currentTab = TAB_NOTES;
+    private int currentTab = TAB_ATTENDANCE;
 
     // Attendance Sub-Tab States
     public static final int SUB_TAB_TODAY = 0;
@@ -113,6 +122,11 @@ public class MainActivity extends AppCompatActivity implements
     private TextView tvHeaderTitle;
     private TextView tvHeaderSubtitle;
     private TextView tvItemCountBadge;
+    private View dotLocalPulse;
+    private ObjectAnimator pulseAnimator;
+    private View btnHeaderProfile;
+    private TextView tvHeaderProfileInitial;
+    private ImageView ivHeaderProfilePhoto;
     private EditText etSearch;
     private ImageView btnClearSearch;
     private LinearLayout searchBarContainer;
@@ -142,9 +156,8 @@ public class MainActivity extends AppCompatActivity implements
     private NoteAdapter noteAdapter;
     private TaskAdapter taskAdapter;
 
-    // Page Views & Adapters - Attendance Tracker
+    // Page Views & Adapters - Attendance Tracker & Dashboard
     private AttendanceViewHolder attendanceViewHolder;
-    private TodayClassAdapter todayClassAdapter;
     private WeeklyScheduleAdapter weeklyScheduleAdapter;
     private SubjectAnalyticsAdapter subjectAnalyticsAdapter;
 
@@ -153,19 +166,38 @@ public class MainActivity extends AppCompatActivity implements
     // Cached Data
     private List<Note> currentNotes = new ArrayList<>();
     private List<Task> currentTasks = new ArrayList<>();
+    private List<Task> allDashboardTasks = new ArrayList<>();
     private List<ClassSchedule> currentSchedules = new ArrayList<>();
     private List<AttendanceHistory> todayAttendanceRecords = new ArrayList<>();
     private List<SubjectStats> currentSubjectStats = new ArrayList<>();
     private String currentScheduleFilterDay = "All";
+    private int focusedScheduleId = -1;
+    private UserProfile currentUserProfile;
+    private Bitmap currentAvatarBitmap;
 
-    // Database Reference
+    // Database Reference & LiveData Observers
     private AppDatabase database;
+    private LiveData<List<Note>> activeNotesLiveData;
+    private LiveData<List<Task>> activeTasksLiveData;
+    private boolean attendanceObserversAttached = false;
+    private final Observer<List<Note>> notesObserver = this::updateNotesList;
+    private final Observer<List<Task>> tasksObserver = this::updateTasksList;
 
     // Notification Permission Launcher (Android 13+)
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
                     NotificationHelper.createNotificationChannel(this);
+                }
+            });
+
+    // Profile Setup Launcher
+    private final ActivityResultLauncher<Intent> profileSetupLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                refreshProfileHeader();
+                if (attendanceViewHolder != null) {
+                    attendanceViewHolder.updateGreeting();
+                    attendanceViewHolder.updateQuickOverview(currentSubjectStats, allDashboardTasks);
                 }
             });
 
@@ -201,6 +233,20 @@ public class MainActivity extends AppCompatActivity implements
         handleIntent(getIntent());
 
         observeDatabase("");
+        observeAttendanceData();
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (currentTab == TAB_ATTENDANCE && currentAttendanceSubTab != SUB_TAB_TODAY && attendanceViewHolder != null) {
+                    attendanceViewHolder.switchSubTab(SUB_TAB_TODAY);
+                } else if (currentTab != TAB_ATTENDANCE && viewPager != null) {
+                    viewPager.setCurrentItem(TAB_ATTENDANCE, true);
+                } else {
+                    finish();
+                }
+            }
+        });
 
         // Automated background check for in-app updates on app launch
         if (UpdateManager.isAutoUpdateEnabled(this)) {
@@ -218,13 +264,21 @@ public class MainActivity extends AppCompatActivity implements
      * @return true if onboarding was launched and MainActivity should terminate.
      */
     private boolean checkAndLaunchOnboarding() {
-        SharedPreferences prefs = getSharedPreferences("zen_prefs", Context.MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences(PREFS_ZEN, Context.MODE_PRIVATE);
         SharedPreferences defaultPrefs = android.preference.PreferenceManager.getDefaultSharedPreferences(this);
         boolean isFirstLaunch = prefs.getBoolean("is_first_launch_v9_3_migration", true)
                 && defaultPrefs.getBoolean("is_first_launch_v9_3_migration", true);
 
         if (isFirstLaunch) {
             Intent intent = new Intent(this, OnboardingActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+
+        if (!SecureProfileStore.hasSeenProfileSetup(this)) {
+            Intent intent = new Intent(this, ProfileSetupActivity.class);
+            intent.putExtra(ProfileSetupActivity.EXTRA_IS_FIRST_LAUNCH, true);
             startActivity(intent);
             finish();
             return true;
@@ -242,7 +296,9 @@ public class MainActivity extends AppCompatActivity implements
     private void handleIntent(Intent intent) {
         if (intent != null) {
             String tab = intent.getStringExtra("NAV_TAB");
-            if ("tasks".equalsIgnoreCase(tab)) {
+            if ("notes".equalsIgnoreCase(tab)) {
+                if (viewPager != null) viewPager.setCurrentItem(TAB_NOTES, true);
+            } else if ("tasks".equalsIgnoreCase(tab)) {
                 if (viewPager != null) viewPager.setCurrentItem(TAB_TASKS, true);
             } else if ("attendance".equalsIgnoreCase(tab) || "classes".equalsIgnoreCase(tab)) {
                 if (viewPager != null) viewPager.setCurrentItem(TAB_ATTENDANCE, true);
@@ -337,6 +393,19 @@ public class MainActivity extends AppCompatActivity implements
         tvHeaderTitle = findViewById(R.id.tv_header_title);
         tvHeaderSubtitle = findViewById(R.id.tv_header_subtitle);
         tvItemCountBadge = findViewById(R.id.tv_item_count_badge);
+        dotLocalPulse = findViewById(R.id.dot_local_pulse);
+        btnHeaderProfile = findViewById(R.id.btn_header_profile);
+        tvHeaderProfileInitial = findViewById(R.id.tv_header_profile_initial);
+        ivHeaderProfilePhoto = findViewById(R.id.iv_header_profile_photo);
+        if (ivHeaderProfilePhoto != null) {
+            ivHeaderProfilePhoto.setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    outline.setOval(0, 0, view.getWidth(), view.getHeight());
+                }
+            });
+            ivHeaderProfilePhoto.setClipToOutline(true);
+        }
         searchBarContainer = findViewById(R.id.search_bar_container);
         etSearch = findViewById(R.id.et_search);
         btnClearSearch = findViewById(R.id.btn_clear_search);
@@ -357,7 +426,7 @@ public class MainActivity extends AppCompatActivity implements
         tvNavAttendanceText = findViewById(R.id.tv_nav_attendance_text);
         fabAdd = findViewById(R.id.fab_add);
 
-        // Attach Easter Egg 7-tap listener on Header Title & Subtitle
+        // Attach Easter Egg 7-tap listener on Header Title & LOCAL Pill
         if (tvHeaderTitle != null) {
             tvHeaderTitle.setOnClickListener(v -> handleEasterEggTap());
         }
@@ -372,6 +441,44 @@ public class MainActivity extends AppCompatActivity implements
                 startActivity(intent);
             });
         }
+
+        if (btnHeaderProfile != null) {
+            btnHeaderProfile.setOnClickListener(v -> openProfileSetup());
+        }
+
+        if (dotLocalPulse != null) {
+            pulseAnimator = ObjectAnimator.ofFloat(dotLocalPulse, View.ALPHA, 1.0f, 0.35f);
+            pulseAnimator.setDuration(900);
+            pulseAnimator.setRepeatMode(ValueAnimator.REVERSE);
+            pulseAnimator.setRepeatCount(ValueAnimator.INFINITE);
+            pulseAnimator.start();
+        }
+
+        refreshProfileHeader();
+    }
+
+    private void refreshProfileHeader() {
+        currentUserProfile = SecureProfileStore.loadProfile(this);
+        currentAvatarBitmap = SecureProfileStore.loadAvatarBitmap(this);
+
+        if (ivHeaderProfilePhoto != null && tvHeaderProfileInitial != null) {
+            if (currentAvatarBitmap != null) {
+                ivHeaderProfilePhoto.setImageBitmap(currentAvatarBitmap);
+                ivHeaderProfilePhoto.setVisibility(View.VISIBLE);
+                tvHeaderProfileInitial.setVisibility(View.GONE);
+            } else {
+                ivHeaderProfilePhoto.setImageDrawable(null);
+                ivHeaderProfilePhoto.setVisibility(View.GONE);
+                tvHeaderProfileInitial.setVisibility(View.VISIBLE);
+                tvHeaderProfileInitial.setText(currentUserProfile.getInitial());
+            }
+        }
+    }
+
+    private void openProfileSetup() {
+        Intent intent = new Intent(this, ProfileSetupActivity.class);
+        intent.putExtra(ProfileSetupActivity.EXTRA_IS_FIRST_LAUNCH, false);
+        profileSetupLauncher.launch(intent);
     }
 
     @Override
@@ -379,6 +486,21 @@ public class MainActivity extends AppCompatActivity implements
         super.onResume();
         int storedAccent = ThemeHelper.getAccentColor(this);
         applyThemeAccent(storedAccent);
+        refreshProfileHeader();
+        if (attendanceViewHolder != null) {
+            attendanceViewHolder.updateGreeting();
+            refreshTodayClassesView();
+            attendanceViewHolder.updateQuickOverview(currentSubjectStats, allDashboardTasks);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (pulseAnimator != null) {
+            pulseAnimator.cancel();
+            pulseAnimator = null;
+        }
+        super.onDestroy();
     }
 
     private void handleEasterEggTap() {
@@ -411,7 +533,6 @@ public class MainActivity extends AppCompatActivity implements
     private void setupAdapters() {
         noteAdapter = new NoteAdapter(this);
         taskAdapter = new TaskAdapter(this);
-        todayClassAdapter = new TodayClassAdapter(this, this);
         weeklyScheduleAdapter = new WeeklyScheduleAdapter(this, this);
         subjectAnalyticsAdapter = new SubjectAnalyticsAdapter(this, this);
     }
@@ -434,6 +555,9 @@ public class MainActivity extends AppCompatActivity implements
                 onTabChanged(position);
             }
         });
+
+        viewPager.setCurrentItem(TAB_ATTENDANCE, false);
+        onTabChanged(TAB_ATTENDANCE);
     }
 
     private void setupNavigation() {
@@ -531,28 +655,29 @@ public class MainActivity extends AppCompatActivity implements
         int accentColor = ThemeHelper.getAccentColor(this);
         updatePillStates(tab, true);
 
+        tvHeaderTitle.setText("ZEN");
+
         if (tab == TAB_NOTES) {
-            tvHeaderTitle.setText("ZEN");
-            tvHeaderSubtitle.setText("RECENT NOTES");
+            tvItemCountBadge.setVisibility(View.VISIBLE);
             searchBarContainer.setVisibility(View.VISIBLE);
             etSearch.setHint(R.string.search_notes_hint);
             fabAdd.setVisibility(View.VISIBLE);
             fabAdd.setContentDescription("Add Note");
             updateNotesBadge();
         } else if (tab == TAB_TASKS) {
-            tvHeaderTitle.setText("ZEN");
-            tvHeaderSubtitle.setText("ACTIVE TASKS");
+            tvItemCountBadge.setVisibility(View.VISIBLE);
             searchBarContainer.setVisibility(View.VISIBLE);
             etSearch.setHint(R.string.search_tasks_hint);
             fabAdd.setVisibility(View.VISIBLE);
             fabAdd.setContentDescription("Add Task");
             updateTasksBadge();
         } else {
-            tvHeaderTitle.setText("ZEN");
-            tvHeaderSubtitle.setText("ATTENDANCE TRACKER");
+            tvItemCountBadge.setVisibility(View.GONE);
             searchBarContainer.setVisibility(View.GONE);
-            fabAdd.setVisibility(View.GONE); // Attendance page has its own specialized FAB
-            updateAttendanceBadge();
+            fabAdd.setVisibility(View.GONE); // Classes page uses specialized FAB / actions
+            if (attendanceViewHolder != null) {
+                attendanceViewHolder.updateGreeting();
+            }
         }
 
         ThemeHelper.applyAccentToFab(fabAdd, accentColor);
@@ -632,23 +757,38 @@ public class MainActivity extends AppCompatActivity implements
 
     private void observeDatabase(String query) {
         if (currentTab == TAB_NOTES) {
-            if (TextUtils.isEmpty(query)) {
-                database.noteDao().getAllNotes().observe(this, this::updateNotesList);
-            } else {
-                database.noteDao().searchNotes(query).observe(this, this::updateNotesList);
+            if (activeNotesLiveData != null) {
+                activeNotesLiveData.removeObserver(notesObserver);
             }
+            activeNotesLiveData = TextUtils.isEmpty(query)
+                    ? database.noteDao().getAllNotes()
+                    : database.noteDao().searchNotes(query);
+            activeNotesLiveData.observe(this, notesObserver);
         } else if (currentTab == TAB_TASKS) {
-            if (TextUtils.isEmpty(query)) {
-                database.taskDao().getAllTasks().observe(this, this::updateTasksList);
-            } else {
-                database.taskDao().searchTasks(query).observe(this, this::updateTasksList);
+            if (activeTasksLiveData != null) {
+                activeTasksLiveData.removeObserver(tasksObserver);
             }
+            activeTasksLiveData = TextUtils.isEmpty(query)
+                    ? database.taskDao().getAllTasks()
+                    : database.taskDao().searchTasks(query);
+            activeTasksLiveData.observe(this, tasksObserver);
         } else {
             observeAttendanceData();
         }
     }
 
     private void observeAttendanceData() {
+        if (attendanceObserversAttached) {
+            refreshTodayClassesView();
+            refreshWeeklyScheduleView();
+            if (attendanceViewHolder != null) {
+                attendanceViewHolder.updateAnalyticsView(currentSubjectStats);
+                attendanceViewHolder.updateQuickOverview(currentSubjectStats, allDashboardTasks);
+            }
+            return;
+        }
+        attendanceObserversAttached = true;
+
         long todayStartOfDay = getStartOfDayMillis(Calendar.getInstance());
 
         // Observe Today's Attendance Records
@@ -663,7 +803,6 @@ public class MainActivity extends AppCompatActivity implements
             Collections.sort(this.currentSchedules, ClassSchedule.TIMETABLE_COMPARATOR);
             refreshTodayClassesView();
             refreshWeeklyScheduleView();
-            updateAttendanceBadge();
         });
 
         // Observe Subject Analytics with exact SQL percentage math
@@ -671,6 +810,15 @@ public class MainActivity extends AppCompatActivity implements
             this.currentSubjectStats = stats != null ? stats : new ArrayList<>();
             if (attendanceViewHolder != null) {
                 attendanceViewHolder.updateAnalyticsView(currentSubjectStats);
+                attendanceViewHolder.updateQuickOverview(currentSubjectStats, allDashboardTasks);
+            }
+        });
+
+        // Observe All Tasks continuously for Dashboard Quick Overview priority task
+        database.taskDao().getAllTasks().observe(this, tasks -> {
+            this.allDashboardTasks = tasks != null ? tasks : new ArrayList<>();
+            if (attendanceViewHolder != null) {
+                attendanceViewHolder.updateQuickOverview(currentSubjectStats, allDashboardTasks);
             }
         });
     }
@@ -681,23 +829,30 @@ public class MainActivity extends AppCompatActivity implements
         Calendar cal = Calendar.getInstance();
         int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
         boolean isWeekend = (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY);
+        String todayDayName = getCurrentDayOfWeekName();
+
+        // Count distinct enrolled courses across weekly timetable
+        Set<String> distinctCourses = new HashSet<>();
+        for (ClassSchedule cs : currentSchedules) {
+            if (cs.getSubjectName() != null && !cs.getSubjectName().trim().isEmpty()) {
+                distinctCourses.add(cs.getSubjectName().trim().toLowerCase(Locale.ROOT));
+            }
+        }
+        int enrolledCount = distinctCourses.size();
 
         if (isWeekend) {
-            attendanceViewHolder.showTodayWeekendEmptyState();
+            attendanceViewHolder.updateDashboardTodayUI(new ArrayList<>(), todayDayName, true, enrolledCount);
             return;
         }
 
-        String todayDayName = getCurrentDayOfWeekName();
         List<ClassSchedule> todaySchedules = new ArrayList<>();
         for (ClassSchedule cs : currentSchedules) {
             if (todayDayName.equalsIgnoreCase(cs.getDayOfWeek())) {
                 todaySchedules.add(cs);
             }
         }
-        // Apply chronological sorting by start time for Today's dashboard
         Collections.sort(todaySchedules, ClassSchedule.CHRONOLOGICAL_COMPARATOR);
 
-        // Map today's attendance records by subject name
         Map<String, AttendanceHistory> recordMap = new HashMap<>();
         for (AttendanceHistory ar : todayAttendanceRecords) {
             if (ar.getSubjectName() != null) {
@@ -711,8 +866,7 @@ public class MainActivity extends AppCompatActivity implements
             compositeList.add(new ClassWithTodayStatus(cs, recordMap.get(key)));
         }
 
-        todayClassAdapter.setClasses(compositeList);
-        attendanceViewHolder.updateTodayClassesUI(compositeList, todayDayName);
+        attendanceViewHolder.updateDashboardTodayUI(compositeList, todayDayName, false, enrolledCount);
     }
 
     private void refreshWeeklyScheduleView() {
@@ -721,7 +875,6 @@ public class MainActivity extends AppCompatActivity implements
         List<ClassSchedule> filteredList = new ArrayList<>();
         if ("All".equalsIgnoreCase(currentScheduleFilterDay)) {
             filteredList.addAll(currentSchedules);
-            // Apply chronological sorting for all timetable days (Monday to Friday, ordered by time)
             Collections.sort(filteredList, ClassSchedule.TIMETABLE_COMPARATOR);
         } else {
             for (ClassSchedule cs : currentSchedules) {
@@ -729,7 +882,6 @@ public class MainActivity extends AppCompatActivity implements
                     filteredList.add(cs);
                 }
             }
-            // Apply chronological sorting by start time for the selected weekday
             Collections.sort(filteredList, ClassSchedule.CHRONOLOGICAL_COMPARATOR);
         }
 
@@ -795,14 +947,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private void updateAttendanceBadge() {
-        if (currentSchedules == null || currentSchedules.isEmpty()) {
-            tvItemCountBadge.setText("0 classes");
-        } else {
-            tvItemCountBadge.setText(currentSchedules.size() + (currentSchedules.size() == 1 ? " class" : " classes"));
-        }
-    }
-
     // =========================================================================
     // ViewPager2 Adapter
     // =========================================================================
@@ -865,36 +1009,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    public void onTasksFragmentAttached(com.example.fragment.TasksFragment fragment) {
-        if (fragment != null) {
-            this.rvTasks = fragment.getRecyclerView();
-            this.layoutEmptyTasks = fragment.getEmptyView();
-            if (this.rvTasks != null && this.taskAdapter != null) {
-                this.rvTasks.setAdapter(this.taskAdapter);
-                updateTasksList(this.currentTasks);
-            }
-        }
-    }
-
-    public void onNotesFragmentAttached(com.example.fragment.NotesFragment fragment) {
-        if (fragment != null) {
-            this.rvNotes = fragment.getRecyclerView();
-            this.layoutEmptyNotes = fragment.getEmptyView();
-            if (this.rvNotes != null && this.noteAdapter != null) {
-                this.rvNotes.setAdapter(this.noteAdapter);
-                updateNotesList(this.currentNotes);
-            }
-        }
-    }
-
-    public void onClassesFragmentAttached(View view) {
-        if (view != null) {
-            attendanceViewHolder = new AttendanceViewHolder(view);
-            attendanceViewHolder.setup();
-            observeAttendanceData();
-        }
-    }
-
     static class NotesViewHolder extends RecyclerView.ViewHolder {
         RecyclerView rvNotes;
         View layoutEmptyNotes;
@@ -918,33 +1032,84 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     // =========================================================================
-    // Attendance Tracker View Holder & Sub-Tab Architecture
+    // Attendance Tracker Dashboard ViewHolder & Sub-Tab Architecture
     // =========================================================================
 
     public class AttendanceViewHolder extends RecyclerView.ViewHolder {
-        TextView tvCurrentDateBadge;
-        TextView tabToday;
-        TextView tabTimetable;
-        TextView tabAnalytics;
-
         // Sub-Views
-        View viewTodayClasses;
+        NestedScrollView viewTodayClasses;
         View viewWeeklySchedule;
         View viewAnalytics;
 
-        // Today's View Components
-        TextView tvTodaySummaryInfo;
-        RecyclerView rvTodayClasses;
-        View layoutEmptyToday;
-        TextView tvEmptyTodayTitle;
-        TextView tvEmptyTodaySubtitle;
+        // Dashboard Header & Greeting
+        TextView tvDashboardDate;
+        TextView tvDashboardGreeting;
+        TextView tvDashboardAcademicMeta;
+        View btnDashboardBolt;
 
-        // Schedule View Components
+        // Quick Glance Chips
+        View chipEnrolledCourses;
+        TextView tvChipEnrolledCourses;
+        View chipScheduledToday;
+        TextView tvChipScheduledToday;
+        TextView tvChipNextTime;
+
+        // Hero Immediate Focus Card & Empty State
+        View cardImmediateFocus;
+        TextView tvFocusSubject;
+        TextView tvFocusType;
+        TextView tvFocusTime;
+        TextView tvFocusRoom;
+        TextView tvFocusBadge;
+        View btnFocusPresent;
+        ImageView ivFocusPresent;
+        TextView tvFocusPresent;
+        View btnFocusAbsent;
+        ImageView ivFocusAbsent;
+        TextView tvFocusAbsent;
+        View btnFocusHoliday;
+        ImageView ivFocusHoliday;
+        TextView tvFocusHoliday;
+        TextView tvFocusStatusCaption;
+
+        View cardEmptyFocus;
+        TextView tvEmptyFocusTitle;
+        TextView tvEmptyFocusDesc;
+        View btnEmptyOpenTimetable;
+
+        // Today's Schedule Section
+        View layoutScheduleSection;
+        TextView tvScheduleSectionTitle;
+        TextView tvScheduleCountPill;
+        View btnOpenTimetable;
+        LinearLayout containerTodaySchedule;
+
+        // Quick Overview Section
+        View btnViewTasks;
+        View cardOverallStanding;
+        View boxStandingIcon;
+        ImageView ivStandingIcon;
+        TextView tvOverallPercent;
+        TextView tvOverallStandingLabel;
+        TextView tvOverallStandingDesc;
+
+        View cardPriorityTask;
+        View btnPriorityTaskCheck;
+        View boxPriorityTaskCheckbox;
+        ImageView ivPriorityTaskCheck;
+        TextView tvPriorityTaskTitle;
+        TextView tvPriorityTaskDue;
+
+        // Weekly Schedule Sub-View
+        ImageButton btnBackFromSchedule;
+        View btnScheduleToAnalytics;
         TextView filterDayAll, filterDayMon, filterDayTue, filterDayWed, filterDayThu, filterDayFri;
         RecyclerView rvWeeklySchedule;
         View layoutEmptySchedule;
 
-        // History View Components
+        // Analytics Sub-View
+        ImageButton btnBackFromAnalytics;
+        View btnAnalyticsToSchedule;
         RecyclerView rvSubjectAnalytics;
         View layoutEmptyAnalytics;
 
@@ -952,21 +1117,66 @@ public class MainActivity extends AppCompatActivity implements
 
         AttendanceViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvCurrentDateBadge = itemView.findViewById(R.id.tv_current_date_badge);
-            tabToday = itemView.findViewById(R.id.tab_today);
-            tabTimetable = itemView.findViewById(R.id.tab_timetable);
-            tabAnalytics = itemView.findViewById(R.id.tab_analytics);
-
             viewTodayClasses = itemView.findViewById(R.id.view_today_classes);
             viewWeeklySchedule = itemView.findViewById(R.id.view_weekly_schedule);
             viewAnalytics = itemView.findViewById(R.id.view_analytics);
 
-            tvTodaySummaryInfo = itemView.findViewById(R.id.tv_today_summary_info);
-            rvTodayClasses = itemView.findViewById(R.id.rv_today_classes);
-            layoutEmptyToday = itemView.findViewById(R.id.layout_empty_today);
-            tvEmptyTodayTitle = itemView.findViewById(R.id.tv_empty_today_title);
-            tvEmptyTodaySubtitle = itemView.findViewById(R.id.tv_empty_today_subtitle);
+            tvDashboardDate = itemView.findViewById(R.id.tv_dashboard_date);
+            tvDashboardGreeting = itemView.findViewById(R.id.tv_dashboard_greeting);
+            tvDashboardAcademicMeta = itemView.findViewById(R.id.tv_dashboard_academic_meta);
+            btnDashboardBolt = itemView.findViewById(R.id.btn_dashboard_bolt);
 
+            chipEnrolledCourses = itemView.findViewById(R.id.chip_enrolled_courses);
+            tvChipEnrolledCourses = itemView.findViewById(R.id.tv_chip_enrolled_courses);
+            chipScheduledToday = itemView.findViewById(R.id.chip_scheduled_today);
+            tvChipScheduledToday = itemView.findViewById(R.id.tv_chip_scheduled_today);
+            tvChipNextTime = itemView.findViewById(R.id.tv_chip_next_time);
+
+            cardImmediateFocus = itemView.findViewById(R.id.card_immediate_focus);
+            tvFocusSubject = itemView.findViewById(R.id.tv_focus_subject);
+            tvFocusType = itemView.findViewById(R.id.tv_focus_type);
+            tvFocusTime = itemView.findViewById(R.id.tv_focus_time);
+            tvFocusRoom = itemView.findViewById(R.id.tv_focus_room);
+            tvFocusBadge = itemView.findViewById(R.id.tv_focus_badge);
+            btnFocusPresent = itemView.findViewById(R.id.btn_focus_present);
+            ivFocusPresent = itemView.findViewById(R.id.iv_focus_present);
+            tvFocusPresent = itemView.findViewById(R.id.tv_focus_present);
+            btnFocusAbsent = itemView.findViewById(R.id.btn_focus_absent);
+            ivFocusAbsent = itemView.findViewById(R.id.iv_focus_absent);
+            tvFocusAbsent = itemView.findViewById(R.id.tv_focus_absent);
+            btnFocusHoliday = itemView.findViewById(R.id.btn_focus_holiday);
+            ivFocusHoliday = itemView.findViewById(R.id.iv_focus_holiday);
+            tvFocusHoliday = itemView.findViewById(R.id.tv_focus_holiday);
+            tvFocusStatusCaption = itemView.findViewById(R.id.tv_focus_status_caption);
+
+            cardEmptyFocus = itemView.findViewById(R.id.card_empty_focus);
+            tvEmptyFocusTitle = itemView.findViewById(R.id.tv_empty_focus_title);
+            tvEmptyFocusDesc = itemView.findViewById(R.id.tv_empty_focus_desc);
+            btnEmptyOpenTimetable = itemView.findViewById(R.id.btn_empty_open_timetable);
+
+            layoutScheduleSection = itemView.findViewById(R.id.layout_schedule_section);
+            tvScheduleSectionTitle = itemView.findViewById(R.id.tv_schedule_section_title);
+            tvScheduleCountPill = itemView.findViewById(R.id.tv_schedule_count_pill);
+            btnOpenTimetable = itemView.findViewById(R.id.btn_open_timetable);
+            containerTodaySchedule = itemView.findViewById(R.id.container_today_schedule);
+
+            btnViewTasks = itemView.findViewById(R.id.btn_view_tasks);
+            cardOverallStanding = itemView.findViewById(R.id.card_overall_standing);
+            boxStandingIcon = itemView.findViewById(R.id.box_standing_icon);
+            ivStandingIcon = itemView.findViewById(R.id.iv_standing_icon);
+            tvOverallPercent = itemView.findViewById(R.id.tv_overall_percent);
+            tvOverallStandingLabel = itemView.findViewById(R.id.tv_overall_standing_label);
+            tvOverallStandingDesc = itemView.findViewById(R.id.tv_overall_standing_desc);
+
+            cardPriorityTask = itemView.findViewById(R.id.card_priority_task);
+            btnPriorityTaskCheck = itemView.findViewById(R.id.btn_priority_task_check);
+            boxPriorityTaskCheckbox = itemView.findViewById(R.id.box_priority_task_checkbox);
+            ivPriorityTaskCheck = itemView.findViewById(R.id.iv_priority_task_check);
+            tvPriorityTaskTitle = itemView.findViewById(R.id.tv_priority_task_title);
+            tvPriorityTaskDue = itemView.findViewById(R.id.tv_priority_task_due);
+
+            btnBackFromSchedule = itemView.findViewById(R.id.btn_back_from_schedule);
+            btnScheduleToAnalytics = itemView.findViewById(R.id.btn_schedule_to_analytics);
             filterDayAll = itemView.findViewById(R.id.filter_day_all);
             filterDayMon = itemView.findViewById(R.id.filter_day_mon);
             filterDayTue = itemView.findViewById(R.id.filter_day_tue);
@@ -976,6 +1186,8 @@ public class MainActivity extends AppCompatActivity implements
             rvWeeklySchedule = itemView.findViewById(R.id.rv_weekly_schedule);
             layoutEmptySchedule = itemView.findViewById(R.id.layout_empty_schedule);
 
+            btnBackFromAnalytics = itemView.findViewById(R.id.btn_back_from_analytics);
+            btnAnalyticsToSchedule = itemView.findViewById(R.id.btn_analytics_to_schedule);
             rvSubjectAnalytics = itemView.findViewById(R.id.rv_subject_analytics);
             layoutEmptyAnalytics = itemView.findViewById(R.id.layout_empty_analytics);
 
@@ -983,15 +1195,9 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         void setup() {
-            SimpleDateFormat sdf = new SimpleDateFormat("EEEE, MMM d", Locale.getDefault());
-            tvCurrentDateBadge.setText(sdf.format(new Date()));
+            updateGreeting();
 
-            // RecyclerView Setup
-            rvTodayClasses.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-            rvTodayClasses.setAdapter(todayClassAdapter);
-            rvTodayClasses.clearOnScrollListeners();
-            rvTodayClasses.addOnScrollListener(verticalScrollStateListener);
-
+            // RecyclerView Setup for Timetable & Analytics sub-views
             rvWeeklySchedule.setLayoutManager(new LinearLayoutManager(MainActivity.this));
             rvWeeklySchedule.setAdapter(weeklyScheduleAdapter);
             rvWeeklySchedule.clearOnScrollListeners();
@@ -1002,10 +1208,27 @@ public class MainActivity extends AppCompatActivity implements
             rvSubjectAnalytics.clearOnScrollListeners();
             rvSubjectAnalytics.addOnScrollListener(verticalScrollStateListener);
 
-            // Sub-Tab Switcher Listeners
-            tabToday.setOnClickListener(v -> switchSubTab(SUB_TAB_TODAY));
-            tabTimetable.setOnClickListener(v -> switchSubTab(SUB_TAB_TIMETABLE));
-            tabAnalytics.setOnClickListener(v -> switchSubTab(SUB_TAB_ANALYTICS));
+            // Dashboard Quick Navigation Listeners
+            btnDashboardBolt.setOnClickListener(v -> switchSubTab(SUB_TAB_TIMETABLE));
+            chipEnrolledCourses.setOnClickListener(v -> switchSubTab(SUB_TAB_TIMETABLE));
+            btnOpenTimetable.setOnClickListener(v -> switchSubTab(SUB_TAB_TIMETABLE));
+            btnEmptyOpenTimetable.setOnClickListener(v -> switchSubTab(SUB_TAB_TIMETABLE));
+            chipScheduledToday.setOnClickListener(v -> {
+                if (layoutScheduleSection != null && layoutScheduleSection.getVisibility() == View.VISIBLE && viewTodayClasses != null) {
+                    viewTodayClasses.smoothScrollTo(0, layoutScheduleSection.getTop());
+                } else {
+                    switchSubTab(SUB_TAB_TIMETABLE);
+                }
+            });
+
+            btnViewTasks.setOnClickListener(v -> selectTabDirectly(TAB_TASKS));
+            cardOverallStanding.setOnClickListener(v -> switchSubTab(SUB_TAB_ANALYTICS));
+
+            // Sub-View Navigation Listeners
+            btnBackFromSchedule.setOnClickListener(v -> switchSubTab(SUB_TAB_TODAY));
+            btnScheduleToAnalytics.setOnClickListener(v -> switchSubTab(SUB_TAB_ANALYTICS));
+            btnBackFromAnalytics.setOnClickListener(v -> switchSubTab(SUB_TAB_TODAY));
+            btnAnalyticsToSchedule.setOnClickListener(v -> switchSubTab(SUB_TAB_TIMETABLE));
 
             // Schedule Day Filters (Strictly Monday-Friday)
             setupDayFilters();
@@ -1018,6 +1241,40 @@ public class MainActivity extends AppCompatActivity implements
             }
 
             switchSubTab(currentAttendanceSubTab);
+            updateQuickOverview(currentSubjectStats, allDashboardTasks);
+        }
+
+        void updateGreeting() {
+            if (currentUserProfile == null) {
+                currentUserProfile = SecureProfileStore.loadProfile(MainActivity.this);
+            }
+            if (tvDashboardDate != null) {
+                SimpleDateFormat sdf = new SimpleDateFormat("EEEE, MMM d", Locale.getDefault());
+                tvDashboardDate.setText(sdf.format(new Date()).toUpperCase(Locale.getDefault()));
+            }
+            if (tvDashboardGreeting != null) {
+                Calendar cal = Calendar.getInstance();
+                int hour = cal.get(Calendar.HOUR_OF_DAY);
+                String baseGreeting;
+                if (hour >= 5 && hour < 12) {
+                    baseGreeting = "Good Morning";
+                } else if (hour >= 12 && hour < 17) {
+                    baseGreeting = "Good Afternoon";
+                } else {
+                    baseGreeting = "Good Evening";
+                }
+                String userName = currentUserProfile != null ? currentUserProfile.getFullName() : "";
+                tvDashboardGreeting.setText(userName.isEmpty() ? baseGreeting : baseGreeting + ", " + userName);
+            }
+            if (tvDashboardAcademicMeta != null) {
+                String summary = currentUserProfile != null ? currentUserProfile.getAcademicSummaryLine() : "";
+                if (!summary.isEmpty()) {
+                    tvDashboardAcademicMeta.setText(summary);
+                    tvDashboardAcademicMeta.setVisibility(View.VISIBLE);
+                } else {
+                    tvDashboardAcademicMeta.setVisibility(View.GONE);
+                }
+            }
         }
 
         void refreshThemeAccent(int accentColor) {
@@ -1029,7 +1286,6 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         boolean isScrolling() {
-            if (rvTodayClasses != null && rvTodayClasses.getScrollState() != RecyclerView.SCROLL_STATE_IDLE) return true;
             if (rvWeeklySchedule != null && rvWeeklySchedule.getScrollState() != RecyclerView.SCROLL_STATE_IDLE) return true;
             if (rvSubjectAnalytics != null && rvSubjectAnalytics.getScrollState() != RecyclerView.SCROLL_STATE_IDLE) return true;
             return false;
@@ -1064,58 +1320,405 @@ public class MainActivity extends AppCompatActivity implements
         void switchSubTab(int subTab) {
             currentAttendanceSubTab = subTab;
 
-            int accentColor = ThemeHelper.getAccentColor(MainActivity.this);
-            int onAccentColor = ThemeHelper.getOnAccentColor(accentColor);
-
-            // Reset Sub-Tab header buttons
-            tabToday.setBackgroundResource(R.drawable.bg_nav_tab_inactive);
-            tabToday.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_text_secondary));
-            tabTimetable.setBackgroundResource(R.drawable.bg_nav_tab_inactive);
-            tabTimetable.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_text_secondary));
-            tabAnalytics.setBackgroundResource(R.drawable.bg_nav_tab_inactive);
-            tabAnalytics.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_text_secondary));
-
             viewTodayClasses.setVisibility(View.GONE);
             viewWeeklySchedule.setVisibility(View.GONE);
             viewAnalytics.setVisibility(View.GONE);
 
             if (subTab == SUB_TAB_TODAY) {
-                tabToday.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
-                tabToday.setTextColor(onAccentColor);
                 viewTodayClasses.setVisibility(View.VISIBLE);
+                if (fabAddClass != null) fabAddClass.setVisibility(View.GONE);
+                updateGreeting();
                 refreshTodayClassesView();
+                updateQuickOverview(currentSubjectStats, allDashboardTasks);
             } else if (subTab == SUB_TAB_TIMETABLE) {
-                tabTimetable.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
-                tabTimetable.setTextColor(onAccentColor);
                 viewWeeklySchedule.setVisibility(View.VISIBLE);
+                if (fabAddClass != null) fabAddClass.setVisibility(View.VISIBLE);
                 refreshWeeklyScheduleView();
             } else {
-                tabAnalytics.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
-                tabAnalytics.setTextColor(onAccentColor);
                 viewAnalytics.setVisibility(View.VISIBLE);
+                if (fabAddClass != null) fabAddClass.setVisibility(View.GONE);
                 updateAnalyticsView(currentSubjectStats);
             }
         }
 
-        void showTodayWeekendEmptyState() {
-            layoutEmptyToday.setVisibility(View.VISIBLE);
-            rvTodayClasses.setVisibility(View.GONE);
-            tvEmptyTodayTitle.setText("No classes this weekend");
-            tvEmptyTodaySubtitle.setText("Enjoy your rest and mindfulness. Weekends are strictly free of scheduled classes.");
-            tvTodaySummaryInfo.setText("Weekend Relaxation • No scheduled lectures");
+        void updateDashboardTodayUI(List<ClassWithTodayStatus> items, String todayDayName, boolean isWeekend, int enrolledCourseCount) {
+            updateGreeting();
+
+            // Quick Glance Chip 1: Enrolled Courses
+            tvChipEnrolledCourses.setText(enrolledCourseCount + (enrolledCourseCount == 1 ? " Enrolled Course" : " Enrolled Courses"));
+
+            // Quick Glance Chip 2: Scheduled Today
+            int todayCount = items != null ? items.size() : 0;
+            tvChipScheduledToday.setText(todayCount + " Scheduled Today");
+
+            Calendar nowCal = Calendar.getInstance();
+            int nowMinutes = nowCal.get(Calendar.HOUR_OF_DAY) * 60 + nowCal.get(Calendar.MINUTE);
+
+            if (isWeekend || items == null || items.isEmpty()) {
+                tvChipNextTime.setText(isWeekend ? "Weekend" : "No Classes");
+                cardImmediateFocus.setVisibility(View.GONE);
+                cardEmptyFocus.setVisibility(View.VISIBLE);
+                layoutScheduleSection.setVisibility(View.GONE);
+
+                if (isWeekend) {
+                    tvEmptyFocusTitle.setText("Weekend Mode");
+                    tvEmptyFocusDesc.setText("No classes on Saturday or Sunday. Review your weekly timetable or catch up on tasks.");
+                } else {
+                    tvEmptyFocusTitle.setText("No classes scheduled for " + todayDayName);
+                    tvEmptyFocusDesc.setText("Configure your Monday–Friday classes in the weekly timetable or tap + to add one.");
+                }
+                return;
+            }
+
+            cardImmediateFocus.setVisibility(View.VISIBLE);
+            cardEmptyFocus.setVisibility(View.GONE);
+            layoutScheduleSection.setVisibility(View.VISIBLE);
+
+            // Find next upcoming class for Quick Glance Chip 3
+            ClassSchedule nextUpcoming = null;
+            for (ClassWithTodayStatus item : items) {
+                ClassSchedule cs = item.getSchedule();
+                int startMin = ClassSchedule.parseTimeToMinutes(cs.getStartTime());
+                int endMin = ClassSchedule.parseTimeToMinutes(cs.getEndTime());
+                if (endMin > nowMinutes || startMin >= nowMinutes) {
+                    nextUpcoming = cs;
+                    break;
+                }
+            }
+            if (nextUpcoming != null) {
+                tvChipNextTime.setText("Next: " + nextUpcoming.getStartTime());
+            } else {
+                tvChipNextTime.setText("Done Today");
+            }
+
+            // Determine Focused Class for Immediate Focus Hero Card
+            ClassWithTodayStatus focusedItem = null;
+            if (focusedScheduleId != -1) {
+                for (ClassWithTodayStatus item : items) {
+                    if (item.getSchedule().getId() == focusedScheduleId) {
+                        focusedItem = item;
+                        break;
+                    }
+                }
+            }
+            if (focusedItem == null) {
+                for (ClassWithTodayStatus item : items) {
+                    int endMin = ClassSchedule.parseTimeToMinutes(item.getSchedule().getEndTime());
+                    if (endMin > nowMinutes) {
+                        focusedItem = item;
+                        break;
+                    }
+                }
+            }
+            if (focusedItem == null) {
+                focusedItem = items.get(items.size() - 1);
+            }
+
+            bindImmediateFocusCard(focusedItem, nowMinutes);
+
+            // Populate Today's Schedule Section
+            tvScheduleSectionTitle.setText(todayDayName + " Schedule");
+            tvScheduleCountPill.setText(todayCount + (todayCount == 1 ? " class" : " classes"));
+            containerTodaySchedule.removeAllViews();
+
+            LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
+            for (ClassWithTodayStatus item : items) {
+                // Exclude focused item when there are multiple classes to match clean hierarchy
+                if (items.size() > 1 && item == focusedItem) {
+                    continue;
+                }
+                View row = inflater.inflate(R.layout.item_dashboard_schedule, containerTodaySchedule, false);
+                bindDashboardScheduleRow(row, item, nowMinutes);
+                containerTodaySchedule.addView(row);
+            }
         }
 
-        void updateTodayClassesUI(List<ClassWithTodayStatus> items, String todayDayName) {
-            if (items == null || items.isEmpty()) {
-                layoutEmptyToday.setVisibility(View.VISIBLE);
-                rvTodayClasses.setVisibility(View.GONE);
-                tvEmptyTodayTitle.setText("No classes today (" + todayDayName + ")");
-                tvEmptyTodaySubtitle.setText("No recurring classes scheduled for " + todayDayName + ". Configure schedules in the Timetable tab.");
-                tvTodaySummaryInfo.setText("0 classes scheduled for " + todayDayName);
+        private void bindImmediateFocusCard(ClassWithTodayStatus item, int nowMinutes) {
+            ClassSchedule cs = item.getSchedule();
+            tvFocusSubject.setText(cs.getSubjectName());
+
+            String type = cs.getClassType();
+            tvFocusType.setText(type.toUpperCase(Locale.ROOT));
+            if ("Lab".equalsIgnoreCase(type)) {
+                tvFocusType.setBackgroundResource(R.drawable.bg_type_lab);
+                tvFocusType.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.type_lab_text));
             } else {
-                layoutEmptyToday.setVisibility(View.GONE);
-                rvTodayClasses.setVisibility(View.VISIBLE);
-                tvTodaySummaryInfo.setText(items.size() + (items.size() == 1 ? " class" : " classes") + " scheduled for " + todayDayName);
+                tvFocusType.setBackgroundResource(R.drawable.bg_type_theory);
+                tvFocusType.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.type_theory_text));
+            }
+
+            String endStr = cs.getEndTime() != null ? cs.getEndTime().trim() : "";
+            String timeText = endStr.isEmpty() ? cs.getStartTime() : (cs.getStartTime() + " - " + endStr);
+            tvFocusTime.setText(timeText);
+
+            String roomLabel = formatRoomLabel(cs.getRoomNumber());
+            tvFocusRoom.setText(roomLabel + " (" + cs.getCreditHours() + " Cr)");
+
+            int startMin = ClassSchedule.parseTimeToMinutes(cs.getStartTime());
+            int endMin = ClassSchedule.parseTimeToMinutes(cs.getEndTime());
+            if (nowMinutes >= startMin && nowMinutes < endMin) {
+                tvFocusBadge.setText("NOW");
+            } else if (nowMinutes < startMin) {
+                tvFocusBadge.setText("NEXT UP");
+            } else {
+                tvFocusBadge.setText("TODAY");
+            }
+
+            // Reset toggle buttons
+            int secondaryColor = ContextCompat.getColor(MainActivity.this, R.color.zen_text_secondary);
+            btnFocusPresent.setBackground(null);
+            ivFocusPresent.setColorFilter(secondaryColor);
+            tvFocusPresent.setTextColor(secondaryColor);
+
+            btnFocusAbsent.setBackground(null);
+            ivFocusAbsent.setColorFilter(secondaryColor);
+            tvFocusAbsent.setTextColor(secondaryColor);
+
+            btnFocusHoliday.setBackground(null);
+            ivFocusHoliday.setColorFilter(secondaryColor);
+            tvFocusHoliday.setTextColor(secondaryColor);
+
+            String status = item.getCurrentStatus();
+            if (AttendanceHistory.STATUS_PRESENT.equalsIgnoreCase(status)) {
+                int onAccent = ContextCompat.getColor(MainActivity.this, R.color.zen_on_accent);
+                btnFocusPresent.setBackgroundResource(R.drawable.bg_toggle_present_active);
+                ivFocusPresent.setColorFilter(onAccent);
+                tvFocusPresent.setTextColor(onAccent);
+                setFocusStatusCaption("Marked as Present", "Present", ContextCompat.getColor(MainActivity.this, R.color.status_present));
+            } else if (AttendanceHistory.STATUS_ABSENT.equalsIgnoreCase(status)) {
+                int onErr = ContextCompat.getColor(MainActivity.this, R.color.zen_on_error_container);
+                btnFocusAbsent.setBackgroundResource(R.drawable.bg_toggle_absent_active);
+                ivFocusAbsent.setColorFilter(onErr);
+                tvFocusAbsent.setTextColor(onErr);
+                setFocusStatusCaption("Marked as Absent", "Absent", ContextCompat.getColor(MainActivity.this, R.color.status_absent));
+            } else if (AttendanceHistory.STATUS_HOLIDAY.equalsIgnoreCase(status)) {
+                int holidayTint = ContextCompat.getColor(MainActivity.this, R.color.status_holiday);
+                int primaryText = ContextCompat.getColor(MainActivity.this, R.color.zen_text_primary);
+                btnFocusHoliday.setBackgroundResource(R.drawable.bg_toggle_holiday_active);
+                ivFocusHoliday.setColorFilter(holidayTint);
+                tvFocusHoliday.setTextColor(primaryText);
+                setFocusStatusCaption("Marked as Holiday (Session excluded)", "Holiday", holidayTint);
+            } else {
+                tvFocusStatusCaption.setText("Tap an option above to mark attendance");
+                tvFocusStatusCaption.setTextColor(secondaryColor);
+            }
+
+            btnFocusPresent.setOnClickListener(v -> onMarkAttendance(cs, AttendanceHistory.STATUS_PRESENT));
+            btnFocusAbsent.setOnClickListener(v -> onMarkAttendance(cs, AttendanceHistory.STATUS_ABSENT));
+            btnFocusHoliday.setOnClickListener(v -> onMarkAttendance(cs, AttendanceHistory.STATUS_HOLIDAY));
+        }
+
+        private void setFocusStatusCaption(String fullText, String highlightWord, int highlightColor) {
+            tvFocusStatusCaption.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_text_secondary));
+            int start = fullText.indexOf(highlightWord);
+            if (start >= 0) {
+                SpannableString ss = new SpannableString(fullText);
+                ss.setSpan(new ForegroundColorSpan(highlightColor), start, start + highlightWord.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ss.setSpan(new android.text.style.StyleSpan(Typeface.BOLD), start, start + highlightWord.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                tvFocusStatusCaption.setText(ss);
+            } else {
+                tvFocusStatusCaption.setText(fullText);
+            }
+        }
+
+        private void bindDashboardScheduleRow(View row, ClassWithTodayStatus item, int nowMinutes) {
+            ClassSchedule cs = item.getSchedule();
+            TextView tvSubject = row.findViewById(R.id.tv_dash_sched_subject);
+            TextView tvType = row.findViewById(R.id.tv_dash_sched_type);
+            TextView tvMeta = row.findViewById(R.id.tv_dash_sched_meta);
+            TextView tvPill = row.findViewById(R.id.tv_dash_sched_status_pill);
+
+            tvSubject.setText(cs.getSubjectName());
+            String type = cs.getClassType();
+            tvType.setText(type.toUpperCase(Locale.ROOT));
+            if ("Lab".equalsIgnoreCase(type)) {
+                tvType.setBackgroundResource(R.drawable.bg_type_lab);
+                tvType.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.type_lab_text));
+            } else {
+                tvType.setBackgroundResource(R.drawable.bg_type_theory);
+                tvType.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.type_theory_text));
+            }
+
+            String endStr = cs.getEndTime() != null ? cs.getEndTime().trim() : "";
+            String timeStr = endStr.isEmpty() ? cs.getStartTime() : (cs.getStartTime() + " - " + endStr);
+            String roomLabel = formatRoomLabel(cs.getRoomNumber());
+            tvMeta.setText(timeStr + " • " + roomLabel + " (" + cs.getCreditHours() + " Cr)");
+
+            String status = item.getCurrentStatus();
+            if (AttendanceHistory.STATUS_PRESENT.equalsIgnoreCase(status)) {
+                tvPill.setText("Present");
+                tvPill.setBackgroundResource(R.drawable.bg_pill_accent_soft);
+                tvPill.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.status_present));
+            } else if (AttendanceHistory.STATUS_ABSENT.equalsIgnoreCase(status)) {
+                tvPill.setText("Absent");
+                tvPill.setBackgroundResource(R.drawable.bg_toggle_absent_active);
+                tvPill.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_on_error_container));
+            } else if (AttendanceHistory.STATUS_HOLIDAY.equalsIgnoreCase(status)) {
+                tvPill.setText("Holiday");
+                tvPill.setBackgroundResource(R.drawable.bg_pill_highest);
+                tvPill.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.status_holiday));
+            } else {
+                tvPill.setBackgroundResource(R.drawable.bg_pill_highest);
+                int startMin = ClassSchedule.parseTimeToMinutes(cs.getStartTime());
+                int endMin = ClassSchedule.parseTimeToMinutes(cs.getEndTime());
+                if (nowMinutes >= startMin && nowMinutes < endMin) {
+                    tvPill.setText("Now");
+                    tvPill.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_accent));
+                } else if (startMin > nowMinutes) {
+                    int diffMins = startMin - nowMinutes;
+                    if (diffMins >= 60) {
+                        int hrs = Math.max(1, Math.round(diffMins / 60f));
+                        tvPill.setText("In " + hrs + "h");
+                    } else {
+                        tvPill.setText("In " + diffMins + "m");
+                    }
+                    tvPill.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_text_secondary));
+                } else {
+                    tvPill.setText("Ended");
+                    tvPill.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_text_tertiary));
+                }
+            }
+
+            row.setOnClickListener(v -> {
+                focusedScheduleId = cs.getId();
+                refreshTodayClassesView();
+                if (viewTodayClasses != null) {
+                    viewTodayClasses.smoothScrollTo(0, 0);
+                }
+            });
+        }
+
+        private String formatRoomLabel(String rawRoom) {
+            if (rawRoom == null || rawRoom.trim().isEmpty()) {
+                return "TBA";
+            }
+            String trimmed = rawRoom.trim();
+            String lower = trimmed.toLowerCase(Locale.ROOT);
+            if (lower.startsWith("room") || lower.startsWith("romm") || lower.startsWith("lab") || lower.startsWith("hall") || lower.equals("tba")) {
+                return trimmed;
+            }
+            return "Room # " + trimmed;
+        }
+
+        void updateQuickOverview(List<SubjectStats> stats, List<Task> tasks) {
+            // 1. Overall Attendance Standing Card
+            int targetPct = currentUserProfile != null ? currentUserProfile.getEffectiveTargetPercent() : 75;
+            int totalPresent = 0;
+            int totalAbsent = 0;
+            int belowThresholdCount = 0;
+            if (stats != null) {
+                for (SubjectStats s : stats) {
+                    totalPresent += s.getPresentCount();
+                    totalAbsent += s.getAbsentCount();
+                    if (s.getEffectiveTotal() > 0 && s.getAttendancePercentage() < (double) targetPct) {
+                        belowThresholdCount++;
+                    }
+                }
+            }
+
+            int totalEffective = totalPresent + totalAbsent;
+            if (totalEffective > 0) {
+                double overallPct = (totalPresent * 100.0) / totalEffective;
+                tvOverallPercent.setText(String.format(Locale.getDefault(), "%.1f%% Overall", overallPct));
+                if (overallPct >= (double) targetPct && belowThresholdCount == 0) {
+                    tvOverallStandingLabel.setText("Good Standing");
+                    tvOverallStandingLabel.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_accent));
+                    tvOverallStandingDesc.setText("All attendance thresholds (" + targetPct + "%) met");
+                    ivStandingIcon.setColorFilter(ContextCompat.getColor(MainActivity.this, R.color.zen_accent));
+                } else if (overallPct >= (double) targetPct) {
+                    tvOverallStandingLabel.setText("Watch List");
+                    tvOverallStandingLabel.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.status_warning));
+                    tvOverallStandingDesc.setText(belowThresholdCount + (belowThresholdCount == 1 ? " subject" : " subjects") + " below " + targetPct + "%");
+                    ivStandingIcon.setColorFilter(ContextCompat.getColor(MainActivity.this, R.color.status_warning));
+                } else {
+                    tvOverallStandingLabel.setText("Needs Focus");
+                    tvOverallStandingLabel.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.status_absent));
+                    tvOverallStandingDesc.setText(belowThresholdCount + (belowThresholdCount == 1 ? " subject" : " subjects") + " below " + targetPct + "%");
+                    ivStandingIcon.setColorFilter(ContextCompat.getColor(MainActivity.this, R.color.status_absent));
+                }
+            } else {
+                tvOverallPercent.setText("No Attendance Yet");
+                tvOverallStandingLabel.setText("Ready");
+                tvOverallStandingLabel.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_accent));
+                tvOverallStandingDesc.setText("Mark classes above to calculate standing");
+                ivStandingIcon.setColorFilter(ContextCompat.getColor(MainActivity.this, R.color.zen_accent));
+            }
+
+            // 2. Priority Task Card
+            Task priorityTask = pickPriorityTask(tasks);
+            if (priorityTask != null) {
+                boolean done = priorityTask.isCompleted();
+                tvPriorityTaskTitle.setText(priorityTask.getDescription());
+                if (done) {
+                    tvPriorityTaskTitle.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_text_completed));
+                    tvPriorityTaskTitle.setPaintFlags(tvPriorityTaskTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    boxPriorityTaskCheckbox.setBackgroundResource(R.drawable.bg_checkbox_checked);
+                    ivPriorityTaskCheck.setVisibility(View.VISIBLE);
+                } else {
+                    tvPriorityTaskTitle.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_text_primary));
+                    tvPriorityTaskTitle.setPaintFlags(tvPriorityTaskTitle.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                    boxPriorityTaskCheckbox.setBackgroundResource(R.drawable.bg_checkbox_unchecked);
+                    ivPriorityTaskCheck.setVisibility(View.INVISIBLE);
+                }
+                tvPriorityTaskDue.setText(formatTaskDueSubtitle(priorityTask));
+
+                btnPriorityTaskCheck.setOnClickListener(v -> onTaskToggle(priorityTask, !priorityTask.isCompleted()));
+                cardPriorityTask.setOnClickListener(v -> selectTabDirectly(TAB_TASKS));
+            } else {
+                tvPriorityTaskTitle.setText("No pending tasks");
+                tvPriorityTaskTitle.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_text_secondary));
+                tvPriorityTaskTitle.setPaintFlags(tvPriorityTaskTitle.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                boxPriorityTaskCheckbox.setBackgroundResource(R.drawable.bg_checkbox_unchecked);
+                ivPriorityTaskCheck.setVisibility(View.INVISIBLE);
+                tvPriorityTaskDue.setText("Tap to add or manage tasks");
+
+                btnPriorityTaskCheck.setOnClickListener(v -> showAddTaskBottomSheet());
+                cardPriorityTask.setOnClickListener(v -> selectTabDirectly(TAB_TASKS));
+            }
+        }
+
+        private Task pickPriorityTask(List<Task> tasks) {
+            if (tasks == null || tasks.isEmpty()) return null;
+            Task earliestTimedPending = null;
+            Task firstPending = null;
+            for (Task t : tasks) {
+                if (!t.isCompleted()) {
+                    if (firstPending == null) {
+                        firstPending = t;
+                    }
+                    if (t.getEndTime() > 0) {
+                        if (earliestTimedPending == null || t.getEndTime() < earliestTimedPending.getEndTime()) {
+                            earliestTimedPending = t;
+                        }
+                    }
+                }
+            }
+            if (earliestTimedPending != null) return earliestTimedPending;
+            if (firstPending != null) return firstPending;
+            return tasks.get(0);
+        }
+
+        private String formatTaskDueSubtitle(Task task) {
+            if (task.getEndTime() <= 0) {
+                return task.isCompleted() ? "Completed" : "No deadline • Tap to view tasks";
+            }
+            long dueMillis = task.getEndTime();
+            long todayStart = getStartOfDayMillis(Calendar.getInstance());
+            Calendar tomorrowCal = Calendar.getInstance();
+            tomorrowCal.add(Calendar.DAY_OF_YEAR, 1);
+            long tomorrowStart = getStartOfDayMillis(tomorrowCal);
+            Calendar dayAfterCal = (Calendar) tomorrowCal.clone();
+            dayAfterCal.add(Calendar.DAY_OF_YEAR, 1);
+            long dayAfterStart = getStartOfDayMillis(dayAfterCal);
+
+            SimpleDateFormat timeFmt = new SimpleDateFormat("h:mm a", Locale.getDefault());
+            if (dueMillis >= todayStart && dueMillis < tomorrowStart) {
+                return "Due Today • " + timeFmt.format(new Date(dueMillis));
+            } else if (dueMillis >= tomorrowStart && dueMillis < dayAfterStart) {
+                return "Due Tomorrow • " + timeFmt.format(new Date(dueMillis));
+            } else {
+                SimpleDateFormat dateFmt = new SimpleDateFormat("MMM d • h:mm a", Locale.getDefault());
+                return "Due " + dateFmt.format(new Date(dueMillis));
             }
         }
 
@@ -1146,8 +1749,8 @@ public class MainActivity extends AppCompatActivity implements
     // Attendance Interaction Callbacks
     // =========================================================================
 
-    @Override
     public void onMarkAttendance(String subjectName, int creditHours, String classType, String status) {
+        ThemeHelper.performHaptic(attendanceViewHolder != null ? attendanceViewHolder.itemView : viewPager);
         long todayDate = getStartOfDayMillis(Calendar.getInstance());
 
         AppDatabase.databaseWriteExecutor.execute(() -> {
@@ -1177,7 +1780,6 @@ public class MainActivity extends AppCompatActivity implements
         Toast.makeText(this, "Marked " + subjectName + " as " + status, Toast.LENGTH_SHORT).show();
     }
 
-    @Override
     public void onMarkAttendance(ClassSchedule schedule, String status) {
         if (schedule != null) {
             onMarkAttendance(schedule.getSubjectName(), schedule.getCreditHours(), schedule.getClassType(), status);
@@ -1700,6 +2302,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onTaskToggle(Task task, boolean isCompleted) {
+        ThemeHelper.performHaptic(viewPager);
         task.setCompleted(isCompleted);
         task.setTimestamp(System.currentTimeMillis());
         AppDatabase.databaseWriteExecutor.execute(() -> {

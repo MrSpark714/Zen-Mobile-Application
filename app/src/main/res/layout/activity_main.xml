@@ -7,55 +7,90 @@
     android:background="@color/zen_background"
     android:fitsSystemWindows="true">
 
-    <!-- Top Header Area -->
+    <!-- Top Header Area (Matches Zen Dark Minimalist Dashboard Header) -->
     <LinearLayout
         android:id="@+id/header_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingStart="16dp"
-        android:paddingTop="12dp"
+        android:paddingTop="10dp"
         android:paddingEnd="16dp"
         android:paddingBottom="8dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="48dp">
 
+            <!-- Left: ZEN Brand + Offline Cloud Icon + LOCAL Pill -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:orientation="vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/tv_header_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-black"
+                    android:fontFamily="@font/inter"
                     android:includeFontPadding="false"
-                    android:letterSpacing="0.12"
+                    android:letterSpacing="-0.02"
                     android:text="ZEN"
                     android:textColor="@color/zen_text_primary"
-                    android:textSize="22sp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tv_header_subtitle"
+                <ImageView
+                    android:id="@+id/iv_header_offline"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginStart="6dp"
+                    android:alpha="0.8"
+                    android:contentDescription="Offline storage active"
+                    android:src="@drawable/ic_cloud_off"
+                    app:tint="@color/zen_text_secondary" />
+
+                <!-- LOCAL Status Pill -->
+                <LinearLayout
+                    android:id="@+id/pill_local_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:fontFamily="sans-serif-medium"
-                    android:includeFontPadding="false"
-                    android:letterSpacing="0.15"
-                    android:text="ALL NOTES"
-                    android:textAllCaps="true"
-                    android:textColor="@color/zen_text_secondary"
-                    android:textSize="11sp" />
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_pill_surface_high"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="8dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="4dp">
+
+                    <View
+                        android:id="@+id/dot_local_pulse"
+                        android:layout_width="6dp"
+                        android:layout_height="6dp"
+                        android:background="@drawable/bg_dot_lime" />
+
+                    <TextView
+                        android:id="@+id/tv_header_subtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:fontFamily="@font/inter"
+                        android:includeFontPadding="false"
+                        android:letterSpacing="0.06"
+                        android:text="LOCAL"
+                        android:textAllCaps="true"
+                        android:textColor="@color/zen_text_secondary"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
             </LinearLayout>
 
+            <!-- Right: Count Badge (Notes/Tasks) + Settings Gear + Profile Circle -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -68,8 +103,9 @@
                     android:id="@+id/tv_item_count_badge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
                     android:background="@drawable/bg_badge"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="@font/inter"
                     android:gravity="center"
                     android:includeFontPadding="false"
                     android:letterSpacing="0.04"
@@ -79,48 +115,83 @@
                     android:paddingBottom="4dp"
                     android:text="0 notes"
                     android:textColor="@color/zen_accent"
-                    android:textSize="11sp" />
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/btn_header_settings"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginStart="8dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="Settings and Data Management"
-                    android:padding="6dp"
+                    android:padding="13dp"
+                    android:scaleType="fitCenter"
                     android:src="@drawable/ic_settings"
                     app:tint="@color/zen_text_secondary" />
+
+                <FrameLayout
+                    android:id="@+id/btn_header_profile"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="Academic Profile"
+                    android:focusable="true">
+
+                    <TextView
+                        android:id="@+id/tv_header_profile_initial"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/bg_circle_primary"
+                        android:fontFamily="@font/inter"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:textColor="@color/zen_on_accent"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/iv_header_profile_photo"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="Profile Photo"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone" />
+                </FrameLayout>
             </LinearLayout>
         </RelativeLayout>
 
-        <!-- Search Bar -->
+        <!-- Search Bar (Visible on Notes and Tasks tabs) -->
         <LinearLayout
             android:id="@+id/search_bar_container"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="12dp"
+            android:layout_height="44dp"
+            android:layout_marginTop="8dp"
             android:background="@drawable/bg_search_bar"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp">
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:visibility="gone">
 
             <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:contentDescription="Search"
                 android:src="@drawable/ic_search"
-                app:tint="@color/zen_text_secondary" />
+                app:tint="@color/zen_text_tertiary" />
 
             <EditText
                 android:id="@+id/et_search"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="10dp"
                 android:layout_weight="1"
                 android:background="@null"
-                android:fontFamily="sans-serif"
+                android:fontFamily="@font/inter"
                 android:gravity="center_vertical"
                 android:hint="@string/search_notes_hint"
                 android:imeOptions="actionSearch"
@@ -129,13 +200,13 @@
                 android:maxLines="1"
                 android:padding="0dp"
                 android:textColor="@color/zen_text_primary"
-                android:textColorHint="@color/zen_text_secondary"
+                android:textColorHint="@color/zen_text_tertiary"
                 android:textSize="14sp" />
 
             <ImageView
                 android:id="@+id/btn_clear_search"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Clear"
                 android:src="@drawable/ic_close"
@@ -144,7 +215,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- ViewPager2 for Tabbed Swiping: Notes (0), Tasks (1), Attendance (2) -->
+    <!-- ViewPager2 for Tabbed Swiping: Notes (0), Tasks (1), Classes Dashboard (2) -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
@@ -152,7 +223,7 @@
         app:layout_constraintBottom_toTopOf="@id/bottom_nav_container"
         app:layout_constraintTop_toBottomOf="@id/header_layout" />
 
-    <!-- Floating Pill Navigation Bar -->
+    <!-- Floating Pill Navigation Bar (UNCHANGED) -->
     <FrameLayout
         android:id="@+id/bottom_nav_container"
         android:layout_width="match_parent"
@@ -185,6 +256,7 @@
                     android:id="@+id/pill_nav_notes"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:alpha="0"
                     android:background="@drawable/bg_nav_tab_active" />
 
                 <LinearLayout
@@ -200,19 +272,19 @@
                         android:layout_height="18dp"
                         android:contentDescription="Notes"
                         android:src="@drawable/ic_notes"
-                        app:tint="@color/zen_accent" />
+                        app:tint="@color/zen_text_secondary" />
 
                     <TextView
                         android:id="@+id/tv_nav_notes_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
-                        android:fontFamily="sans-serif-bold"
+                        android:fontFamily="sans-serif-medium"
                         android:gravity="center_vertical"
                         android:includeFontPadding="false"
                         android:letterSpacing="0.08"
                         android:text="NOTES"
-                        android:textColor="@color/zen_accent"
+                        android:textColor="@color/zen_text_secondary"
                         android:textSize="12sp" />
                 </LinearLayout>
             </FrameLayout>
@@ -276,7 +348,6 @@
                     android:id="@+id/pill_nav_attendance"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:alpha="0"
                     android:background="@drawable/bg_nav_tab_active" />
 
                 <LinearLayout
@@ -292,19 +363,19 @@
                         android:layout_height="18dp"
                         android:contentDescription="Classes"
                         android:src="@drawable/ic_school"
-                        app:tint="@color/zen_text_secondary" />
+                        app:tint="@color/zen_accent" />
 
                     <TextView
                         android:id="@+id/tv_nav_attendance_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
-                        android:fontFamily="sans-serif-medium"
+                        android:fontFamily="sans-serif-bold"
                         android:gravity="center_vertical"
                         android:includeFontPadding="false"
                         android:letterSpacing="0.08"
                         android:text="CLASSES"
-                        android:textColor="@color/zen_text_secondary"
+                        android:textColor="@color/zen_accent"
                         android:textSize="12sp" />
                 </LinearLayout>
             </FrameLayout>
@@ -317,7 +388,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="20dp"
         android:layout_marginBottom="84dp"
         android:contentDescription="Add Item"
         android:src="@drawable/ic_add"
@@ -327,25 +398,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.ZEN.Rounded2xl"
         app:tint="@color/zen_on_accent" />
-
-    <!-- Auxiliary views for optional Fragment container compatibility -->
-    <FrameLayout
-        android:id="@+id/fragment_container"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_nav_view"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

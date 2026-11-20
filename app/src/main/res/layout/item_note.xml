@@ -8,7 +8,7 @@
     android:layout_marginTop="4dp"
     android:layout_marginBottom="4dp"
     app:cardBackgroundColor="@color/zen_surface"
-    app:cardCornerRadius="13dp"
+    app:cardCornerRadius="16dp"
     app:cardElevation="0dp"
     app:strokeColor="@color/zen_border"
     app:strokeWidth="1dp">
@@ -16,7 +16,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="13dp">
+        android:padding="14dp">
 
         <!-- Optional Top Badges Row (Important / Date) -->
         <LinearLayout

@@ -49,7 +49,7 @@
             android:contentDescription="Close"
             android:padding="5dp"
             android:src="@drawable/ic_close"
-            android:tint="@color/zen_text_secondary" />
+            app:tint="@color/zen_text_secondary" />
     </RelativeLayout>
 
     <View

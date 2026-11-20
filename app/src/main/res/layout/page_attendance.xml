@@ -6,454 +6,1211 @@
     android:layout_height="match_parent"
     android:background="@color/zen_background">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <!-- Top Header & Sub-Navigation -->
-        <LinearLayout
+        <!-- 1. DASHBOARD VIEW (Matches screen_a2ed9798.png & code_9d4a206c.html) -->
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/view_today_classes"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingStart="16dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="8dp">
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingBottom="96dp"
+            android:visibility="visible">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/tv_attendance_header_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:fontFamily="sans-serif-bold"
-                    android:includeFontPadding="false"
-                    android:letterSpacing="0.05"
-                    android:text="ZEN ATTENDANCE"
-                    android:textColor="@color/zen_text_primary"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/tv_current_date_badge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:background="@drawable/bg_badge"
-                    android:fontFamily="sans-serif-medium"
-                    android:gravity="center"
-                    android:includeFontPadding="false"
-                    android:paddingStart="7dp"
-                    android:paddingTop="2dp"
-                    android:paddingEnd="7dp"
-                    android:paddingBottom="2dp"
-                    android:textColor="@color/zen_accent"
-                    android:textSize="11sp"
-                    tools:text="Wednesday" />
-            </RelativeLayout>
-
-            <!-- Sub-Navigation Segmented Control (TODAY / TIMETABLE / ANALYTICS) -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="38dp"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/bg_floating_bottom_nav"
-                android:orientation="horizontal"
-                android:padding="2dp">
-
-                <TextView
-                    android:id="@+id/tab_today"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_nav_tab_active"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:fontFamily="sans-serif-bold"
-                    android:gravity="center"
-                    android:includeFontPadding="false"
-                    android:letterSpacing="0.05"
-                    android:text="TODAY"
-                    android:textColor="@color/zen_on_accent"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/tab_timetable"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_nav_tab_inactive"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:fontFamily="sans-serif-medium"
-                    android:gravity="center"
-                    android:includeFontPadding="false"
-                    android:letterSpacing="0.05"
-                    android:text="SCHEDULE"
-                    android:textColor="@color/zen_text_secondary"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/tab_analytics"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_nav_tab_inactive"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:fontFamily="sans-serif-medium"
-                    android:gravity="center"
-                    android:includeFontPadding="false"
-                    android:letterSpacing="0.05"
-                    android:text="HISTORY"
-                    android:textColor="@color/zen_text_secondary"
-                    android:textSize="12sp" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- CONTAINER FOR SUB-VIEWS -->
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-
-            <!-- 1. TODAY'S CLASSES VIEW -->
-            <LinearLayout
-                android:id="@+id/view_today_classes"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="visible">
+                android:paddingStart="16dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="16dp">
 
-                <!-- Header Info -->
+                <!-- Top Greeting & Context Ribbon -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingStart="16dp"
-                    android:paddingTop="5dp"
-                    android:paddingEnd="16dp"
-                    android:paddingBottom="5dp">
+                    android:gravity="top"
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/tv_today_summary_info"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif"
-                        android:includeFontPadding="false"
-                        android:textColor="@color/zen_text_secondary"
-                        android:textSize="11sp"
-                        tools:text="Showing classes scheduled for today" />
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tv_dashboard_date"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/inter"
+                                android:includeFontPadding="false"
+                                android:letterSpacing="0.08"
+                                android:textAllCaps="true"
+                                android:textColor="@color/zen_text_secondary"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                tools:text="MONDAY, NOV 16" />
+
+                            <View
+                                android:layout_width="4dp"
+                                android:layout_height="4dp"
+                                android:layout_marginStart="6dp"
+                                android:layout_marginEnd="6dp"
+                                android:background="@drawable/bg_dot_lime"
+                                android:backgroundTint="@color/zen_outline_variant" />
+
+                            <ImageView
+                                android:layout_width="13dp"
+                                android:layout_height="13dp"
+                                android:contentDescription="Synced locally"
+                                android:src="@drawable/ic_offline_pin"
+                                app:tint="@color/zen_accent" />
+
+                            <TextView
+                                android:id="@+id/tv_dashboard_sync_status"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:fontFamily="@font/inter"
+                                android:includeFontPadding="false"
+                                android:letterSpacing="0.08"
+                                android:text="LOCAL SYNCED"
+                                android:textAllCaps="true"
+                                android:textColor="@color/zen_accent"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tv_dashboard_greeting"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:letterSpacing="-0.02"
+                            android:textColor="@color/zen_text_primary"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            tools:text="Good Morning" />
+
+                        <TextView
+                            android:id="@+id/tv_dashboard_academic_meta"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textColor="@color/zen_text_secondary"
+                            android:textSize="12sp"
+                            android:visibility="gone"
+                            tools:text="Semester 4 • Bachelor of Computer Science" />
+                    </LinearLayout>
+
+                    <!-- Electric Bolt Quick Action (Opens Timetable) -->
+                    <FrameLayout
+                        android:id="@+id/btn_dashboard_bolt"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_rounded_2xl_surface_high"
+                        android:clickable="true"
+                        android:contentDescription="Open Weekly Schedule"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackgroundBorderless">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="Quick Schedule"
+                            android:src="@drawable/ic_electric_bolt"
+                            app:tint="@color/zen_accent" />
+                    </FrameLayout>
                 </LinearLayout>
 
-                <!-- RecyclerView for Today's Classes -->
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_today_classes"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:clipToPadding="false"
-                    android:overScrollMode="never"
-                    android:paddingBottom="72dp" />
-
-                <!-- Empty State for Today / Weekend -->
-                <LinearLayout
-                    android:id="@+id/layout_empty_today"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="26dp"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🌸"
-                        android:textSize="30sp" />
-
-                    <TextView
-                        android:id="@+id/tv_empty_today_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:fontFamily="sans-serif-bold"
-                        android:letterSpacing="0.04"
-                        android:text="No classes this weekend"
-                        android:textColor="@color/zen_text_primary"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/tv_empty_today_subtitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:fontFamily="sans-serif"
-                        android:gravity="center"
-                        android:text="Enjoy your rest and mindfulness. Weekends are free of scheduled classes."
-                        android:textColor="@color/zen_text_secondary"
-                        android:textSize="11sp" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- 2. WEEKLY CONFIGURATION / SCHEDULE VIEW -->
-            <LinearLayout
-                android:id="@+id/view_weekly_schedule"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <!-- Mon-Fri Filter Pills (Strictly weekdays only) -->
+                <!-- Quick Glance Chips Row -->
                 <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="3dp"
+                    android:layout_marginTop="12dp"
                     android:overScrollMode="never"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
                     android:scrollbars="none">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:paddingTop="3dp"
-                        android:paddingBottom="7dp">
+                        android:paddingTop="2dp"
+                        android:paddingBottom="2dp">
 
-                        <TextView
-                            android:id="@+id/filter_day_all"
+                        <!-- Chip 1: Enrolled Courses -->
+                        <LinearLayout
+                            android:id="@+id/chip_enrolled_courses"
                             android:layout_width="wrap_content"
-                            android:layout_height="26dp"
-                            android:background="@drawable/bg_chip_selected"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_pill_surface"
                             android:clickable="true"
                             android:focusable="true"
-                            android:fontFamily="sans-serif-medium"
-                            android:gravity="center"
-                            android:paddingStart="11dp"
-                            android:paddingEnd="11dp"
-                            android:text="All Days"
-                            android:textColor="@color/zen_accent"
-                            android:textSize="10sp" />
+                            android:foreground="?attr/selectableItemBackground"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="12dp"
+                            android:paddingTop="7dp"
+                            android:paddingEnd="12dp"
+                            android:paddingBottom="7dp">
 
-                        <TextView
-                            android:id="@+id/filter_day_mon"
+                            <View
+                                android:layout_width="8dp"
+                                android:layout_height="8dp"
+                                android:background="@drawable/bg_dot_cyan" />
+
+                            <TextView
+                                android:id="@+id/tv_chip_enrolled_courses"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:fontFamily="@font/inter"
+                                android:includeFontPadding="false"
+                                android:textColor="@color/zen_text_primary"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                tools:text="11 Enrolled Courses" />
+                        </LinearLayout>
+
+                        <!-- Chip 2: Scheduled Today -->
+                        <LinearLayout
+                            android:id="@+id/chip_scheduled_today"
                             android:layout_width="wrap_content"
-                            android:layout_height="26dp"
-                            android:layout_marginStart="7dp"
-                            android:background="@drawable/bg_chip_unselected"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/bg_pill_surface_high"
                             android:clickable="true"
                             android:focusable="true"
-                            android:fontFamily="sans-serif-medium"
-                            android:gravity="center"
-                            android:paddingStart="11dp"
-                            android:paddingEnd="11dp"
-                            android:text="Monday"
-                            android:textColor="@color/zen_text_secondary"
-                            android:textSize="10sp" />
+                            android:foreground="?attr/selectableItemBackground"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="12dp"
+                            android:paddingTop="7dp"
+                            android:paddingEnd="12dp"
+                            android:paddingBottom="7dp">
 
-                        <TextView
-                            android:id="@+id/filter_day_tue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="26dp"
-                            android:layout_marginStart="7dp"
-                            android:background="@drawable/bg_chip_unselected"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:fontFamily="sans-serif-medium"
-                            android:gravity="center"
-                            android:paddingStart="11dp"
-                            android:paddingEnd="11dp"
-                            android:text="Tuesday"
-                            android:textColor="@color/zen_text_secondary"
-                            android:textSize="10sp" />
+                            <View
+                                android:layout_width="8dp"
+                                android:layout_height="8dp"
+                                android:background="@drawable/bg_dot_lime" />
 
-                        <TextView
-                            android:id="@+id/filter_day_wed"
-                            android:layout_width="wrap_content"
-                            android:layout_height="26dp"
-                            android:layout_marginStart="7dp"
-                            android:background="@drawable/bg_chip_unselected"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:fontFamily="sans-serif-medium"
-                            android:gravity="center"
-                            android:paddingStart="11dp"
-                            android:paddingEnd="11dp"
-                            android:text="Wednesday"
-                            android:textColor="@color/zen_text_secondary"
-                            android:textSize="10sp" />
+                            <TextView
+                                android:id="@+id/tv_chip_scheduled_today"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:fontFamily="@font/inter"
+                                android:includeFontPadding="false"
+                                android:textColor="@color/zen_accent"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                tools:text="3 Scheduled Today" />
+                        </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/filter_day_thu"
+                        <!-- Chip 3: Next Class Time -->
+                        <LinearLayout
+                            android:id="@+id/chip_next_class_time"
                             android:layout_width="wrap_content"
-                            android:layout_height="26dp"
-                            android:layout_marginStart="7dp"
-                            android:background="@drawable/bg_chip_unselected"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:fontFamily="sans-serif-medium"
-                            android:gravity="center"
-                            android:paddingStart="11dp"
-                            android:paddingEnd="11dp"
-                            android:text="Thursday"
-                            android:textColor="@color/zen_text_secondary"
-                            android:textSize="10sp" />
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/bg_pill_surface"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="12dp"
+                            android:paddingTop="7dp"
+                            android:paddingEnd="12dp"
+                            android:paddingBottom="7dp">
 
-                        <TextView
-                            android:id="@+id/filter_day_fri"
-                            android:layout_width="wrap_content"
-                            android:layout_height="26dp"
-                            android:layout_marginStart="7dp"
-                            android:background="@drawable/bg_chip_unselected"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:fontFamily="sans-serif-medium"
-                            android:gravity="center"
-                            android:paddingStart="11dp"
-                            android:paddingEnd="11dp"
-                            android:text="Friday"
-                            android:textColor="@color/zen_text_secondary"
-                            android:textSize="10sp" />
+                            <ImageView
+                                android:layout_width="15dp"
+                                android:layout_height="15dp"
+                                android:contentDescription="Next class time"
+                                android:src="@drawable/ic_timer"
+                                app:tint="@color/zen_text_secondary" />
+
+                            <TextView
+                                android:id="@+id/tv_chip_next_time"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:fontFamily="@font/inter"
+                                android:includeFontPadding="false"
+                                android:textColor="@color/zen_text_secondary"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                tools:text="Next: 08:30 AM" />
+                        </LinearLayout>
                     </LinearLayout>
                 </HorizontalScrollView>
 
-                <!-- RecyclerView for Weekly Schedule -->
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_weekly_schedule"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:clipToPadding="false"
-                    android:overScrollMode="never"
-                    android:paddingBottom="72dp" />
-
-                <!-- Empty State for Schedule -->
-                <LinearLayout
-                    android:id="@+id/layout_empty_schedule"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="26dp"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🗓️"
-                        android:textSize="30sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:fontFamily="sans-serif-bold"
-                        android:letterSpacing="0.04"
-                        android:text="No classes scheduled"
-                        android:textColor="@color/zen_text_primary"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:fontFamily="sans-serif"
-                        android:gravity="center"
-                        android:text="Tap the '+' button below to configure repeating classes for Monday through Friday."
-                        android:textColor="@color/zen_text_secondary"
-                        android:textSize="11sp" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- 3. HISTORY & SUBJECT LEDGER VIEW -->
-            <LinearLayout
-                android:id="@+id/view_analytics"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <!-- Subject Breakdown List -->
+                <!-- Hero Card: Immediate Focus -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="7dp"
-                    android:layout_marginBottom="5dp"
-                    android:fontFamily="sans-serif-bold"
-                    android:letterSpacing="0.06"
-                    android:text="ENROLLED SUBJECTS"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:fontFamily="@font/inter"
+                    android:includeFontPadding="false"
+                    android:letterSpacing="0.08"
+                    android:text="IMMEDIATE FOCUS"
+                    android:textAllCaps="true"
                     android:textColor="@color/zen_text_secondary"
-                    android:textSize="10sp" />
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_subject_analytics"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:clipToPadding="false"
-                    android:overScrollMode="never"
-                    android:paddingBottom="72dp" />
-
-                <!-- Empty State for Analytics -->
+                <!-- Active Hero Card -->
                 <LinearLayout
-                    android:id="@+id/layout_empty_analytics"
+                    android:id="@+id/card_immediate_focus"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_card_hero"
+                    android:elevation="4dp"
                     android:orientation="vertical"
-                    android:padding="26dp"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tv_focus_subject"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/inter"
+                                android:includeFontPadding="false"
+                                android:maxWidth="175dp"
+                                android:maxLines="1"
+                                android:textColor="@color/zen_text_primary"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                tools:text="Computer Architecture" />
+
+                            <TextView
+                                android:id="@+id/tv_focus_type"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:background="@drawable/bg_type_theory"
+                                android:fontFamily="@font/inter"
+                                android:gravity="center"
+                                android:includeFontPadding="false"
+                                android:letterSpacing="0.04"
+                                android:paddingStart="8dp"
+                                android:paddingTop="2dp"
+                                android:paddingEnd="8dp"
+                                android:paddingBottom="2dp"
+                                android:text="THEORY"
+                                android:textColor="@color/type_theory_text"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tv_focus_badge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_pill_accent_soft"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:letterSpacing="0.04"
+                            android:paddingStart="10dp"
+                            android:paddingTop="5dp"
+                            android:paddingEnd="10dp"
+                            android:paddingBottom="5dp"
+                            android:text="NEXT UP"
+                            android:textColor="@color/zen_accent"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:contentDescription="Time"
+                            android:src="@drawable/ic_schedule"
+                            app:tint="@color/zen_accent" />
+
+                        <TextView
+                            android:id="@+id/tv_focus_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:textColor="@color/zen_text_secondary"
+                            android:textSize="12sp"
+                            tools:text="08:30 - 10:20 AM" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:layout_marginEnd="6dp"
+                            android:includeFontPadding="false"
+                            android:text="•"
+                            android:textColor="@color/zen_text_secondary"
+                            android:textSize="12sp" />
+
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:contentDescription="Room"
+                            android:src="@drawable/ic_room"
+                            app:tint="@color/zen_text_secondary" />
+
+                        <TextView
+                            android:id="@+id/tv_focus_room"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textColor="@color/zen_text_secondary"
+                            android:textSize="12sp"
+                            tools:text="Room # A3 (2 Cr)" />
+                    </LinearLayout>
+
+                    <!-- Compact Quick Attendance Pill Toggle -->
+                    <LinearLayout
+                        android:id="@+id/layout_focus_toggle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:background="@drawable/bg_toggle_container"
+                        android:orientation="horizontal"
+                        android:padding="4dp">
+
+                        <LinearLayout
+                            android:id="@+id/btn_focus_present"
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_weight="1"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:id="@+id/iv_focus_present"
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:contentDescription="Present"
+                                android:src="@drawable/ic_check_circle"
+                                app:tint="@color/zen_text_secondary" />
+
+                            <TextView
+                                android:id="@+id/tv_focus_present"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:fontFamily="@font/inter"
+                                android:includeFontPadding="false"
+                                android:text="Present"
+                                android:textColor="@color/zen_text_secondary"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/btn_focus_absent"
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_marginStart="4dp"
+                            android:layout_weight="1"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:id="@+id/iv_focus_absent"
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:contentDescription="Absent"
+                                android:src="@drawable/ic_cancel"
+                                app:tint="@color/zen_text_secondary" />
+
+                            <TextView
+                                android:id="@+id/tv_focus_absent"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:fontFamily="@font/inter"
+                                android:includeFontPadding="false"
+                                android:text="Absent"
+                                android:textColor="@color/zen_text_secondary"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/btn_focus_holiday"
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_marginStart="4dp"
+                            android:layout_weight="1"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:id="@+id/iv_focus_holiday"
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:contentDescription="Holiday"
+                                android:src="@drawable/ic_beach_access"
+                                app:tint="@color/zen_text_secondary" />
+
+                            <TextView
+                                android:id="@+id/tv_focus_holiday"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:fontFamily="@font/inter"
+                                android:includeFontPadding="false"
+                                android:text="Holiday"
+                                android:textColor="@color/zen_text_secondary"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_focus_status_caption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/inter"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:textColor="@color/zen_text_secondary"
+                        android:textSize="12sp"
+                        tools:text="Marked as Holiday (Faculty off-duty)" />
+                </LinearLayout>
+
+                <!-- Empty Immediate Focus State (Weekend or No Classes Today) -->
+                <LinearLayout
+                    android:id="@+id/card_empty_focus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_card_hero"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:padding="20dp"
                     android:visibility="gone">
 
                     <TextView
+                        android:id="@+id/tv_empty_focus_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="📊"
-                        android:textSize="30sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:fontFamily="sans-serif-bold"
-                        android:letterSpacing="0.04"
-                        android:text="No analytics available"
+                        android:fontFamily="@font/inter"
+                        android:includeFontPadding="false"
+                        android:text="No classes scheduled today"
                         android:textColor="@color/zen_text_primary"
-                        android:textSize="14sp" />
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tv_empty_focus_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:fontFamily="sans-serif"
+                        android:layout_marginTop="6dp"
+                        android:fontFamily="@font/inter"
                         android:gravity="center"
-                        android:text="Configure your class schedule and mark attendance to see detailed subject statistics."
+                        android:includeFontPadding="false"
+                        android:text="Configure your Monday–Friday classes in the weekly timetable or tap + to add one."
+                        android:textColor="@color/zen_text_secondary"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/btn_empty_open_timetable"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:background="@drawable/bg_pill_accent_soft"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="@font/inter"
+                        android:includeFontPadding="false"
+                        android:paddingStart="14dp"
+                        android:paddingTop="8dp"
+                        android:paddingEnd="14dp"
+                        android:paddingBottom="8dp"
+                        android:text="Manage Timetable"
+                        android:textColor="@color/zen_accent"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Today's Schedule Section -->
+                <LinearLayout
+                    android:id="@+id/layout_schedule_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_schedule_section_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:letterSpacing="-0.01"
+                            android:textColor="@color/zen_text_primary"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:text="Monday Schedule" />
+
+                        <TextView
+                            android:id="@+id/tv_schedule_count_pill"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/bg_pill_highest"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:paddingStart="8dp"
+                            android:paddingTop="3dp"
+                            android:paddingEnd="8dp"
+                            android:paddingBottom="3dp"
+                            android:textColor="@color/zen_text_secondary"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            tools:text="3 classes" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/btn_open_timetable"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:paddingStart="6dp"
+                            android:paddingTop="4dp"
+                            android:paddingBottom="4dp"
+                            android:text="Timetable"
+                            android:textColor="@color/zen_accent"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/container_today_schedule"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </LinearLayout>
+
+                <!-- Quick Overview Section -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:letterSpacing="-0.01"
+                            android:text="Quick Overview"
+                            android:textColor="@color/zen_text_primary"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/btn_view_tasks"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:paddingStart="6dp"
+                            android:paddingTop="4dp"
+                            android:paddingBottom="4dp"
+                            android:text="View Tasks"
+                            android:textColor="@color/zen_accent"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Overall Standing Minimal Card -->
+                    <LinearLayout
+                        android:id="@+id/card_overall_standing"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_card_container"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="14dp">
+
+                        <FrameLayout
+                            android:id="@+id/box_standing_icon"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_rounded_xl_accent_soft">
+
+                            <ImageView
+                                android:id="@+id/iv_standing_icon"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:contentDescription="Overall Standing"
+                                android:src="@drawable/ic_verified"
+                                app:tint="@color/zen_accent" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tv_overall_percent"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/inter"
+                                    android:includeFontPadding="false"
+                                    android:textColor="@color/zen_text_primary"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    tools:text="88.4% Overall" />
+
+                                <TextView
+                                    android:id="@+id/tv_overall_standing_label"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:fontFamily="@font/inter"
+                                    android:includeFontPadding="false"
+                                    android:textColor="@color/zen_accent"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold"
+                                    tools:text="Good Standing" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/tv_overall_standing_desc"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="3dp"
+                                android:fontFamily="@font/inter"
+                                android:includeFontPadding="false"
+                                android:textColor="@color/zen_text_secondary"
+                                android:textSize="12sp"
+                                tools:text="All attendance thresholds met" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:alpha="0.6"
+                            android:contentDescription="View Subject Analytics"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="@color/zen_text_secondary" />
+                    </LinearLayout>
+
+                    <!-- Priority Task Minimal Card -->
+                    <LinearLayout
+                        android:id="@+id/card_priority_task"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/bg_card_container"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="6dp"
+                        android:paddingTop="8dp"
+                        android:paddingEnd="14dp"
+                        android:paddingBottom="8dp">
+
+                        <FrameLayout
+                            android:id="@+id/btn_priority_task_check"
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:clickable="true"
+                            android:contentDescription="Toggle task completion"
+                            android:focusable="true">
+
+                            <FrameLayout
+                                android:id="@+id/box_priority_task_checkbox"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/bg_checkbox_unchecked">
+
+                                <ImageView
+                                    android:id="@+id/iv_priority_task_check"
+                                    android:layout_width="16dp"
+                                    android:layout_height="16dp"
+                                    android:layout_gravity="center"
+                                    android:contentDescription="Completed"
+                                    android:src="@drawable/ic_check"
+                                    android:visibility="invisible"
+                                    app:tint="@color/zen_on_accent" />
+                            </FrameLayout>
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tv_priority_task_title"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/inter"
+                                android:includeFontPadding="false"
+                                android:maxLines="1"
+                                android:textColor="@color/zen_text_primary"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                tools:text="Complete HCI Diagram Assignment" />
+
+                            <TextView
+                                android:id="@+id/tv_priority_task_due"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="3dp"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/inter"
+                                android:includeFontPadding="false"
+                                android:maxLines="1"
+                                android:textColor="@color/zen_text_secondary"
+                                android:textSize="11sp"
+                                tools:text="Due Today • 5:00 PM" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:alpha="0.6"
+                            android:contentDescription="Open Tasks"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="@color/zen_text_secondary" />
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <!-- 2. WEEKLY CONFIGURATION / SCHEDULE VIEW -->
+        <LinearLayout
+            android:id="@+id/view_weekly_schedule"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <!-- Sub-view Header -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="8dp"
+                android:paddingEnd="16dp">
+
+                <ImageButton
+                    android:id="@+id/btn_back_from_schedule"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Back to Dashboard"
+                    android:padding="13dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_back"
+                    app:tint="@color/zen_text_primary" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/inter"
+                    android:includeFontPadding="false"
+                    android:text="Weekly Timetable"
+                    android:textColor="@color/zen_text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/btn_schedule_to_analytics"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_pill_surface_high"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/inter"
+                    android:includeFontPadding="false"
+                    android:paddingStart="12dp"
+                    android:paddingTop="6dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="6dp"
+                    android:text="Analytics"
+                    android:textColor="@color/zen_accent"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Mon-Fri Filter Pills -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:overScrollMode="never"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="8dp">
+
+                    <TextView
+                        android:id="@+id/filter_day_all"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:background="@drawable/bg_chip_selected"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="@font/inter"
+                        android:gravity="center"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:text="All Days"
+                        android:textColor="@color/zen_accent"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/filter_day_mon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_chip_unselected"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="@font/inter"
+                        android:gravity="center"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:text="Monday"
+                        android:textColor="@color/zen_text_secondary"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+id/filter_day_tue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_chip_unselected"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="@font/inter"
+                        android:gravity="center"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:text="Tuesday"
+                        android:textColor="@color/zen_text_secondary"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+id/filter_day_wed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_chip_unselected"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="@font/inter"
+                        android:gravity="center"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:text="Wednesday"
+                        android:textColor="@color/zen_text_secondary"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+id/filter_day_thu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_chip_unselected"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="@font/inter"
+                        android:gravity="center"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:text="Thursday"
+                        android:textColor="@color/zen_text_secondary"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+id/filter_day_fri"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_chip_unselected"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="@font/inter"
+                        android:gravity="center"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:text="Friday"
                         android:textColor="@color/zen_text_secondary"
                         android:textSize="11sp" />
                 </LinearLayout>
+            </HorizontalScrollView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_weekly_schedule"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                android:paddingBottom="88dp" />
+
+            <LinearLayout
+                android:id="@+id/layout_empty_schedule"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="28dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter"
+                    android:text="No classes scheduled"
+                    android:textColor="@color/zen_text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/inter"
+                    android:gravity="center"
+                    android:text="Tap the '+' button below to configure repeating classes for Monday through Friday."
+                    android:textColor="@color/zen_text_secondary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 3. HISTORY & SUBJECT ANALYTICS VIEW -->
+        <LinearLayout
+            android:id="@+id/view_analytics"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="8dp"
+                android:paddingEnd="16dp">
+
+                <ImageButton
+                    android:id="@+id/btn_back_from_analytics"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Back to Dashboard"
+                    android:padding="13dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_back"
+                    app:tint="@color/zen_text_primary" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/inter"
+                    android:includeFontPadding="false"
+                    android:text="Attendance Analytics"
+                    android:textColor="@color/zen_text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/btn_analytics_to_schedule"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_pill_surface_high"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/inter"
+                    android:includeFontPadding="false"
+                    android:paddingStart="12dp"
+                    android:paddingTop="6dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="6dp"
+                    android:text="Timetable"
+                    android:textColor="@color/zen_accent"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
-        </FrameLayout>
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/inter"
+                android:letterSpacing="0.08"
+                android:text="ENROLLED SUBJECTS"
+                android:textColor="@color/zen_text_secondary"
+                android:textSize="11sp"
+                android:textStyle="bold" />
 
-    <!-- Floating Action Button to Add Class -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_subject_analytics"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                android:paddingBottom="88dp" />
+
+            <LinearLayout
+                android:id="@+id/layout_empty_analytics"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="28dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter"
+                    android:text="No analytics available"
+                    android:textColor="@color/zen_text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/inter"
+                    android:gravity="center"
+                    android:text="Configure your class schedule and mark attendance to see detailed subject statistics."
+                    android:textColor="@color/zen_text_secondary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <!-- Floating Action Button to Add Class (Shown in Timetable view) -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_class"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:contentDescription="Schedule Class"
         android:src="@drawable/ic_add"
+        android:visibility="gone"
         app:backgroundTint="@color/zen_accent"
-        app:elevation="3dp"
-        app:fabCustomSize="46dp"
-        app:maxImageSize="22dp"
-        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+        app:elevation="6dp"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.ZEN.Rounded2xl"
         app:tint="@color/zen_on_accent" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

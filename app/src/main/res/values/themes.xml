@@ -8,15 +8,14 @@
         <!-- Center app icon -->
         <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
 
-        <!-- Branding image at the bottom (Android 12+) -->
-        <item name="android:windowSplashScreenBrandingImage">@drawable/ic_branding_text</item>
-
         <!-- Post-splash theme for MainActivity -->
         <item name="postSplashScreenTheme">@style/Theme.MyApplication</item>
     </style>
 
     <!-- Base ZEN Dark Theme -->
     <style name="Theme.ZEN" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="fontFamily">@font/inter</item>
         <item name="android:windowBackground">@color/zen_background</item>
         <item name="android:colorBackground">@color/zen_background</item>
         <item name="android:statusBarColor">@color/zen_background</item>
@@ -68,6 +67,16 @@
 
     <style name="Widget.ZEN.BottomNavIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
         <item name="android:color">@color/zen_accent</item>
+    </style>
+
+    <!-- Custom Material 3 DatePicker Theme Overlay matching ZEN Dark palette -->
+    <style name="ThemeOverlay.ZEN.DatePicker" parent="ThemeOverlay.Material3.MaterialCalendar">
+        <item name="colorPrimary">@color/zen_accent</item>
+        <item name="colorOnPrimary">@color/zen_on_accent</item>
+        <item name="colorSurface">@color/zen_surface</item>
+        <item name="colorSurfaceContainerHigh">@color/zen_surface</item>
+        <item name="colorOnSurface">@color/zen_text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/zen_text_secondary</item>
     </style>
 </resources>
 

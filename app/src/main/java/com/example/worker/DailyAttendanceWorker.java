@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.work.Configuration;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
@@ -180,7 +181,19 @@ public class DailyAttendanceWorker extends Worker {
                         .setConstraints(constraints)
                         .build();
 
-        WorkManager.getInstance(context.getApplicationContext()).enqueueUniquePeriodicWork(
+        Context appContext = context.getApplicationContext();
+        WorkManager workManager;
+        try {
+            if (!WorkManager.isInitialized()) {
+                WorkManager.initialize(appContext, new Configuration.Builder().build());
+            }
+            workManager = WorkManager.getInstance(appContext);
+        } catch (IllegalStateException e) {
+            Log.w(TAG, "WorkManager unavailable in current context; skipping auto-marker scheduling", e);
+            return;
+        }
+
+        workManager.enqueueUniquePeriodicWork(
                 WORK_NAME,
                 ExistingPeriodicWorkPolicy.KEEP,
                 periodicWorkRequest
