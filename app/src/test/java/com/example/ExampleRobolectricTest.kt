@@ -174,4 +174,63 @@ class ExampleRobolectricTest {
     }
     assertEquals("Pass", tvIntegrity.text.toString())
   }
+
+  @Test
+  fun `bottom nav is hidden on weekly timetable and analytics screens and analytics shows redesigned header`() {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    context.getSharedPreferences("zen_prefs", Context.MODE_PRIVATE)
+      .edit()
+      .putBoolean(OnboardingActivity.PREF_KEY_MIGRATION, false)
+      .commit()
+    SecureProfileStore.markProfileSetupSeen(context)
+
+    val controller = Robolectric.buildActivity(MainActivity::class.java)
+      .create()
+      .start()
+      .resume()
+      .visible()
+    val activity = controller.get()
+    ShadowLooper.idleMainLooper()
+
+    val root = activity.findViewById<View>(android.R.id.content)
+    root.measure(
+      View.MeasureSpec.makeMeasureSpec(1080, View.MeasureSpec.EXACTLY),
+      View.MeasureSpec.makeMeasureSpec(1920, View.MeasureSpec.EXACTLY)
+    )
+    root.layout(0, 0, 1080, 1920)
+    ShadowLooper.idleMainLooper()
+
+    val bottomNav = activity.findViewById<View>(R.id.bottom_nav_container)
+    assertEquals(View.VISIBLE, bottomNav.visibility)
+
+    // Open Analytics via Overall Standing card
+    val cardStanding = activity.findViewById<View>(R.id.card_overall_standing)
+    assertNotNull(cardStanding)
+    cardStanding.performClick()
+    ShadowLooper.idleMainLooper()
+
+    assertEquals(View.GONE, bottomNav.visibility)
+    val viewAnalytics = activity.findViewById<View>(R.id.view_analytics)
+    assertEquals(View.VISIBLE, viewAnalytics.visibility)
+    val heading = activity.findViewById<TextView>(R.id.tv_analytics_heading)
+    assertEquals("Attendance Analytics", heading.text.toString())
+    assertNotNull(activity.findViewById<View>(R.id.filter_analytics_all))
+    assertNotNull(activity.findViewById<View>(R.id.filter_analytics_theory))
+    assertNotNull(activity.findViewById<View>(R.id.filter_analytics_lab))
+    assertEquals("75%", activity.findViewById<TextView>(R.id.tv_analytics_min_req_badge).text.toString())
+
+    // Switch to Weekly Timetable from Analytics
+    activity.findViewById<View>(R.id.btn_analytics_to_schedule).performClick()
+    ShadowLooper.idleMainLooper()
+
+    assertEquals(View.GONE, bottomNav.visibility)
+    assertEquals(View.VISIBLE, activity.findViewById<View>(R.id.view_weekly_schedule).visibility)
+
+    // Return to Dashboard -> Bottom nav reappears
+    activity.findViewById<View>(R.id.btn_back_from_schedule).performClick()
+    ShadowLooper.idleMainLooper()
+
+    assertEquals(View.VISIBLE, bottomNav.visibility)
+    assertEquals(View.VISIBLE, activity.findViewById<View>(R.id.view_today_classes).visibility)
+  }
 }

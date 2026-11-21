@@ -6,13 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="16dp"
-    android:layout_marginTop="4dp"
+    android:layout_marginTop="5dp"
     android:layout_marginEnd="16dp"
     android:layout_marginBottom="7dp"
-    android:backgroundTint="@color/zen_surface"
     android:clickable="true"
     android:focusable="true"
-    app:cardCornerRadius="16dp"
+    app:cardBackgroundColor="@color/zen_surface_low"
+    app:cardCornerRadius="20dp"
     app:cardElevation="0dp"
     app:strokeColor="@color/zen_border"
     app:strokeWidth="1dp">
@@ -21,85 +21,185 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="14dp">
+        android:padding="16dp">
 
-        <!-- Subject Name & Attendance Percentage Badge -->
-        <RelativeLayout
+        <!-- Header Row: Left (Type Badge + Credits + Course Name) & Right (% + Total) -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tv_analytics_subject_name"
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <!-- Type Pill & Credits Meta -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_analytics_type_badge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_type_theory"
+                        android:fontFamily="@font/inter"
+                        android:includeFontPadding="false"
+                        android:paddingStart="10dp"
+                        android:paddingTop="3dp"
+                        android:paddingEnd="10dp"
+                        android:paddingBottom="3dp"
+                        android:textColor="@color/type_theory_text"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        tools:text="Theory" />
+
+                    <TextView
+                        android:id="@+id/tv_analytics_credits"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:fontFamily="@font/inter"
+                        android:fontFeatureSettings="tnum"
+                        android:includeFontPadding="false"
+                        android:textColor="@color/zen_text_secondary"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        tools:text="• 4 Credits" />
+                </LinearLayout>
+
+                <!-- Subject Name -->
+                <TextView
+                    android:id="@+id/tv_analytics_subject_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter"
+                    android:includeFontPadding="false"
+                    android:letterSpacing="-0.01"
+                    android:maxLines="2"
+                    android:textColor="@color/zen_text_primary"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    tools:text="Advanced Algorithms" />
+            </LinearLayout>
+
+            <!-- Right Percentage & Total Metric -->
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_toStartOf="@id/tv_analytics_percentage"
-                android:ellipsize="end"
-                android:fontFamily="sans-serif-bold"
-                android:maxLines="1"
-                android:textColor="@color/zen_text_primary"
-                android:textSize="14sp"
-                tools:text="Software Engineering" />
+                android:gravity="end"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_analytics_percentage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:background="@drawable/bg_badge"
-                android:fontFamily="sans-serif-bold"
-                android:letterSpacing="0.04"
-                android:paddingStart="8dp"
-                android:paddingTop="3dp"
-                android:paddingEnd="8dp"
-                android:paddingBottom="3dp"
-                android:textColor="@color/zen_accent"
-                android:textSize="12sp"
-                tools:text="85.7%" />
-        </RelativeLayout>
+                <TextView
+                    android:id="@+id/tv_analytics_percentage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter"
+                    android:fontFeatureSettings="tnum"
+                    android:includeFontPadding="false"
+                    android:textColor="@color/zen_accent"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="94.4%" />
 
-        <!-- Progress Indicator -->
+                <TextView
+                    android:id="@+id/tv_analytics_total_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/inter"
+                    android:fontFeatureSettings="tnum"
+                    android:includeFontPadding="false"
+                    android:textColor="@color/zen_text_secondary"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    tools:text="18 total" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Progress Track -->
         <ProgressBar
             android:id="@+id/progress_attendance"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="5dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="14dp"
             android:max="100"
             android:progress="85"
-            android:progressBackgroundTint="@color/zen_surface_variant"
-            android:progressTint="@color/zen_accent" />
+            android:progressDrawable="@drawable/bg_analytics_progress" />
 
-        <!-- Count Stats & View History indicator -->
-        <RelativeLayout
+        <!-- Threshold Status Badge (Shown when at or below minimum threshold) -->
+        <LinearLayout
+            android:id="@+id/layout_threshold_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_pill_highest"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="10dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="5dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <View
+                android:id="@+id/view_threshold_dot"
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:background="@drawable/bg_dot_cyan" />
+
+            <TextView
+                android:id="@+id/tv_threshold_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:fontFamily="@font/inter"
+                android:fontFeatureSettings="tnum"
+                android:includeFontPadding="false"
+                android:textColor="@color/zen_text_primary"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                tools:text="At 75% Minimum Threshold" />
+        </LinearLayout>
+
+        <!-- Footer: Present / Absent / Holiday Breakdown + Chevron -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/tv_analytics_breakdown"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:fontFamily="sans-serif"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/inter"
+                android:fontFeatureSettings="tnum"
+                android:includeFontPadding="false"
                 android:textColor="@color/zen_text_secondary"
-                android:textSize="11sp"
-                tools:text="6 Present • 1 Absent • 1 Holiday" />
+                android:textSize="12sp"
+                tools:text="17 Present  •  1 Absent  •  4 Holiday" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:fontFamily="sans-serif-medium"
-                android:letterSpacing="0.05"
-                android:text="HISTORY ›"
-                android:textColor="@color/zen_accent"
-                android:textSize="11sp" />
-        </RelativeLayout>
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:contentDescription="View Course History"
+                android:src="@drawable/ic_chevron_right"
+                app:tint="@color/zen_text_tertiary" />
+        </LinearLayout>
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

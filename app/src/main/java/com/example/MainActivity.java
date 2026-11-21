@@ -335,7 +335,8 @@ public class MainActivity extends AppCompatActivity implements
             if (newState == RecyclerView.SCROLL_STATE_DRAGGING || newState == RecyclerView.SCROLL_STATE_SETTLING) {
                 viewPager.setUserInputEnabled(false);
             } else if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                viewPager.setUserInputEnabled(true);
+                boolean allowSwipe = (currentTab != TAB_ATTENDANCE) || (currentAttendanceSubTab == SUB_TAB_TODAY);
+                viewPager.setUserInputEnabled(allowSwipe);
             }
         }
     };
@@ -365,17 +366,19 @@ public class MainActivity extends AppCompatActivity implements
                         viewPager.requestDisallowInterceptTouchEvent(true);
                     }
                 } else if (dx > dy * 1.8f) {
-                    // Deliberate horizontal swipe across screens
+                    // Deliberate horizontal swipe across screens (disabled when nav bar is hidden on sub-views)
+                    boolean allowSwipe = (currentTab != TAB_ATTENDANCE) || (currentAttendanceSubTab == SUB_TAB_TODAY);
                     if (viewPager != null) {
-                        viewPager.setUserInputEnabled(true);
+                        viewPager.setUserInputEnabled(allowSwipe);
                     }
                 }
             }
         } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
             isGestureLocked = false;
+            boolean allowSwipe = (currentTab != TAB_ATTENDANCE) || (currentAttendanceSubTab == SUB_TAB_TODAY);
             // Only re-enable horizontal paging if no vertical list is actively flinging/scrolling
             if (viewPager != null && !isAnyListActivelyScrolling()) {
-                viewPager.setUserInputEnabled(true);
+                viewPager.setUserInputEnabled(allowSwipe);
             }
         }
 
@@ -491,6 +494,7 @@ public class MainActivity extends AppCompatActivity implements
             attendanceViewHolder.updateGreeting();
             refreshTodayClassesView();
             attendanceViewHolder.updateQuickOverview(currentSubjectStats, allDashboardTasks);
+            attendanceViewHolder.updateAnalyticsView(currentSubjectStats);
         }
     }
 
@@ -680,6 +684,14 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
 
+        boolean showBottomNav = (tab != TAB_ATTENDANCE) || (currentAttendanceSubTab == SUB_TAB_TODAY);
+        if (bottomNavContainer != null) {
+            bottomNavContainer.setVisibility(showBottomNav ? View.VISIBLE : View.GONE);
+        }
+        if (viewPager != null) {
+            viewPager.setUserInputEnabled(showBottomNav);
+        }
+
         ThemeHelper.applyAccentToFab(fabAdd, accentColor);
         ThemeHelper.applyAccentToBadge(tvItemCountBadge, accentColor);
 
@@ -803,6 +815,9 @@ public class MainActivity extends AppCompatActivity implements
             Collections.sort(this.currentSchedules, ClassSchedule.TIMETABLE_COMPARATOR);
             refreshTodayClassesView();
             refreshWeeklyScheduleView();
+            if (attendanceViewHolder != null) {
+                attendanceViewHolder.updateAnalyticsView(currentSubjectStats);
+            }
         });
 
         // Observe Subject Analytics with exact SQL percentage math
@@ -1108,10 +1123,18 @@ public class MainActivity extends AppCompatActivity implements
         View layoutEmptySchedule;
 
         // Analytics Sub-View
-        ImageButton btnBackFromAnalytics;
+        TextView tvAnalyticsSemesterPill;
+        TextView tvAnalyticsEnrolledCount;
         View btnAnalyticsToSchedule;
+        TextView filterAnalyticsAll;
+        TextView filterAnalyticsTheory;
+        TextView filterAnalyticsLab;
+        TextView tvAnalyticsMinReqBadge;
         RecyclerView rvSubjectAnalytics;
         View layoutEmptyAnalytics;
+        TextView tvAnalyticsEmptyTitle;
+        TextView tvAnalyticsEmptyDesc;
+        String currentAnalyticsFilter = "ALL";
 
         FloatingActionButton fabAddClass;
 
@@ -1186,10 +1209,17 @@ public class MainActivity extends AppCompatActivity implements
             rvWeeklySchedule = itemView.findViewById(R.id.rv_weekly_schedule);
             layoutEmptySchedule = itemView.findViewById(R.id.layout_empty_schedule);
 
-            btnBackFromAnalytics = itemView.findViewById(R.id.btn_back_from_analytics);
+            tvAnalyticsSemesterPill = itemView.findViewById(R.id.tv_analytics_semester_pill);
+            tvAnalyticsEnrolledCount = itemView.findViewById(R.id.tv_analytics_enrolled_count);
             btnAnalyticsToSchedule = itemView.findViewById(R.id.btn_analytics_to_schedule);
+            filterAnalyticsAll = itemView.findViewById(R.id.filter_analytics_all);
+            filterAnalyticsTheory = itemView.findViewById(R.id.filter_analytics_theory);
+            filterAnalyticsLab = itemView.findViewById(R.id.filter_analytics_lab);
+            tvAnalyticsMinReqBadge = itemView.findViewById(R.id.tv_analytics_min_req_badge);
             rvSubjectAnalytics = itemView.findViewById(R.id.rv_subject_analytics);
             layoutEmptyAnalytics = itemView.findViewById(R.id.layout_empty_analytics);
+            tvAnalyticsEmptyTitle = itemView.findViewById(R.id.tv_analytics_empty_title);
+            tvAnalyticsEmptyDesc = itemView.findViewById(R.id.tv_analytics_empty_desc);
 
             fabAddClass = itemView.findViewById(R.id.fab_add_class);
         }
@@ -1227,8 +1257,10 @@ public class MainActivity extends AppCompatActivity implements
             // Sub-View Navigation Listeners
             btnBackFromSchedule.setOnClickListener(v -> switchSubTab(SUB_TAB_TODAY));
             btnScheduleToAnalytics.setOnClickListener(v -> switchSubTab(SUB_TAB_ANALYTICS));
-            btnBackFromAnalytics.setOnClickListener(v -> switchSubTab(SUB_TAB_TODAY));
-            btnAnalyticsToSchedule.setOnClickListener(v -> switchSubTab(SUB_TAB_TIMETABLE));
+            if (btnAnalyticsToSchedule != null) {
+                btnAnalyticsToSchedule.setOnClickListener(v -> switchSubTab(SUB_TAB_TIMETABLE));
+            }
+            setupAnalyticsFilters();
 
             // Schedule Day Filters (Strictly Monday-Friday)
             setupDayFilters();
@@ -1323,6 +1355,14 @@ public class MainActivity extends AppCompatActivity implements
             viewTodayClasses.setVisibility(View.GONE);
             viewWeeklySchedule.setVisibility(View.GONE);
             viewAnalytics.setVisibility(View.GONE);
+
+            boolean showBottomNav = (currentTab != TAB_ATTENDANCE) || (subTab == SUB_TAB_TODAY);
+            if (bottomNavContainer != null) {
+                bottomNavContainer.setVisibility(showBottomNav ? View.VISIBLE : View.GONE);
+            }
+            if (viewPager != null) {
+                viewPager.setUserInputEnabled(showBottomNav);
+            }
 
             if (subTab == SUB_TAB_TODAY) {
                 viewTodayClasses.setVisibility(View.VISIBLE);
@@ -1732,12 +1772,129 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
 
-        void updateAnalyticsView(List<SubjectStats> stats) {
-            subjectAnalyticsAdapter.setStats(stats);
+        private void setupAnalyticsFilters() {
+            if (filterAnalyticsAll != null) {
+                filterAnalyticsAll.setOnClickListener(v -> {
+                    currentAnalyticsFilter = "ALL";
+                    refreshAnalyticsFilterPills();
+                    updateAnalyticsView(currentSubjectStats);
+                });
+            }
+            if (filterAnalyticsTheory != null) {
+                filterAnalyticsTheory.setOnClickListener(v -> {
+                    currentAnalyticsFilter = "THEORY";
+                    refreshAnalyticsFilterPills();
+                    updateAnalyticsView(currentSubjectStats);
+                });
+            }
+            if (filterAnalyticsLab != null) {
+                filterAnalyticsLab.setOnClickListener(v -> {
+                    currentAnalyticsFilter = "LAB";
+                    refreshAnalyticsFilterPills();
+                    updateAnalyticsView(currentSubjectStats);
+                });
+            }
+            refreshAnalyticsFilterPills();
+        }
 
-            if (stats == null || stats.isEmpty()) {
+        private void refreshAnalyticsFilterPills() {
+            applyAnalyticsFilterStyle(filterAnalyticsAll, "ALL".equals(currentAnalyticsFilter));
+            applyAnalyticsFilterStyle(filterAnalyticsTheory, "THEORY".equals(currentAnalyticsFilter));
+            applyAnalyticsFilterStyle(filterAnalyticsLab, "LAB".equals(currentAnalyticsFilter));
+        }
+
+        private void applyAnalyticsFilterStyle(TextView pill, boolean selected) {
+            if (pill == null) return;
+            if (selected) {
+                pill.setBackgroundResource(R.drawable.bg_pill_lime_solid);
+                pill.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_on_accent));
+            } else {
+                pill.setBackgroundResource(R.drawable.bg_pill_surface_outline);
+                pill.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.zen_text_secondary));
+            }
+        }
+
+        void updateAnalyticsView(List<SubjectStats> stats) {
+            if (currentUserProfile == null) {
+                currentUserProfile = SecureProfileStore.loadProfile(MainActivity.this);
+            }
+
+            // Semester & Min. Req threshold
+            int minTarget = currentUserProfile != null ? currentUserProfile.getEffectiveTargetPercent() : 75;
+            subjectAnalyticsAdapter.setMinTargetPercent(minTarget);
+            if (tvAnalyticsMinReqBadge != null) {
+                tvAnalyticsMinReqBadge.setText(String.format(Locale.getDefault(), "%d%%", minTarget));
+            }
+            if (tvAnalyticsSemesterPill != null) {
+                String sem = currentUserProfile != null ? currentUserProfile.getCurrentSemester() : "";
+                tvAnalyticsSemesterPill.setText(!sem.isEmpty() ? sem.toUpperCase(Locale.getDefault()) : "CURRENT TERM");
+            }
+
+            // Enrich stats with schedule metadata (classType & creditHours)
+            Map<String, ClassSchedule> scheduleLookup = new HashMap<>();
+            Set<String> distinctCourses = new HashSet<>();
+            for (ClassSchedule cs : currentSchedules) {
+                if (cs.getSubjectName() != null && !cs.getSubjectName().trim().isEmpty()) {
+                    String key = cs.getSubjectName().trim().toLowerCase(Locale.ROOT);
+                    distinctCourses.add(key);
+                    if (!scheduleLookup.containsKey(key)) {
+                        scheduleLookup.put(key, cs);
+                    }
+                }
+            }
+
+            List<SubjectStats> allStats = stats != null ? new ArrayList<>(stats) : new ArrayList<>();
+            for (SubjectStats s : allStats) {
+                String key = s.getSubjectName().trim().toLowerCase(Locale.ROOT);
+                distinctCourses.add(key);
+                ClassSchedule match = scheduleLookup.get(key);
+                if (match != null) {
+                    s.setClassType(match.getClassType());
+                    s.setCreditHours(match.getCreditHours());
+                }
+            }
+
+            int enrolledCount = distinctCourses.size();
+            if (tvAnalyticsEnrolledCount != null) {
+                tvAnalyticsEnrolledCount.setText(String.format(Locale.getDefault(),
+                        "%d %s Enrolled", enrolledCount, enrolledCount == 1 ? "Course" : "Courses"));
+            }
+            if (filterAnalyticsAll != null) {
+                filterAnalyticsAll.setText(String.format(Locale.getDefault(), "All (%d)", allStats.size()));
+            }
+
+            List<SubjectStats> filtered = new ArrayList<>();
+            for (SubjectStats s : allStats) {
+                if ("THEORY".equals(currentAnalyticsFilter)) {
+                    if (!"Lab".equalsIgnoreCase(s.getClassType())) {
+                        filtered.add(s);
+                    }
+                } else if ("LAB".equals(currentAnalyticsFilter)) {
+                    if ("Lab".equalsIgnoreCase(s.getClassType())) {
+                        filtered.add(s);
+                    }
+                } else {
+                    filtered.add(s);
+                }
+            }
+
+            subjectAnalyticsAdapter.setStats(filtered);
+
+            if (filtered.isEmpty()) {
                 layoutEmptyAnalytics.setVisibility(View.VISIBLE);
                 rvSubjectAnalytics.setVisibility(View.GONE);
+                if (tvAnalyticsEmptyTitle != null && tvAnalyticsEmptyDesc != null) {
+                    if ("THEORY".equals(currentAnalyticsFilter) && !allStats.isEmpty()) {
+                        tvAnalyticsEmptyTitle.setText("No Theory courses recorded");
+                        tvAnalyticsEmptyDesc.setText("Mark attendance for a Theory class or switch to All.");
+                    } else if ("LAB".equals(currentAnalyticsFilter) && !allStats.isEmpty()) {
+                        tvAnalyticsEmptyTitle.setText("No Laboratory courses recorded");
+                        tvAnalyticsEmptyDesc.setText("Mark attendance for a Lab class or switch to All.");
+                    } else {
+                        tvAnalyticsEmptyTitle.setText("No analytics available");
+                        tvAnalyticsEmptyDesc.setText("Configure your class schedule and mark attendance to see detailed subject statistics.");
+                    }
+                }
             } else {
                 layoutEmptyAnalytics.setVisibility(View.GONE);
                 rvSubjectAnalytics.setVisibility(View.VISIBLE);

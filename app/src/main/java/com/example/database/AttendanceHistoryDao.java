@@ -75,6 +75,8 @@ public interface AttendanceHistoryDao {
      */
     @Query("SELECT " +
             "subject_name AS subject_name, " +
+            "MAX(COALESCE(class_type, 'Theory')) AS class_type, " +
+            "MAX(COALESCE(credit_hours, 1)) AS credit_hours, " +
             "COUNT(id) AS total_classes, " +
             "SUM(CASE WHEN status = 'Present' THEN COALESCE(credit_hours, 1) ELSE 0 END) AS present_count, " +
             "SUM(CASE WHEN status = 'Absent' THEN COALESCE(credit_hours, 1) ELSE 0 END) AS absent_count, " +
@@ -93,6 +95,8 @@ public interface AttendanceHistoryDao {
 
     @Query("SELECT " +
             "subject_name AS subject_name, " +
+            "MAX(COALESCE(class_type, 'Theory')) AS class_type, " +
+            "MAX(COALESCE(credit_hours, 1)) AS credit_hours, " +
             "COUNT(id) AS total_classes, " +
             "SUM(CASE WHEN status = 'Present' THEN COALESCE(credit_hours, 1) ELSE 0 END) AS present_count, " +
             "SUM(CASE WHEN status = 'Absent' THEN COALESCE(credit_hours, 1) ELSE 0 END) AS absent_count, " +
@@ -114,6 +118,8 @@ public interface AttendanceHistoryDao {
      */
     @Query("SELECT " +
             "subject_name AS subject_name, " +
+            "MAX(COALESCE(class_type, 'Theory')) AS class_type, " +
+            "MAX(COALESCE(credit_hours, 1)) AS credit_hours, " +
             "COUNT(id) AS total_classes, " +
             "SUM(CASE WHEN status = 'Present' THEN COALESCE(credit_hours, 1) ELSE 0 END) AS present_count, " +
             "SUM(CASE WHEN status = 'Absent' THEN COALESCE(credit_hours, 1) ELSE 0 END) AS absent_count, " +
@@ -132,6 +138,8 @@ public interface AttendanceHistoryDao {
 
     @Query("SELECT " +
             "subject_name AS subject_name, " +
+            "MAX(COALESCE(class_type, 'Theory')) AS class_type, " +
+            "MAX(COALESCE(credit_hours, 1)) AS credit_hours, " +
             "COUNT(id) AS total_classes, " +
             "SUM(CASE WHEN status = 'Present' THEN COALESCE(credit_hours, 1) ELSE 0 END) AS present_count, " +
             "SUM(CASE WHEN status = 'Absent' THEN COALESCE(credit_hours, 1) ELSE 0 END) AS absent_count, " +

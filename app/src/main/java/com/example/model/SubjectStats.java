@@ -30,6 +30,12 @@ public class SubjectStats implements Serializable {
     @ColumnInfo(name = "attendance_percentage")
     private double attendancePercentage;
 
+    @ColumnInfo(name = "class_type")
+    private String classType = "Theory";
+
+    @ColumnInfo(name = "credit_hours")
+    private int creditHours = 1;
+
     public SubjectStats() {
     }
 
@@ -87,5 +93,21 @@ public class SubjectStats implements Serializable {
 
     public int getEffectiveTotal() {
         return presentCount + absentCount;
+    }
+
+    public String getClassType() {
+        return classType != null && !classType.trim().isEmpty() ? classType.trim() : "Theory";
+    }
+
+    public void setClassType(String classType) {
+        this.classType = classType;
+    }
+
+    public int getCreditHours() {
+        return creditHours > 0 ? creditHours : 1;
+    }
+
+    public void setCreditHours(int creditHours) {
+        this.creditHours = creditHours;
     }
 }
