@@ -1331,9 +1331,8 @@ public class MainActivity extends AppCompatActivity implements
                 final int index = i;
                 filterChips[i].setOnClickListener(v -> {
                     currentScheduleFilterDay = dayNames[index];
-                    int accentColor = ThemeHelper.getAccentColor(MainActivity.this);
                     for (int j = 0; j < filterChips.length; j++) {
-                        ThemeHelper.applyChipSelected(filterChips[j], j == index, accentColor);
+                        applyAnalyticsFilterStyle(filterChips[j], j == index);
                     }
                     refreshWeeklyScheduleView();
                 });
@@ -1345,7 +1344,7 @@ public class MainActivity extends AppCompatActivity implements
             String[] dayNames = {"All", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
             for (int i = 0; i < filterChips.length; i++) {
                 boolean isSelected = dayNames[i].equalsIgnoreCase(currentScheduleFilterDay);
-                ThemeHelper.applyChipSelected(filterChips[i], isSelected, accentColor);
+                applyAnalyticsFilterStyle(filterChips[i], isSelected);
             }
         }
 

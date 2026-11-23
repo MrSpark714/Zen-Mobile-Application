@@ -226,6 +226,16 @@ class ExampleRobolectricTest {
     assertEquals(View.GONE, bottomNav.visibility)
     assertEquals(View.VISIBLE, activity.findViewById<View>(R.id.view_weekly_schedule).visibility)
 
+    val dayAll = activity.findViewById<TextView>(R.id.filter_day_all)
+    val dayMon = activity.findViewById<TextView>(R.id.filter_day_mon)
+    assertEquals(androidx.core.content.ContextCompat.getColor(activity, R.color.zen_on_accent), dayAll.currentTextColor)
+    assertEquals(androidx.core.content.ContextCompat.getColor(activity, R.color.zen_text_secondary), dayMon.currentTextColor)
+
+    dayMon.performClick()
+    ShadowLooper.idleMainLooper()
+    assertEquals(androidx.core.content.ContextCompat.getColor(activity, R.color.zen_text_secondary), dayAll.currentTextColor)
+    assertEquals(androidx.core.content.ContextCompat.getColor(activity, R.color.zen_on_accent), dayMon.currentTextColor)
+
     // Return to Dashboard -> Bottom nav reappears
     activity.findViewById<View>(R.id.btn_back_from_schedule).performClick()
     ShadowLooper.idleMainLooper()
