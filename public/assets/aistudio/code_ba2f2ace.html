@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ZEN - Delete Note Confirmation</title>
+<!-- Material Symbols & Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0" rel="stylesheet"/>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"Space Grotesk"', 'monospace'],
+          },
+          colors: {
+            zen: {
+              lime: '#C4F135',
+              darkLime: '#A4CF22',
+              bg: '#111214',
+              surface: '#181A1D',
+              surfaceAlt: '#212429',
+              border: '#2C3036',
+              danger: '#FF4D4D',
+              dangerMuted: '#FF4D4D15',
+            }
+          },
+          boxShadow: {
+            'modal': '0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(255, 255, 255, 0.08)',
+            'danger-glow': '0 8px 24px -4px rgba(255, 77, 77, 0.35)',
+            'lime-glow': '0 10px 25px -4px rgba(196, 241, 53, 0.3)',
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: Custom Micro-Styles -->
+<style data-purpose="custom-tokens">
+    /* Subtle custom scrollbar suppression and mobile ergonomics */
+    body {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      background-color: #0c0d0e;
+    }
+    .material-symbols-rounded {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .material-symbols-outlined-unfill {
+      font-family: 'Material Symbols Rounded';
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+<!-- END: Custom Micro-Styles -->
+</head>
+<body class="flex items-center justify-center min-h-screen text-zinc-100 font-sans antialiased p-0 sm:p-4">
+<!-- BEGIN: DeviceViewportWrapper -->
+<!-- Outer container simulates an authentic modern mobile device frame -->
+<div class="relative w-full max-w-[412px] h-[892px] bg-[#111214] overflow-hidden sm:rounded-[44px] shadow-2xl border-0 sm:border-[8px] sm:border-zinc-800/80 flex flex-col justify-between select-none" data-purpose="mobile-viewport-container">
+<!-- BEGIN: AndroidStatusBar -->
+<header class="w-full pt-3 px-6 pb-2 flex items-center justify-between z-10 text-xs font-semibold tracking-tight text-zinc-300" data-purpose="status-bar">
+<span class="text-sm font-semibold tracking-tight text-white font-mono">5:01</span>
+<!-- System Notification & Sensor Icons -->
+<div class="flex items-center gap-2 text-zinc-300">
+<span class="material-symbols-rounded text-[15px] opacity-80">signal_cellular_4_bar</span>
+<span class="material-symbols-rounded text-[16px] opacity-80">wifi</span>
+<div class="flex items-center gap-0.5 ml-0.5">
+<span class="text-[11px] font-mono font-medium">38</span>
+<span class="material-symbols-rounded text-[18px]">battery_3_bar</span>
+</div>
+</div>
+</header>
+<!-- END: AndroidStatusBar -->
+<!-- BEGIN: BackgroundApplicationScreen -->
+<!-- The native ZEN application screen underneath the modal dialog -->
+<main class="relative flex-1 px-4 overflow-y-hidden flex flex-col pointer-events-none filter blur-[6px] brightness-90 transition-all duration-300" data-purpose="zen-notes-screen">
+<!-- Top Bar: App Title, Sync Status & Quick Actions -->
+<div class="flex items-center justify-between py-3" data-purpose="app-header">
+<div class="flex items-center gap-2">
+<h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+            ZEN
+            <span class="material-symbols-rounded text-[#C4F135] text-lg">spa</span>
+</h1>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-zinc-800/90 text-zinc-300 border border-zinc-700/50">
+<span class="w-1.5 h-1.5 rounded-full bg-[#C4F135] animate-pulse"></span>
+            LOCAL
+          </span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-[#C4F135]/15 text-[#C4F135] border border-[#C4F135]/20">
+            4 notes
+          </span>
+<button class="w-9 h-9 rounded-full bg-zinc-800/80 flex items-center justify-center text-zinc-300">
+<span class="material-symbols-rounded text-[20px]">settings</span>
+</button>
+<div class="w-9 h-9 rounded-full overflow-hidden bg-gradient-to-tr from-purple-900 to-indigo-600 flex items-center justify-center ring-1 ring-white/10">
+<span class="material-symbols-rounded text-sm text-indigo-200">nightlight</span>
+</div>
+</div>
+</div>
+<!-- Search Bar -->
+<div class="mt-2 relative" data-purpose="search-box">
+<span class="material-symbols-rounded absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 text-lg">search</span>
+<input class="w-full bg-[#1A1C1F] text-zinc-400 text-sm pl-11 pr-4 py-3 rounded-2xl border border-zinc-800/90 focus:outline-none" disabled="" type="text" value="Search notes..."/>
+</div>
+<!-- Notes Feed: Underneath Context -->
+<div class="mt-4 space-y-3.5" data-purpose="notes-feed-list">
+<!-- Note Item 1: App Feature Improvements (Active target) -->
+<article class="p-4 rounded-2xl bg-[#1C1F23] border border-[#C4F135]/30 relative shadow-sm">
+<div class="flex items-center justify-between mb-1.5">
+<span class="inline-flex items-center gap-1 text-[11px] font-bold text-[#C4F135] uppercase tracking-wider">
+<span class="material-symbols-rounded text-[14px]">star</span> IMPORTANT
+            </span>
+<span class="material-symbols-rounded text-zinc-500 text-lg">delete</span>
+</div>
+<h2 class="text-base font-semibold text-white">App Feature Improvements</h2>
+<p class="text-xs text-zinc-400 mt-1 line-clamp-2 leading-relaxed">
+            1. Add history edit.<br/>
+            2. Sort the today section classes according to time.
+          </p>
+<div class="mt-3 text-[11px] font-medium text-zinc-400">Oct 14, 2026 • 6:58 pm</div>
+</article>
+<!-- Note Item 2: Assignment of HCI -->
+<article class="p-4 rounded-2xl bg-[#17181A] border border-zinc-800/80 relative">
+<div class="flex items-center justify-between mb-1">
+<h2 class="text-base font-medium text-zinc-200">Assignment of HCI</h2>
+<span class="material-symbols-rounded text-zinc-600 text-lg">delete</span>
+</div>
+<p class="text-xs text-zinc-400 mt-1 line-clamp-2 leading-relaxed">
+            1. Human eye with diagram [Label]<br/>
+            2. Hear with diagram [Label]
+          </p>
+<div class="mt-3 text-[11px] font-medium text-zinc-400">Oct 11, 2026 • 9:49 am</div>
+</article>
+<!-- Note Item 3: Weekly groceries and tasks -->
+<article class="p-4 rounded-2xl bg-[#17181A] border border-zinc-800/80">
+<h2 class="text-base font-medium text-zinc-200">Weekly Habit Goals</h2>
+<p class="text-xs text-zinc-400 mt-1">Daily 20m reading, review prototype notes.</p>
+</article>
+</div>
+</main>
+<!-- END: BackgroundApplicationScreen -->
+<!-- BEGIN: FloatingActionButton & BottomNav -->
+<!-- Authentic Android MD3 Bottom Bar -->
+<div class="relative z-10 px-4 pb-3 pt-1 filter blur-[4px] pointer-events-none" data-purpose="background-bottom-nav">
+<!-- Floating Action Button (FAB) -->
+<div class="flex justify-end mb-3 pr-1">
+<div class="w-14 h-14 rounded-2xl bg-[#C4F135] text-zinc-900 shadow-lime-glow flex items-center justify-center font-bold text-2xl">
+<span class="material-symbols-rounded text-[28px]">add</span>
+</div>
+</div>
+<!-- Navigation Pill Bar -->
+<nav class="bg-[#1A1C1F] rounded-full p-1.5 flex items-center justify-between border border-zinc-800/80">
+<div class="flex-1 py-2.5 px-4 rounded-full bg-[#C4F135] text-zinc-900 font-semibold text-xs flex items-center justify-center gap-2">
+<span class="material-symbols-rounded text-base">sticky_note_2</span>
+<span>NOTES</span>
+</div>
+<div class="flex-1 py-2.5 px-4 text-zinc-400 text-xs font-medium flex items-center justify-center gap-2">
+<span class="material-symbols-rounded text-base">check_circle</span>
+<span>TASKS</span>
+</div>
+<div class="flex-1 py-2.5 px-4 text-zinc-400 text-xs font-medium flex items-center justify-center gap-2">
+<span class="material-symbols-rounded text-base">school</span>
+<span>CLASSES</span>
+</div>
+</nav>
+</div>
+<!-- END: FloatingActionButton & BottomNav -->
+<!-- BEGIN: ConfirmationModalOverlay -->
+<!-- High-end Material 3 Destructive Action Dialog -->
+<section aria-describedby="dialog-description" aria-labelledby="dialog-title" aria-modal="true" class="absolute inset-0 z-30 flex items-center justify-center px-5 bg-black/65 backdrop-blur-md transition-opacity duration-300" role="dialog">
+<!-- Modal Elevation Container -->
+<div class="w-full max-w-[348px] rounded-[32px] bg-[#1B1D21] border border-white/[0.08] shadow-modal p-6 flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-200" data-purpose="dialog-card">
+<!-- Destructive Icon Container with Glow Accent -->
+<div class="relative mb-4" data-purpose="modal-icon-badge">
+<div class="w-16 h-16 rounded-[22px] bg-red-500/10 border border-red-500/25 flex items-center justify-center text-[#FF5252] shadow-inner">
+<span class="material-symbols-rounded text-3xl">delete_forever</span>
+</div>
+<!-- Tiny status badge dot -->
+<span class="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-red-500 rounded-full border-2 border-[#1B1D21]"></span>
+</div>
+<!-- Dialog Typography Header -->
+<h2 class="text-xl font-bold tracking-tight text-white mb-2" id="dialog-title">
+          Delete Note?
+        </h2>
+<!-- Contextual Message -->
+<p class="text-[13.5px] leading-relaxed text-zinc-400 px-1 mb-5" id="dialog-description">
+          This note will be permanently removed from your local ZEN vault. This action cannot be undone.
+        </p>
+<!-- Preview Card of Note being Deleted -->
+<div class="w-full text-left bg-[#141517] rounded-2xl p-3.5 mb-6 border border-zinc-800/80 shadow-sm" data-purpose="target-note-preview">
+<div class="flex items-center justify-between mb-1">
+<div class="flex items-center gap-1.5 min-w-0 pr-2">
+<span class="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0"></span>
+<span class="text-xs font-semibold text-zinc-200 truncate">App Feature Improvements</span>
+</div>
+<span class="shrink-0 text-[10px] font-bold text-[#C4F135] bg-[#C4F135]/10 px-2 py-0.5 rounded-full border border-[#C4F135]/20">
+              ★ Important
+            </span>
+</div>
+<div class="flex items-center justify-between text-[11px] text-zinc-400 mt-1.5 pt-1.5 border-t border-zinc-800/50">
+<span class="truncate">3 checklist items</span>
+<span class="shrink-0 font-mono text-zinc-400">Oct 14, 2026</span>
+</div>
+</div>
+<!-- Material 3 Ergonomic Dual Action Buttons -->
+<div class="w-full flex items-center gap-3" data-purpose="dialog-actions">
+<!-- Secondary Action: Dismiss/Cancel -->
+<button class="flex-1 py-3.5 px-4 rounded-full text-sm font-semibold text-zinc-300 bg-zinc-800/80 hover:bg-zinc-700/80 active:scale-[0.98] transition-all border border-zinc-700/40 focus:outline-none focus:ring-2 focus:ring-zinc-500" type="button">
+            Cancel
+          </button>
+<!-- Primary Action: Permanent Deletion -->
+<button class="flex-1 py-3.5 px-4 rounded-full text-sm font-bold text-white bg-red-500 hover:bg-red-600 active:scale-[0.98] shadow-danger-glow transition-all flex items-center justify-center gap-1.5 focus:outline-none focus:ring-2 focus:ring-red-400" type="button">
+<span class="material-symbols-rounded text-lg">delete</span>
+            Delete
+          </button>
+</div>
+</div>
+</section>
+<!-- END: ConfirmationModalOverlay -->
+<!-- BEGIN: AndroidGestureNavigationBar -->
+<!-- Android standard navigation buttons / gesture handle at base -->
+<footer class="w-full pb-2 pt-1 flex items-center justify-center gap-16 z-20 text-zinc-400 select-none" data-purpose="android-nav-bar">
+<button aria-label="Recent Apps" class="p-1 hover:text-white transition-colors">
+<span class="material-symbols-rounded text-xl">menu</span>
+</button>
+<button aria-label="Home" class="p-1 hover:text-white transition-colors">
+<span class="material-symbols-outlined-unfill text-lg">circle</span>
+</button>
+<button aria-label="Back" class="p-1 hover:text-white transition-colors">
+<span class="material-symbols-rounded text-xl">chevron_left</span>
+</button>
+</footer>
+<!-- END: AndroidGestureNavigationBar -->
+</div>
+<!-- END: DeviceViewportWrapper -->
+<!-- BEGIN: InteractiveModalMockScript -->
+<script data-purpose="modal-interaction">
+    // Simple tactile feedback simulation on buttons
+    document.querySelectorAll('button').forEach(button => {
+      button.addEventListener('click', () => {
+        button.style.transform = 'scale(0.96)';
+        setTimeout(() => {
+          button.style.transform = '';
+        }, 120);
+      });
+    });
+  </script>
+<!-- END: InteractiveModalMockScript -->
+</body></html>

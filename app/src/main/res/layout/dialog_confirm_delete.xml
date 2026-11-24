@@ -1,123 +1,251 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="20dp"
-    app:cardBackgroundColor="@color/zen_surface"
-    app:cardCornerRadius="20dp"
-    app:cardElevation="10dp"
-    app:strokeColor="@color/zen_border"
-    app:strokeWidth="1dp">
+    android:paddingStart="20dp"
+    android:paddingTop="12dp"
+    android:paddingEnd="20dp"
+    android:paddingBottom="12dp">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/card_delete_modal"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_delete_modal_card"
+        android:elevation="16dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingStart="20dp"
-        android:paddingTop="23dp"
-        android:paddingEnd="20dp"
-        android:paddingBottom="20dp">
+        android:padding="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_max="348dp">
 
-        <!-- Danger Icon Badge -->
+        <!-- Destructive Icon Badge with Top-Right Red Dot -->
         <FrameLayout
-            android:layout_width="46dp"
-            android:layout_height="46dp"
-            android:background="@drawable/bg_status_absent">
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:clipChildren="false"
+            android:clipToPadding="false">
 
-            <ImageView
-                android:id="@+id/iv_delete_icon"
-                android:layout_width="23dp"
-                android:layout_height="23dp"
+            <FrameLayout
+                android:layout_width="64dp"
+                android:layout_height="64dp"
                 android:layout_gravity="center"
-                android:contentDescription="Delete Icon"
-                android:src="@drawable/ic_delete"
-                app:tint="@color/status_absent" />
+                android:background="@drawable/bg_delete_icon_badge">
+
+                <ImageView
+                    android:id="@+id/iv_delete_icon"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="Delete warning icon"
+                    android:src="@drawable/ic_delete_forever"
+                    app:tint="#FF5252" />
+            </FrameLayout>
+
+            <View
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_gravity="top|end"
+                android:background="@drawable/bg_delete_badge_dot" />
         </FrameLayout>
 
-        <!-- Title -->
+        <!-- Modal Title -->
         <TextView
             android:id="@+id/tv_delete_popup_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="13dp"
-            android:fontFamily="sans-serif-bold"
-            android:letterSpacing="0.05"
-            android:text="DELETE ITEM"
-            android:textColor="@color/zen_text_primary"
-            android:textSize="15sp" />
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/inter"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:letterSpacing="-0.01"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:text="Delete Note?" />
 
-        <!-- Description Message -->
+        <!-- Contextual Description -->
         <TextView
             android:id="@+id/tv_delete_popup_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:fontFamily="sans-serif"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/inter"
             android:gravity="center"
-            android:lineSpacingExtra="2dp"
-            android:text="Are you sure you want to delete this item? This action cannot be undone."
-            android:textColor="@color/zen_text_secondary"
-            android:textSize="12sp" />
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="4dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:textColor="#A1A1AA"
+            android:textSize="13.5sp"
+            tools:text="This note will be permanently removed from your local ZEN vault. This action cannot be undone." />
 
-        <!-- Target Item Highlight Box (Optional preview) -->
-        <TextView
-            android:id="@+id/tv_delete_item_preview"
+        <!-- Target Item Preview Card -->
+        <LinearLayout
+            android:id="@+id/layout_delete_preview_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="11dp"
-            android:background="@drawable/bg_card_task"
-            android:ellipsize="end"
-            android:fontFamily="sans-serif-medium"
-            android:gravity="center"
-            android:maxLines="2"
-            android:paddingStart="11dp"
-            android:paddingTop="8dp"
-            android:paddingEnd="11dp"
-            android:paddingBottom="8dp"
-            android:textColor="@color/zen_text_primary"
-            android:textSize="11sp"
-            android:visibility="gone" />
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_delete_preview_card"
+            android:orientation="vertical"
+            android:padding="14dp"
+            android:visibility="gone"
+            tools:visibility="visible">
 
-        <!-- Action Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="6dp"
+                    android:layout_height="6dp"
+                    android:background="@drawable/bg_dot_preview_danger" />
+
+                <TextView
+                    android:id="@+id/tv_delete_item_preview"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textColor="#E4E4E7"
+                    android:textSize="12.5sp"
+                    android:textStyle="bold"
+                    tools:text="App Feature Improvements" />
+
+                <TextView
+                    android:id="@+id/tv_delete_preview_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_pill_preview_lime"
+                    android:fontFamily="@font/inter"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:paddingStart="8dp"
+                    android:paddingTop="3dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="3dp"
+                    android:textColor="#C4F135"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    tools:text="★ Important"
+                    tools:visibility="visible" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_delete_preview_meta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="9dp"
+                    android:layout_marginBottom="9dp"
+                    android:background="#8027272A" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_delete_preview_meta_left"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:textColor="#A1A1AA"
+                        android:textSize="11sp"
+                        tools:text="3 checklist items" />
+
+                    <TextView
+                        android:id="@+id/tv_delete_preview_meta_right"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:fontFamily="monospace"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:textColor="#A1A1AA"
+                        android:textSize="11sp"
+                        tools:text="Oct 14, 2026" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Ergonomic Pill Action Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="24dp"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_popup_delete_cancel"
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="0dp"
-                android:layout_height="38dp"
-                android:layout_marginEnd="7dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="6dp"
                 android:layout_weight="1"
-                android:fontFamily="sans-serif-medium"
-                android:letterSpacing="0.04"
-                android:minHeight="38dp"
+                android:fontFamily="@font/inter"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:minHeight="48dp"
                 android:text="@string/cancel"
-                android:textColor="@color/zen_text_secondary"
-                app:cornerRadius="10dp"
-                app:strokeColor="@color/zen_border"
+                android:textAllCaps="false"
+                android:textColor="#D4D4D8"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:backgroundTint="#CC27272A"
+                app:cornerRadius="100dp"
+                app:elevation="0dp"
+                app:strokeColor="#663F3F46"
                 app:strokeWidth="1dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_popup_delete_confirm"
                 android:layout_width="0dp"
-                android:layout_height="38dp"
-                android:layout_marginStart="7dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="6dp"
                 android:layout_weight="1"
-                android:backgroundTint="@color/status_absent"
-                android:fontFamily="sans-serif-bold"
-                android:letterSpacing="0.04"
-                android:minHeight="38dp"
+                android:fontFamily="@font/inter"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:minHeight="48dp"
                 android:text="@string/delete"
+                android:textAllCaps="false"
                 android:textColor="@color/white"
-                app:cornerRadius="10dp"
-                app:elevation="0dp" />
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:backgroundTint="#FF4747"
+                app:cornerRadius="100dp"
+                app:elevation="0dp"
+                app:icon="@drawable/ic_delete"
+                app:iconGravity="textStart"
+                app:iconPadding="6dp"
+                app:iconSize="18dp"
+                app:iconTint="@color/white" />
         </LinearLayout>
     </LinearLayout>
 
-</com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

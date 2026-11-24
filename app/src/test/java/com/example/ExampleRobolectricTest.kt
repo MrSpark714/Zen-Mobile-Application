@@ -243,4 +243,159 @@ class ExampleRobolectricTest {
     assertEquals(View.VISIBLE, bottomNav.visibility)
     assertEquals(View.VISIBLE, activity.findViewById<View>(R.id.view_today_classes).visibility)
   }
+
+  @Test
+  fun `delete modals and clear local profile modal use redesigned layout and headings`() {
+    val activity = Robolectric.buildActivity(ProfileSetupActivity::class.java)
+      .create()
+      .start()
+      .resume()
+      .get()
+    ShadowLooper.idleMainLooper()
+
+    activity.findViewById<android.widget.EditText>(R.id.et_profile_name).setText("Sohaib")
+    activity.findViewById<android.widget.EditText>(R.id.et_profile_semester).setText("Semester 5")
+    activity.findViewById<android.widget.EditText>(R.id.et_profile_degree).setText("BS Computer Science")
+
+    val btnClear = activity.findViewById<View>(R.id.btn_profile_clear)
+    btnClear.visibility = View.VISIBLE
+    btnClear.performClick()
+    ShadowLooper.idleMainLooper()
+
+    val dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog()
+    assertNotNull(dialog)
+    assertEquals("Clear Local Profile", dialog.findViewById<TextView>(R.id.tv_delete_popup_title).text.toString())
+    assertEquals("Sohaib", dialog.findViewById<TextView>(R.id.tv_delete_item_preview).text.toString())
+    assertEquals("Encrypted", dialog.findViewById<TextView>(R.id.tv_delete_preview_badge).text.toString())
+    dialog.findViewById<View>(R.id.btn_popup_delete_confirm).performClick()
+    ShadowLooper.idleMainLooper()
+
+    assertEquals("", activity.findViewById<android.widget.EditText>(R.id.et_profile_name).text.toString())
+    assertEquals(View.GONE, btnClear.visibility)
+
+    var noteDeleted = false
+    val note = com.example.model.Note("App Feature Improvements", "Line 1\nLine 2\nLine 3", 1760400000000L, true, "", "")
+    com.example.util.DeleteConfirmationDialog.showForNote(activity, note, null, null, false, 0L) {
+      noteDeleted = true
+    }
+    ShadowLooper.idleMainLooper()
+
+    val noteDialog = org.robolectric.shadows.ShadowDialog.getLatestDialog()
+    assertNotNull(noteDialog)
+    assertEquals("Delete Note?", noteDialog.findViewById<TextView>(R.id.tv_delete_popup_title).text.toString())
+    assertEquals("App Feature Improvements", noteDialog.findViewById<TextView>(R.id.tv_delete_item_preview).text.toString())
+    assertEquals("★ Important", noteDialog.findViewById<TextView>(R.id.tv_delete_preview_badge).text.toString())
+    assertEquals("3 items in note", noteDialog.findViewById<TextView>(R.id.tv_delete_preview_meta_left).text.toString())
+    noteDialog.findViewById<View>(R.id.btn_popup_delete_confirm).performClick()
+    ShadowLooper.idleMainLooper()
+    assertTrue(noteDeleted)
+
+    var taskDeleted = false
+    val task = com.example.model.Task("Complete HCI Diagram Assignment", false, 1760400000000L)
+    com.example.util.DeleteConfirmationDialog.showForTask(activity, task) {
+      taskDeleted = true
+    }
+    ShadowLooper.idleMainLooper()
+
+    val taskDialog = org.robolectric.shadows.ShadowDialog.getLatestDialog()
+    assertEquals("Delete Task?", taskDialog.findViewById<TextView>(R.id.tv_delete_popup_title).text.toString())
+    assertEquals("Complete HCI Diagram Assignment", taskDialog.findViewById<TextView>(R.id.tv_delete_item_preview).text.toString())
+    taskDialog.findViewById<View>(R.id.btn_popup_delete_confirm).performClick()
+    ShadowLooper.idleMainLooper()
+    assertTrue(taskDeleted)
+
+    var classDeleted = false
+    val schedule = com.example.model.ClassSchedule("Monday", "Operating System", "08:30 AM", "10:20 AM", 2, "Theory", "A3")
+    com.example.util.DeleteConfirmationDialog.showForSchedule(activity, schedule) {
+      classDeleted = true
+    }
+    ShadowLooper.idleMainLooper()
+
+    val classDialog = org.robolectric.shadows.ShadowDialog.getLatestDialog()
+    assertEquals("Remove Class?", classDialog.findViewById<TextView>(R.id.tv_delete_popup_title).text.toString())
+    assertEquals("Operating System", classDialog.findViewById<TextView>(R.id.tv_delete_item_preview).text.toString())
+    assertEquals("Theory", classDialog.findViewById<TextView>(R.id.tv_delete_preview_badge).text.toString())
+    classDialog.findViewById<View>(R.id.btn_popup_delete_confirm).performClick()
+    ShadowLooper.idleMainLooper()
+    assertTrue(classDeleted)
+  }
+
+  @Test
+  fun `note editor date picker popup renders custom dark calendar and applies selected date`() {
+    val activity = Robolectric.buildActivity(NoteEditorActivity::class.java)
+      .create()
+      .start()
+      .resume()
+      .get()
+    ShadowLooper.idleMainLooper()
+
+    activity.findViewById<View>(R.id.btn_insert_date).performClick()
+    ShadowLooper.idleMainLooper()
+
+    val dateDialog = org.robolectric.shadows.ShadowDialog.getLatestDialog()
+    assertNotNull(dateDialog)
+    val rows = dateDialog.findViewById<android.widget.LinearLayout>(R.id.container_calendar_rows)
+    assertNotNull(rows)
+    assertEquals(6, rows.childCount)
+
+    val presetTomorrow = dateDialog.findViewById<TextView>(R.id.preset_tomorrow)
+    presetTomorrow.performClick()
+    ShadowLooper.idleMainLooper()
+    assertEquals(androidx.core.content.ContextCompat.getColor(activity, R.color.zen_on_accent), presetTomorrow.currentTextColor)
+
+    dateDialog.findViewById<View>(R.id.opt_attach_badge).performClick()
+    dateDialog.findViewById<View>(R.id.btn_popup_apply).performClick()
+    ShadowLooper.idleMainLooper()
+
+    assertEquals(View.VISIBLE, activity.findViewById<View>(R.id.layout_target_date_badge).visibility)
+  }
+
+  @Test
+  fun `backup confirm restore dialog renders redesigned inventory grid and actions`() {
+    val activity = Robolectric.buildActivity(BackupActivity::class.java)
+      .create()
+      .start()
+      .resume()
+      .get()
+    ShadowLooper.idleMainLooper()
+
+    val notes = listOf(
+      com.example.model.Note("Note 1", "Body", 100L),
+      com.example.model.Note("Note 2", "Body", 200L)
+    )
+    val schedules = listOf(
+      com.example.model.ClassSchedule("Monday", "Algorithms", "09:00 AM", "10:00 AM", 3, "Theory", "A1")
+    )
+    val records = listOf(
+      com.example.model.AttendanceHistory("Algorithms", 3, "Theory", 100L, "Present")
+    )
+    val payload = com.example.model.ZenBackupPayload(
+      com.example.model.ZenBackupPayload.TYPE_FULL,
+      notes,
+      emptyList(),
+      schedules,
+      records
+    )
+
+    activity.showImportConfirmationDialog(payload)
+    ShadowLooper.idleMainLooper()
+
+    val restoreDialog = org.robolectric.shadows.ShadowDialog.getLatestDialog()
+    assertNotNull(restoreDialog)
+    assertEquals("Confirm Restore", restoreDialog.findViewById<TextView>(R.id.tv_restore_title).text.toString())
+    assertEquals("Encrypted Backup Package", restoreDialog.findViewById<TextView>(R.id.tv_restore_subtitle).text.toString())
+    assertEquals("2", restoreDialog.findViewById<TextView>(R.id.tv_restore_notes_count).text.toString())
+    assertEquals("0", restoreDialog.findViewById<TextView>(R.id.tv_restore_tasks_count).text.toString())
+    assertEquals("1", restoreDialog.findViewById<TextView>(R.id.tv_restore_schedules_count).text.toString())
+    assertEquals("1", restoreDialog.findViewById<TextView>(R.id.tv_restore_attendance_count).text.toString())
+    val btnConfirm = restoreDialog.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_restore_confirm)
+    val btnCancel = restoreDialog.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_restore_cancel)
+    assertNotNull(btnConfirm)
+    assertNotNull(btnCancel)
+    assertEquals(1, btnConfirm.maxLines)
+    assertEquals(btnCancel.height, btnConfirm.height)
+    btnCancel.performClick()
+    ShadowLooper.idleMainLooper()
+    assertFalse(restoreDialog.isShowing)
+  }
 }

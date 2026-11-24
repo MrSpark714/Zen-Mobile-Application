@@ -24,11 +24,11 @@ import androidx.core.content.ContextCompat;
 
 import com.example.database.AppDatabase;
 import com.example.model.UserProfile;
+import com.example.util.DeleteConfirmationDialog;
 import com.example.util.SecureProfileStore;
 import com.example.util.ThemeHelper;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -515,10 +515,25 @@ public class ProfileSetupActivity extends AppCompatActivity {
     }
 
     private void confirmClearProfile() {
-        new MaterialAlertDialogBuilder(this, R.style.Theme_ZEN)
-                .setTitle("Clear Local Profile")
-                .setMessage("Remove your personal photo and academic profile details from encrypted local storage?")
-                .setPositiveButton("Clear", (dialog, which) -> {
+        UserProfile snapshot = new UserProfile();
+        snapshot.setFullName(readText(etName));
+        snapshot.setUniversityName(readText(etUniversity));
+        snapshot.setCurrentSemester(readText(etSemester));
+        snapshot.setMainDegreeCourse(readText(etDegree));
+        snapshot.setCurrentCourseFocus(readText(etCurrentCourse));
+        String targetStr = readText(etTargetPercent);
+        if (!targetStr.isEmpty()) {
+            try {
+                snapshot.setTargetAttendancePercent(Integer.parseInt(targetStr));
+            } catch (NumberFormatException ignored) {
+            }
+        }
+
+        DeleteConfirmationDialog.showForClearProfile(
+                this,
+                snapshot,
+                activeAvatarBitmap != null,
+                () -> {
                     SecureProfileStore.clearProfile(this);
                     activeAvatarBitmap = null;
                     avatarChanged = false;
@@ -539,9 +554,8 @@ public class ProfileSetupActivity extends AppCompatActivity {
                     btnClearProfile.setVisibility(View.GONE);
                     setResult(RESULT_OK);
                     Toast.makeText(this, "Local profile cleared", Toast.LENGTH_SHORT).show();
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+                }
+        );
     }
 
     private static String readText(TextInputEditText editText) {

@@ -65,6 +65,7 @@ import com.example.model.Note;
 import com.example.model.SubjectStats;
 import com.example.model.Task;
 import com.example.model.UserProfile;
+import com.example.util.DeleteConfirmationDialog;
 import com.example.util.NotificationHelper;
 import com.example.util.SecureProfileStore;
 import com.example.util.ThemeHelper;
@@ -1949,11 +1950,9 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onDeleteSchedule(ClassSchedule schedule) {
-        String preview = schedule.getSubjectName() + " (" + schedule.getDayOfWeek() + " • " + schedule.getStartTime() + " - " + schedule.getEndTime() + ")";
-        showDeleteConfirmationPopup(
-                "REMOVE SCHEDULE",
-                "Are you sure you want to remove this class schedule from your timetable?",
-                preview,
+        DeleteConfirmationDialog.showForSchedule(
+                this,
+                schedule,
                 () -> {
                     AppDatabase.databaseWriteExecutor.execute(() -> {
                         NotificationHelper.cancelClassReminder(MainActivity.this, schedule.getId());
@@ -2438,11 +2437,13 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onNoteDelete(Note note) {
-        String preview = note.getTitle() != null && !note.getTitle().trim().isEmpty() ? note.getTitle() : "Untitled Note";
-        showDeleteConfirmationPopup(
-                "DELETE NOTE",
-                "Are you sure you want to permanently delete this note? This action cannot be undone.",
-                preview,
+        DeleteConfirmationDialog.showForNote(
+                this,
+                note,
+                null,
+                null,
+                false,
+                0L,
                 () -> {
                     AppDatabase.databaseWriteExecutor.execute(() -> {
                         database.noteDao().delete(note);
@@ -2473,11 +2474,9 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onTaskDelete(Task task) {
-        String preview = task.getDescription() != null ? task.getDescription() : "Task";
-        showDeleteConfirmationPopup(
-                "DELETE TASK",
-                "Are you sure you want to delete this task?",
-                preview,
+        DeleteConfirmationDialog.showForTask(
+                this,
+                task,
                 () -> {
                     AppDatabase.databaseWriteExecutor.execute(() -> {
                         NotificationHelper.cancelTaskReminder(MainActivity.this, task.getId());
@@ -2489,43 +2488,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     /**
-     * Shows a customized minimalist pop-up screen modal for deletion confirmation.
+     * Shows the unified ZEN destructive confirmation pop-up modal.
      */
     public void showDeleteConfirmationPopup(String title, String message, String itemPreview, Runnable onConfirm) {
-        Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_confirm_delete);
-
-        Window window = dialog.getWindow();
-        if (window != null) {
-            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-        }
-
-        TextView tvTitle = dialog.findViewById(R.id.tv_delete_popup_title);
-        TextView tvMsg = dialog.findViewById(R.id.tv_delete_popup_message);
-        TextView tvPreview = dialog.findViewById(R.id.tv_delete_item_preview);
-        MaterialButton btnCancel = dialog.findViewById(R.id.btn_popup_delete_cancel);
-        MaterialButton btnConfirm = dialog.findViewById(R.id.btn_popup_delete_confirm);
-
-        if (title != null) tvTitle.setText(title);
-        if (message != null) tvMsg.setText(message);
-        if (itemPreview != null && !itemPreview.trim().isEmpty()) {
-            tvPreview.setVisibility(View.VISIBLE);
-            tvPreview.setText(itemPreview);
-        } else {
-            tvPreview.setVisibility(View.GONE);
-        }
-
-        btnCancel.setOnClickListener(v -> dialog.dismiss());
-        btnConfirm.setOnClickListener(v -> {
-            dialog.dismiss();
-            if (onConfirm != null) {
-                onConfirm.run();
-            }
-        });
-
-        dialog.show();
+        DeleteConfirmationDialog.showSimple(this, title, message, itemPreview, onConfirm);
     }
 
     // =========================================================================

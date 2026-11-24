@@ -1,13 +1,19 @@
 package com.example;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.format.DateUtils;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -640,24 +646,61 @@ public class BackupActivity extends AppCompatActivity {
         });
     }
 
-    private void showImportConfirmationDialog(ZenBackupPayload payload) {
+    void showImportConfirmationDialog(ZenBackupPayload payload) {
+        if (payload == null) return;
         int noteCount = payload.getNotes().size();
         int taskCount = payload.getTasks().size();
         int scheduleCount = payload.getSchedules().size();
         int recordCount = payload.getAttendanceRecords().size();
 
-        String message = String.format(
-                Locale.getDefault(),
-                "Found in backup package:\n\n• %d Notes\n• %d Tasks\n• %d Class Schedules\n• %d Attendance Logs\n\nMerge these items into your local database?",
-                noteCount, taskCount, scheduleCount, recordCount
-        );
+        Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_confirm_restore);
 
-        new MaterialAlertDialogBuilder(this, R.style.Theme_ZEN)
-                .setTitle("Confirm Restore")
-                .setMessage(message)
-                .setPositiveButton("Restore & Merge", (dialog, which) -> executeDatabaseImport(payload))
-                .setNegativeButton("Cancel", null)
-                .show();
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            window.setDimAmount(0.72f);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                try {
+                    window.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+                    window.getAttributes().setBlurBehindRadius(20);
+                } catch (Exception ignored) {
+                }
+            }
+        }
+
+        TextView tvNotes = dialog.findViewById(R.id.tv_restore_notes_count);
+        TextView tvTasks = dialog.findViewById(R.id.tv_restore_tasks_count);
+        TextView tvSchedules = dialog.findViewById(R.id.tv_restore_schedules_count);
+        TextView tvAttendance = dialog.findViewById(R.id.tv_restore_attendance_count);
+        MaterialButton btnCancel = dialog.findViewById(R.id.btn_restore_cancel);
+        MaterialButton btnConfirm = dialog.findViewById(R.id.btn_restore_confirm);
+
+        tvNotes.setText(String.valueOf(noteCount));
+        tvNotes.setTextColor(noteCount > 0 ? Color.WHITE : Color.parseColor("#D4D4D8"));
+
+        tvTasks.setText(String.valueOf(taskCount));
+        tvTasks.setTextColor(taskCount > 0 ? Color.WHITE : Color.parseColor("#D4D4D8"));
+
+        tvSchedules.setText(String.valueOf(scheduleCount));
+        tvSchedules.setTextColor(scheduleCount > 0 ? Color.WHITE : Color.parseColor("#D4D4D8"));
+
+        tvAttendance.setText(String.valueOf(recordCount));
+        tvAttendance.setTextColor(recordCount > 0 ? Color.WHITE : Color.parseColor("#D4D4D8"));
+
+        ThemeHelper.applyAccentToPrimaryButton(btnConfirm, ThemeHelper.getAccentColor(this));
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        btnConfirm.setOnClickListener(v -> {
+            ThemeHelper.performHaptic(v);
+            dialog.dismiss();
+            executeDatabaseImport(payload);
+        });
+
+        dialog.show();
     }
 
     private void executeDatabaseImport(ZenBackupPayload payload) {

@@ -17,10 +17,10 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -34,6 +34,7 @@ import androidx.core.content.ContextCompat;
 
 import com.example.database.AppDatabase;
 import com.example.model.Note;
+import com.example.util.DeleteConfirmationDialog;
 import com.example.util.ThemeHelper;
 import com.google.android.material.button.MaterialButton;
 
@@ -383,7 +384,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     }
 
     /**
-     * Displays a full pop-up screen modal dialog for Date Picker.
+     * Displays the ZEN dark monthly calendar pop-up dialog for inserting/attaching a date.
      */
     private void showPopupDatePickerDialog() {
         Dialog dialog = new Dialog(this);
@@ -394,11 +395,23 @@ public class NoteEditorActivity extends AppCompatActivity {
         if (window != null) {
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            window.setDimAmount(0.72f);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                try {
+                    window.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+                    window.getAttributes().setBlurBehindRadius(20);
+                } catch (Exception ignored) {
+                }
+            }
         }
 
-        DatePicker datePicker = dialog.findViewById(R.id.popup_date_picker);
         TextView tvPreview = dialog.findViewById(R.id.tv_popup_selected_preview);
-        ImageView btnClose = dialog.findViewById(R.id.btn_close_date_popup);
+        View btnClose = dialog.findViewById(R.id.btn_close_date_popup);
+        ImageButton btnPrevMonth = dialog.findViewById(R.id.btn_calendar_prev_month);
+        ImageButton btnNextMonth = dialog.findViewById(R.id.btn_calendar_next_month);
+        TextView tvMonthYear = dialog.findViewById(R.id.tv_calendar_month_year);
+        LinearLayout calendarRowsContainer = dialog.findViewById(R.id.container_calendar_rows);
 
         TextView presetToday = dialog.findViewById(R.id.preset_today);
         TextView presetTomorrow = dialog.findViewById(R.id.preset_tomorrow);
@@ -416,66 +429,166 @@ public class NoteEditorActivity extends AppCompatActivity {
         ThemeHelper.applyAccentToPrimaryButton(btnApply, accentColor);
         tvPreview.setTextColor(accentColor);
 
+        final Calendar todayCal = Calendar.getInstance();
         final Calendar selectedCal = Calendar.getInstance();
+        final Calendar displayedMonthCal = Calendar.getInstance();
+        displayedMonthCal.set(Calendar.DAY_OF_MONTH, 1);
+
         final int[] actionChoice = {0}; // 0: In Text, 1: As Badge, 2: Both
+        final SimpleDateFormat monthYearFormat = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
 
-        Runnable updatePreview = () -> {
-            tvPreview.setText(popupDateFormat.format(selectedCal.getTime()));
-        };
-        updatePreview.run();
-
-        // DatePicker changes
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            datePicker.setOnDateChangedListener((view, year, monthOfYear, dayOfMonth) -> {
-                selectedCal.set(year, monthOfYear, dayOfMonth);
-                updatePreview.run();
-            });
-        }
-
-        // Preset Chips
         TextView[] presets = {presetToday, presetTomorrow, presetIn3Days, presetNextWeek};
-        java.util.function.Consumer<TextView> selectPreset = (selected) -> {
-            for (TextView p : presets) {
-                ThemeHelper.applyChipSelected(p, p == selected, accentColor);
+        int[] presetDayOffsets = {0, 1, 3, 7};
+
+        java.util.function.BiConsumer<TextView, Boolean> applyPillStyle = (pill, selected) -> {
+            if (pill == null) return;
+            if (selected) {
+                pill.setBackgroundResource(R.drawable.bg_pill_lime_solid);
+                pill.setTextColor(ContextCompat.getColor(NoteEditorActivity.this, R.color.zen_on_accent));
+            } else {
+                pill.setBackgroundResource(R.drawable.bg_pill_surface_outline);
+                pill.setTextColor(ContextCompat.getColor(NoteEditorActivity.this, R.color.zen_text_secondary));
             }
         };
 
-        presetToday.setOnClickListener(v -> {
-            selectPreset.accept(presetToday);
-            selectedCal.setTimeInMillis(System.currentTimeMillis());
-            datePicker.updateDate(selectedCal.get(Calendar.YEAR), selectedCal.get(Calendar.MONTH), selectedCal.get(Calendar.DAY_OF_MONTH));
-            updatePreview.run();
+        Runnable syncPresetHighlight = () -> {
+            for (int i = 0; i < presets.length; i++) {
+                Calendar target = (Calendar) todayCal.clone();
+                target.add(Calendar.DAY_OF_YEAR, presetDayOffsets[i]);
+                boolean match = isSameDay(selectedCal, target);
+                applyPillStyle.accept(presets[i], match);
+            }
+        };
+
+        final Runnable[] renderCalendarHolder = new Runnable[1];
+        renderCalendarHolder[0] = () -> {
+            tvPreview.setText(popupDateFormat.format(selectedCal.getTime()));
+            tvMonthYear.setText(monthYearFormat.format(displayedMonthCal.getTime()));
+            syncPresetHighlight.run();
+
+            calendarRowsContainer.removeAllViews();
+
+            Calendar gridCal = (Calendar) displayedMonthCal.clone();
+            gridCal.set(Calendar.DAY_OF_MONTH, 1);
+            int firstDayOffset = gridCal.get(Calendar.DAY_OF_WEEK) - Calendar.SUNDAY;
+            gridCal.add(Calendar.DAY_OF_MONTH, -firstDayOffset);
+
+            int displayedMonth = displayedMonthCal.get(Calendar.MONTH);
+            int displayedYear = displayedMonthCal.get(Calendar.YEAR);
+
+            float density = getResources().getDisplayMetrics().density;
+            int cellSizePx = (int) (36 * density);
+            int rowVertPadPx = (int) (2 * density);
+
+            for (int row = 0; row < 6; row++) {
+                LinearLayout rowLayout = new LinearLayout(NoteEditorActivity.this);
+                rowLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                ));
+                rowLayout.setOrientation(LinearLayout.HORIZONTAL);
+                rowLayout.setPadding(0, rowVertPadPx, 0, rowVertPadPx);
+
+                for (int col = 0; col < 7; col++) {
+                    final Calendar cellCal = (Calendar) gridCal.clone();
+                    boolean inCurrentMonth = cellCal.get(Calendar.MONTH) == displayedMonth
+                            && cellCal.get(Calendar.YEAR) == displayedYear;
+                    boolean isSelected = isSameDay(cellCal, selectedCal);
+                    boolean isToday = isSameDay(cellCal, todayCal);
+
+                    android.widget.FrameLayout cellWrapper = new android.widget.FrameLayout(NoteEditorActivity.this);
+                    LinearLayout.LayoutParams wrapperParams = new LinearLayout.LayoutParams(
+                            0,
+                            (int) (40 * density),
+                            1f
+                    );
+                    cellWrapper.setLayoutParams(wrapperParams);
+
+                    TextView dayView = new TextView(NoteEditorActivity.this);
+                    android.widget.FrameLayout.LayoutParams dayParams = new android.widget.FrameLayout.LayoutParams(
+                            cellSizePx,
+                            cellSizePx
+                    );
+                    dayParams.gravity = Gravity.CENTER;
+                    dayView.setLayoutParams(dayParams);
+                    dayView.setGravity(Gravity.CENTER);
+                    dayView.setIncludeFontPadding(false);
+                    dayView.setTextSize(12.5f);
+                    dayView.setFontFeatureSettings("tnum");
+                    dayView.setText(String.valueOf(cellCal.get(Calendar.DAY_OF_MONTH)));
+
+                    if (isSelected) {
+                        dayView.setBackgroundResource(R.drawable.bg_calendar_day_selected);
+                        dayView.setTextColor(ContextCompat.getColor(NoteEditorActivity.this, R.color.zen_on_accent));
+                        dayView.setTypeface(null, Typeface.BOLD);
+                    } else if (isToday) {
+                        dayView.setBackgroundResource(R.drawable.bg_calendar_day_today);
+                        dayView.setTextColor(ContextCompat.getColor(NoteEditorActivity.this, R.color.zen_accent));
+                        dayView.setTypeface(null, Typeface.BOLD);
+                    } else if (inCurrentMonth) {
+                        dayView.setBackground(null);
+                        dayView.setTextColor(ContextCompat.getColor(NoteEditorActivity.this, R.color.zen_text_primary));
+                        dayView.setTypeface(null, Typeface.NORMAL);
+                    } else {
+                        dayView.setBackground(null);
+                        dayView.setTextColor(Color.parseColor("#52554D"));
+                        dayView.setTypeface(null, Typeface.NORMAL);
+                    }
+
+                    cellWrapper.setClickable(true);
+                    cellWrapper.setFocusable(true);
+                    cellWrapper.setContentDescription(popupDateFormat.format(cellCal.getTime()));
+                    cellWrapper.setOnClickListener(v -> {
+                        ThemeHelper.performHaptic(v);
+                        selectedCal.setTimeInMillis(cellCal.getTimeInMillis());
+                        displayedMonthCal.set(Calendar.YEAR, selectedCal.get(Calendar.YEAR));
+                        displayedMonthCal.set(Calendar.MONTH, selectedCal.get(Calendar.MONTH));
+                        displayedMonthCal.set(Calendar.DAY_OF_MONTH, 1);
+                        renderCalendarHolder[0].run();
+                    });
+
+                    cellWrapper.addView(dayView);
+                    rowLayout.addView(cellWrapper);
+                    gridCal.add(Calendar.DAY_OF_MONTH, 1);
+                }
+                calendarRowsContainer.addView(rowLayout);
+            }
+        };
+
+        renderCalendarHolder[0].run();
+
+        btnPrevMonth.setOnClickListener(v -> {
+            displayedMonthCal.add(Calendar.MONTH, -1);
+            renderCalendarHolder[0].run();
         });
 
-        presetTomorrow.setOnClickListener(v -> {
-            selectPreset.accept(presetTomorrow);
-            selectedCal.setTimeInMillis(System.currentTimeMillis() + (24L * 60 * 60 * 1000));
-            datePicker.updateDate(selectedCal.get(Calendar.YEAR), selectedCal.get(Calendar.MONTH), selectedCal.get(Calendar.DAY_OF_MONTH));
-            updatePreview.run();
+        btnNextMonth.setOnClickListener(v -> {
+            displayedMonthCal.add(Calendar.MONTH, 1);
+            renderCalendarHolder[0].run();
         });
 
-        presetIn3Days.setOnClickListener(v -> {
-            selectPreset.accept(presetIn3Days);
-            selectedCal.setTimeInMillis(System.currentTimeMillis() + (3L * 24 * 60 * 60 * 1000));
-            datePicker.updateDate(selectedCal.get(Calendar.YEAR), selectedCal.get(Calendar.MONTH), selectedCal.get(Calendar.DAY_OF_MONTH));
-            updatePreview.run();
-        });
-
-        presetNextWeek.setOnClickListener(v -> {
-            selectPreset.accept(presetNextWeek);
-            selectedCal.setTimeInMillis(System.currentTimeMillis() + (7L * 24 * 60 * 60 * 1000));
-            datePicker.updateDate(selectedCal.get(Calendar.YEAR), selectedCal.get(Calendar.MONTH), selectedCal.get(Calendar.DAY_OF_MONTH));
-            updatePreview.run();
-        });
+        for (int i = 0; i < presets.length; i++) {
+            final int dayOffset = presetDayOffsets[i];
+            presets[i].setOnClickListener(v -> {
+                ThemeHelper.performHaptic(v);
+                selectedCal.setTimeInMillis(todayCal.getTimeInMillis());
+                selectedCal.add(Calendar.DAY_OF_YEAR, dayOffset);
+                displayedMonthCal.set(Calendar.YEAR, selectedCal.get(Calendar.YEAR));
+                displayedMonthCal.set(Calendar.MONTH, selectedCal.get(Calendar.MONTH));
+                displayedMonthCal.set(Calendar.DAY_OF_MONTH, 1);
+                renderCalendarHolder[0].run();
+            });
+        }
 
         // Action Options
         TextView[] actionViews = {optInsertText, optAttachBadge, optBoth};
         java.util.function.Consumer<Integer> selectAction = (choice) -> {
             actionChoice[0] = choice;
             for (int i = 0; i < actionViews.length; i++) {
-                ThemeHelper.applyChipSelected(actionViews[i], i == choice, accentColor);
+                applyPillStyle.accept(actionViews[i], i == choice);
             }
         };
+        selectAction.accept(0);
 
         optInsertText.setOnClickListener(v -> selectAction.accept(0));
         optAttachBadge.setOnClickListener(v -> selectAction.accept(1));
@@ -485,20 +598,17 @@ public class NoteEditorActivity extends AppCompatActivity {
         btnCancel.setOnClickListener(v -> dialog.dismiss());
 
         btnApply.setOnClickListener(v -> {
-            selectedCal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
             String formattedDate = popupDateFormat.format(selectedCal.getTime());
             String badgeDate = new SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(selectedCal.getTime());
 
             int choice = actionChoice[0];
             if (choice == 0 || choice == 2) {
-                // Insert in text
                 int cursor = Math.max(etBody.getSelectionStart(), 0);
                 String insertStr = "\n📅 " + formattedDate + "\n";
                 etBody.getText().insert(cursor, insertStr);
             }
 
             if (choice == 1 || choice == 2) {
-                // Attach as badge
                 attachedTargetDate = badgeDate;
                 updateDateBadgeUI();
             }
@@ -508,6 +618,11 @@ public class NoteEditorActivity extends AppCompatActivity {
         });
 
         dialog.show();
+    }
+
+    private static boolean isSameDay(Calendar c1, Calendar c2) {
+        return c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR)
+                && c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR);
     }
 
     private void shareCurrentNote() {
@@ -640,43 +755,26 @@ public class NoteEditorActivity extends AppCompatActivity {
     }
 
     private void showDeleteConfirmationDialog() {
-        Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_confirm_delete);
+        String currentTitle = etTitle != null && etTitle.getText() != null ? etTitle.getText().toString().trim() : "";
+        String currentBody = etBody != null && etBody.getText() != null ? etBody.getText().toString() : "";
+        long fallbackTs = existingNote != null && existingNote.getTimestamp() > 0
+                ? existingNote.getTimestamp()
+                : System.currentTimeMillis();
 
-        Window window = dialog.getWindow();
-        if (window != null) {
-            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-        }
-
-        TextView tvTitle = dialog.findViewById(R.id.tv_delete_popup_title);
-        TextView tvMsg = dialog.findViewById(R.id.tv_delete_popup_message);
-        TextView tvPreview = dialog.findViewById(R.id.tv_delete_item_preview);
-        MaterialButton btnCancel = dialog.findViewById(R.id.btn_popup_delete_cancel);
-        MaterialButton btnConfirm = dialog.findViewById(R.id.btn_popup_delete_confirm);
-
-        tvTitle.setText("DELETE NOTE");
-        tvMsg.setText("Are you sure you want to permanently delete this note? This action cannot be undone.");
-
-        String title = etTitle.getText().toString().trim();
-        if (!TextUtils.isEmpty(title)) {
-            tvPreview.setVisibility(View.VISIBLE);
-            tvPreview.setText(title);
-        } else {
-            tvPreview.setVisibility(View.GONE);
-        }
-
-        btnCancel.setOnClickListener(v -> dialog.dismiss());
-        btnConfirm.setOnClickListener(v -> {
-            dialog.dismiss();
-            if (existingNote != null) {
-                AppDatabase.databaseWriteExecutor.execute(() -> database.noteDao().delete(existingNote));
-                Toast.makeText(NoteEditorActivity.this, "Note deleted", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        });
-
-        dialog.show();
+        DeleteConfirmationDialog.showForNote(
+                this,
+                existingNote,
+                currentTitle,
+                currentBody,
+                isImportant,
+                fallbackTs,
+                () -> {
+                    if (existingNote != null) {
+                        AppDatabase.databaseWriteExecutor.execute(() -> database.noteDao().delete(existingNote));
+                        Toast.makeText(NoteEditorActivity.this, "Note deleted", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                }
+        );
     }
 }

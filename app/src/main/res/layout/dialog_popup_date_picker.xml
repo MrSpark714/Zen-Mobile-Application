@@ -1,252 +1,478 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_dialog_popup"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingStart="16dp"
+    android:paddingTop="12dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="12dp">
 
-    <!-- Header with Title & Close Icon -->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
-                android:letterSpacing="0.08"
-                android:text="SELECT DATE"
-                android:textColor="@color/zen_text_primary"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/tv_popup_selected_preview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:fontFamily="sans-serif"
-                android:text="Tuesday, Aug 25, 2026"
-                android:textColor="@color/zen_accent"
-                android:textSize="10sp" />
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/btn_close_date_popup"
-            android:layout_width="26dp"
-            android:layout_height="26dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Close"
-            android:padding="5dp"
-            android:src="@drawable/ic_close"
-            app:tint="@color/zen_text_secondary" />
-    </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:background="@color/zen_divider" />
-
-    <!-- Quick Presets -->
-    <TextView
-        android:layout_width="wrap_content"
+    <ScrollView
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-medium"
-        android:letterSpacing="0.06"
-        android:text="QUICK PRESETS"
-        android:textColor="@color/zen_text_secondary"
-        android:textSize="9sp" />
-
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="7dp"
+        android:background="@drawable/bg_delete_modal_card"
+        android:elevation="16dp"
         android:overScrollMode="never"
-        android:scrollbars="none">
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_max="380dp">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingTop="20dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="20dp">
 
-            <TextView
-                android:id="@+id/preset_today"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:background="@drawable/bg_chip_selected"
-                android:clickable="true"
-                android:focusable="true"
-                android:fontFamily="sans-serif-medium"
-                android:gravity="center"
-                android:paddingStart="11dp"
-                android:paddingEnd="11dp"
-                android:text="Today"
-                android:textColor="@color/zen_accent"
-                android:textSize="10sp" />
+            <!-- Header with Title, Selected Date Subtitle & Close Button -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/preset_tomorrow"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_marginStart="7dp"
-                android:background="@drawable/bg_chip_unselected"
-                android:clickable="true"
-                android:focusable="true"
-                android:fontFamily="sans-serif-medium"
-                android:gravity="center"
-                android:paddingStart="11dp"
-                android:paddingEnd="11dp"
-                android:text="Tomorrow"
-                android:textColor="@color/zen_text_secondary"
-                android:textSize="10sp" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/preset_in_3_days"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_marginStart="7dp"
-                android:background="@drawable/bg_chip_unselected"
-                android:clickable="true"
-                android:focusable="true"
-                android:fontFamily="sans-serif-medium"
-                android:gravity="center"
-                android:paddingStart="11dp"
-                android:paddingEnd="11dp"
-                android:text="In 3 Days"
-                android:textColor="@color/zen_text_secondary"
-                android:textSize="10sp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter"
+                        android:includeFontPadding="false"
+                        android:letterSpacing="0.06"
+                        android:text="SELECT DATE"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
 
+                    <TextView
+                        android:id="@+id/tv_popup_selected_preview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/inter"
+                        android:includeFontPadding="false"
+                        android:textColor="@color/zen_accent"
+                        android:textSize="12.5sp"
+                        android:textStyle="bold"
+                        tools:text="Tuesday, November 24, 2026" />
+                </LinearLayout>
+
+                <FrameLayout
+                    android:id="@+id/btn_close_date_popup"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="-8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="Close date picker"
+                    android:focusable="true">
+
+                    <FrameLayout
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/bg_circle_surface_high">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="Close"
+                            android:src="@drawable/ic_close"
+                            app:tint="@color/zen_text_secondary" />
+                    </FrameLayout>
+                </FrameLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="14dp"
+                android:background="#8027272A" />
+
+            <!-- Quick Presets -->
             <TextView
-                android:id="@+id/preset_next_week"
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_marginStart="7dp"
-                android:background="@drawable/bg_chip_unselected"
-                android:clickable="true"
-                android:focusable="true"
-                android:fontFamily="sans-serif-medium"
-                android:gravity="center"
-                android:paddingStart="11dp"
-                android:paddingEnd="11dp"
-                android:text="Next Week"
-                android:textColor="@color/zen_text_secondary"
-                android:textSize="10sp" />
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter"
+                android:includeFontPadding="false"
+                android:letterSpacing="0.08"
+                android:text="QUICK PRESETS"
+                android:textColor="@color/zen_text_tertiary"
+                android:textSize="10.5sp"
+                android:textStyle="bold" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:overScrollMode="never"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/preset_today"
+                        android:layout_width="wrap_content"
+                        android:layout_height="34dp"
+                        android:background="@drawable/bg_pill_lime_solid"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="@font/inter"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:paddingStart="13dp"
+                        android:paddingEnd="13dp"
+                        android:text="Today"
+                        android:textColor="@color/zen_on_accent"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/preset_tomorrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="34dp"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_pill_surface_outline"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="@font/inter"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:paddingStart="13dp"
+                        android:paddingEnd="13dp"
+                        android:text="Tomorrow"
+                        android:textColor="@color/zen_text_secondary"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/preset_in_3_days"
+                        android:layout_width="wrap_content"
+                        android:layout_height="34dp"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_pill_surface_outline"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="@font/inter"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:paddingStart="13dp"
+                        android:paddingEnd="13dp"
+                        android:text="In 3 Days"
+                        android:textColor="@color/zen_text_secondary"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/preset_next_week"
+                        android:layout_width="wrap_content"
+                        android:layout_height="34dp"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_pill_surface_outline"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="@font/inter"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:paddingStart="13dp"
+                        android:paddingEnd="13dp"
+                        android:text="Next Week"
+                        android:textColor="@color/zen_text_secondary"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <!-- Custom Dark ZEN Monthly Calendar Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_delete_preview_card"
+                android:orientation="vertical"
+                android:paddingStart="12dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="12dp">
+
+                <!-- Month / Year Bar -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/btn_calendar_prev_month"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Previous month"
+                        android:padding="10dp"
+                        android:rotation="180"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="@color/zen_text_primary" />
+
+                    <TextView
+                        android:id="@+id/tv_calendar_month_year"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/inter"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:text="November 2026" />
+
+                    <ImageButton
+                        android:id="@+id/btn_calendar_next_month"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Next month"
+                        android:padding="10dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="@color/zen_text_primary" />
+                </LinearLayout>
+
+                <!-- Weekday Labels -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="24dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/inter"
+                        android:gravity="center"
+                        android:text="S"
+                        android:textColor="@color/zen_text_tertiary"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="24dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/inter"
+                        android:gravity="center"
+                        android:text="M"
+                        android:textColor="@color/zen_text_tertiary"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="24dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/inter"
+                        android:gravity="center"
+                        android:text="T"
+                        android:textColor="@color/zen_text_tertiary"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="24dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/inter"
+                        android:gravity="center"
+                        android:text="W"
+                        android:textColor="@color/zen_text_tertiary"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="24dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/inter"
+                        android:gravity="center"
+                        android:text="T"
+                        android:textColor="@color/zen_text_tertiary"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="24dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/inter"
+                        android:gravity="center"
+                        android:text="F"
+                        android:textColor="@color/zen_text_tertiary"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="24dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/inter"
+                        android:gravity="center"
+                        android:text="S"
+                        android:textColor="@color/zen_text_tertiary"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- 6x7 Calendar Days Container -->
+                <LinearLayout
+                    android:id="@+id/container_calendar_rows"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </LinearLayout>
+
+            <!-- Insertion Target Options -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:fontFamily="@font/inter"
+                android:includeFontPadding="false"
+                android:letterSpacing="0.08"
+                android:text="ACTION"
+                android:textColor="@color/zen_text_tertiary"
+                android:textSize="10.5sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/opt_insert_text"
+                    android:layout_width="0dp"
+                    android:layout_height="36dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_pill_lime_solid"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/inter"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="In Text"
+                    android:textColor="@color/zen_on_accent"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/opt_attach_badge"
+                    android:layout_width="0dp"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_pill_surface_outline"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/inter"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="As Badge"
+                    android:textColor="@color/zen_text_secondary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/opt_both"
+                    android:layout_width="0dp"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_pill_surface_outline"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/inter"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="Both"
+                    android:textColor="@color/zen_text_secondary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Bottom Pill Action Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_popup_cancel"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/inter"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minHeight="48dp"
+                    android:text="@string/cancel"
+                    android:textAllCaps="false"
+                    android:textColor="#D4D4D8"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="#CC27272A"
+                    app:cornerRadius="100dp"
+                    app:elevation="0dp"
+                    app:strokeColor="#663F3F46"
+                    app:strokeWidth="1dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_popup_apply"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/inter"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minHeight="48dp"
+                    android:text="Apply Date"
+                    android:textAllCaps="false"
+                    android:textColor="@color/zen_on_accent"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/zen_accent"
+                    app:cornerRadius="100dp"
+                    app:elevation="0dp" />
+            </LinearLayout>
         </LinearLayout>
-    </HorizontalScrollView>
+    </ScrollView>
 
-    <!-- Calendar DatePicker View -->
-    <DatePicker
-        android:id="@+id/popup_date_picker"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:calendarViewShown="true"
-        android:datePickerMode="calendar"
-        android:spinnersShown="false" />
-
-    <!-- Insertion Target Options -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="7dp"
-        android:fontFamily="sans-serif-medium"
-        android:letterSpacing="0.06"
-        android:text="ACTION"
-        android:textColor="@color/zen_text_secondary"
-        android:textSize="9sp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="7dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/opt_insert_text"
-            android:layout_width="0dp"
-            android:layout_height="32dp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_chip_selected"
-            android:clickable="true"
-            android:focusable="true"
-            android:fontFamily="sans-serif-medium"
-            android:gravity="center"
-            android:text="In Text"
-            android:textColor="@color/zen_accent"
-            android:textSize="10sp" />
-
-        <TextView
-            android:id="@+id/opt_attach_badge"
-            android:layout_width="0dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="5dp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_chip_unselected"
-            android:clickable="true"
-            android:focusable="true"
-            android:fontFamily="sans-serif-medium"
-            android:gravity="center"
-            android:text="As Badge"
-            android:textColor="@color/zen_text_secondary"
-            android:textSize="10sp" />
-
-        <TextView
-            android:id="@+id/opt_both"
-            android:layout_width="0dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="5dp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_chip_unselected"
-            android:clickable="true"
-            android:focusable="true"
-            android:fontFamily="sans-serif-medium"
-            android:gravity="center"
-            android:text="Both"
-            android:textColor="@color/zen_text_secondary"
-            android:textSize="10sp" />
-    </LinearLayout>
-
-    <!-- Bottom Buttons -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="13dp"
-        android:gravity="end"
-        android:orientation="horizontal">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_popup_cancel"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:fontFamily="sans-serif-medium"
-            android:letterSpacing="0.04"
-            android:text="Cancel"
-            android:textColor="@color/zen_text_secondary" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_popup_apply"
-            style="@style/Widget.Material3.Button"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:layout_marginStart="8dp"
-            android:backgroundTint="@color/zen_accent"
-            android:fontFamily="sans-serif-medium"
-            android:letterSpacing="0.04"
-            android:text="Apply Date"
-            android:textColor="@color/zen_on_accent"
-            app:cornerRadius="10dp" />
-    </LinearLayout>
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
