@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "repo_name": "University Cohort Schedules",
+  "generated_at": "2026-11-25T12:00:00Z",
+  "sections": [
+    {
+      "section_id": "cu_cs_sem5_a",
+      "institute": "COMSATS University",
+      "institute_aliases": ["comsats", "cui", "comsats university islamabad"],
+      "department": "Computer Science",
+      "department_aliases": ["cs", "bscs", "comp sci"],
+      "semester": "5",
+      "semester_aliases": ["semester 5", "sem 5", "5th"],
+      "section": "A",
+      "section_aliases": ["section a", "sec a", "5a"],
+      "latest_version": "V1.1",
+      "package_path": "sections/cs_sem5_a.zensched",
+      "package_sha256": "<OUTPUT_OF_ZEN_SCHEDULE_PUBLISHER>"
+    }
+  ],
+  "signature": "<BASE64_ECDSA_SIGNATURE_OVER_CANONICAL_INDEX>"
+}

@@ -2,9 +2,12 @@ package com.example.database;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.migration.Migration;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.example.model.ActivityLog;
 import com.example.model.AttendanceHistory;
@@ -22,11 +25,20 @@ import java.util.concurrent.Executors;
  * is opened across the entire application process, saving system resources and
  * preventing concurrency locking issues.
  */
-@Database(entities = {Note.class, Task.class, ClassSchedule.class, AttendanceHistory.class, ActivityLog.class}, version = 5, exportSchema = false)
+@Database(entities = {Note.class, Task.class, ClassSchedule.class, AttendanceHistory.class, ActivityLog.class}, version = 6, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     // Database name on device storage
     private static final String DATABASE_NAME = "zen_database.db";
+
+    public static final Migration MIGRATION_5_6 = new Migration(5, 6) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE class_schedules ADD COLUMN source TEXT DEFAULT 'MANUAL'");
+            database.execSQL("ALTER TABLE class_schedules ADD COLUMN sync_slot_key TEXT DEFAULT ''");
+            database.execSQL("ALTER TABLE class_schedules ADD COLUMN synced_version TEXT DEFAULT ''");
+        }
+    };
 
     // Singleton database instance
     private static volatile AppDatabase INSTANCE;
@@ -77,7 +89,8 @@ public abstract class AppDatabase extends RoomDatabase {
                             AppDatabase.class,
                             DATABASE_NAME
                     )
-                    // Fallback to destructive migration during schema changes in development
+                    .addMigrations(MIGRATION_5_6)
+                    // Fallback to destructive migration for legacy pre-v5 schemas
                     .fallbackToDestructiveMigration()
                     .build();
                 }

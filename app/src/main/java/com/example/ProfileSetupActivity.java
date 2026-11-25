@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat;
 import com.example.database.AppDatabase;
 import com.example.model.UserProfile;
 import com.example.util.DeleteConfirmationDialog;
+import com.example.util.ScheduleSyncPreferences;
 import com.example.util.SecureProfileStore;
 import com.example.util.ThemeHelper;
 import com.google.android.material.button.MaterialButton;
@@ -494,6 +495,7 @@ public class ProfileSetupActivity extends AppCompatActivity {
         }
 
         SecureProfileStore.markProfileSetupSeen(this);
+        ScheduleSyncPreferences.resetCooldownForProfileChange(this);
         Toast.makeText(this, "Profile encrypted & saved locally", Toast.LENGTH_SHORT).show();
 
         if (isFirstLaunch) {

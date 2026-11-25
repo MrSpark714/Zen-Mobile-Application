@@ -1,0 +1,41 @@
+{
+  "section_id": "cu_cs_sem5_a",
+  "institute": "COMSATS University",
+  "department": "Computer Science",
+  "semester": "5",
+  "section": "A",
+  "version": "V1.1",
+  "changelog": "Updated Operating Systems classroom to Lab 4 and moved Distributed Systems to 11:00 AM.",
+  "classes": [
+    {
+      "slot_key": "mon_cs501_theory",
+      "day_of_week": "Monday",
+      "subject_name": "Advanced Algorithms",
+      "start_time": "09:00 AM",
+      "end_time": "10:30 AM",
+      "credit_hours": 3,
+      "class_type": "Theory",
+      "room_number": "C-204"
+    },
+    {
+      "slot_key": "mon_cs502_theory",
+      "day_of_week": "Monday",
+      "subject_name": "Operating Systems",
+      "start_time": "11:00 AM",
+      "end_time": "12:30 PM",
+      "credit_hours": 4,
+      "class_type": "Theory",
+      "room_number": "Lab 4"
+    },
+    {
+      "slot_key": "tue_cs503_theory",
+      "day_of_week": "Tuesday",
+      "subject_name": "Distributed Systems",
+      "start_time": "11:00 AM",
+      "end_time": "12:30 PM",
+      "credit_hours": 3,
+      "class_type": "Theory",
+      "room_number": "B-102"
+    }
+  ]
+}

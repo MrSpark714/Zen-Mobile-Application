@@ -19,6 +19,9 @@ import com.example.util.NotificationHelper;
 @Entity(tableName = "class_schedules")
 public class ClassSchedule implements Serializable {
 
+    public static final String SOURCE_MANUAL = "MANUAL";
+    public static final String SOURCE_SYNCED = "SYNCED";
+
     @PrimaryKey(autoGenerate = true)
     @com.google.gson.annotations.SerializedName(value = "id", alternate = {"scheduleId", "schedule_id"})
     private int id;
@@ -51,6 +54,18 @@ public class ClassSchedule implements Serializable {
     @ColumnInfo(name = "room_number")
     private String roomNumber;
 
+    @com.google.gson.annotations.SerializedName("source")
+    @ColumnInfo(name = "source", defaultValue = "MANUAL")
+    private String source = SOURCE_MANUAL;
+
+    @com.google.gson.annotations.SerializedName("sync_slot_key")
+    @ColumnInfo(name = "sync_slot_key", defaultValue = "")
+    private String syncSlotKey = "";
+
+    @com.google.gson.annotations.SerializedName("synced_version")
+    @ColumnInfo(name = "synced_version", defaultValue = "")
+    private String syncedVersion = "";
+
     public ClassSchedule() {
     }
 
@@ -64,6 +79,9 @@ public class ClassSchedule implements Serializable {
         this.creditHours = creditHours;
         this.classType = classType;
         this.roomNumber = roomNumber;
+        this.source = SOURCE_MANUAL;
+        this.syncSlotKey = "";
+        this.syncedVersion = "";
     }
 
     // Getters and Setters
@@ -129,6 +147,49 @@ public class ClassSchedule implements Serializable {
 
     public void setRoomNumber(String roomNumber) {
         this.roomNumber = roomNumber;
+    }
+
+    public String getSource() {
+        return (source != null && !source.trim().isEmpty()) ? source : SOURCE_MANUAL;
+    }
+
+    public void setSource(String source) {
+        this.source = (source != null && !source.trim().isEmpty()) ? source.trim() : SOURCE_MANUAL;
+    }
+
+    public String getSyncSlotKey() {
+        return syncSlotKey != null ? syncSlotKey : "";
+    }
+
+    public void setSyncSlotKey(String syncSlotKey) {
+        this.syncSlotKey = syncSlotKey != null ? syncSlotKey : "";
+    }
+
+    public String getSyncedVersion() {
+        return syncedVersion != null ? syncedVersion : "";
+    }
+
+    public void setSyncedVersion(String syncedVersion) {
+        this.syncedVersion = syncedVersion != null ? syncedVersion : "";
+    }
+
+    public boolean isSynced() {
+        return SOURCE_SYNCED.equalsIgnoreCase(getSource());
+    }
+
+    public boolean hasSameScheduleContent(ClassSchedule other) {
+        if (other == null) return false;
+        return normalizeStr(dayOfWeek).equalsIgnoreCase(normalizeStr(other.dayOfWeek))
+                && normalizeStr(subjectName).equals(normalizeStr(other.subjectName))
+                && normalizeStr(startTime).equalsIgnoreCase(normalizeStr(other.startTime))
+                && normalizeStr(endTime).equalsIgnoreCase(normalizeStr(other.endTime))
+                && creditHours == other.creditHours
+                && normalizeStr(getClassType()).equalsIgnoreCase(normalizeStr(other.getClassType()))
+                && normalizeStr(roomNumber).equals(normalizeStr(other.roomNumber));
+    }
+
+    private static String normalizeStr(String value) {
+        return value != null ? value.trim() : "";
     }
 
     /**

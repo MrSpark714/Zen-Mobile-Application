@@ -398,4 +398,275 @@ class ExampleRobolectricTest {
     ShadowLooper.idleMainLooper()
     assertFalse(restoreDialog.isShowing)
   }
+
+  @Test
+  fun `section schedule sync verifies encrypted packages, enforces cooldown and 304, rejects tampering, and smart-merges while keeping manual classes and attendance`() {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    val db = com.example.database.AppDatabase.getInstance(context)
+
+    // Seed 1 personal manual class + 1 past attendance record
+    com.example.database.AppDatabase.databaseWriteExecutor.submit {
+      db.classScheduleDao().deleteAllSchedules()
+      db.attendanceHistoryDao().deleteAllHistory()
+      val manualClass = com.example.model.ClassSchedule(
+        "Wednesday", "Personal Elective", "02:00 PM", "03:00 PM", 2, "Theory", "E-101"
+      )
+      manualClass.source = com.example.model.ClassSchedule.SOURCE_MANUAL
+      db.classScheduleDao().insert(manualClass)
+      db.attendanceHistoryDao().insert(
+        com.example.model.AttendanceHistory("Advanced Algorithms", 3, "Theory", 1000L, "Present")
+      )
+    }.get()
+
+    // Generate ECDSA P-256 keypair in memory for test
+    val kpg = java.security.KeyPairGenerator.getInstance("EC")
+    kpg.initialize(java.security.spec.ECGenParameterSpec("secp256r1"))
+    val keyPair = kpg.generateKeyPair()
+    val pubB64 = android.util.Base64.encodeToString(keyPair.public.encoded, android.util.Base64.NO_WRAP)
+
+    assertTrue(com.example.util.ScheduleSyncPreferences.setPublicKeyOverride(context, pubB64))
+    assertFalse(com.example.util.ScheduleSyncPreferences.setRepoBaseUrl(context, "http://insecure.example.com/"))
+    assertFalse(com.example.util.ScheduleSyncPreferences.setRepoBaseUrl(context, "https://localhost/schedules/"))
+    assertTrue(com.example.util.ScheduleSyncPreferences.setRepoBaseUrl(context, "https://raw.githubusercontent.com/test/zen-schedules/main/schedules/"))
+
+    val profile = com.example.model.UserProfile().apply {
+      universityName = "COMSATS University"
+      department = "CS" // tests alias/normalization matching "Computer Science"
+      currentSemester = "Semester 5" // tests normalization matching "5"
+      campusSection = "Sec A" // tests normalization matching "A"
+    }
+
+    val gson = com.google.gson.GsonBuilder().disableHtmlEscaping().create()
+
+    fun buildSignedAssets(version: String, roomForOs: String, includeDistributed: Boolean): Pair<String, String> {
+      val pkg = com.example.model.ScheduleSyncModels.SectionSchedulePackage().apply {
+        sectionId = "cu_cs_sem5_a"
+        institute = "COMSATS University"
+        department = "Computer Science"
+        semester = "5"
+        section = "A"
+        this.version = version
+        changelog = "Weekly section update $version"
+        classes = mutableListOf(
+          com.example.model.ScheduleSyncModels.SyncedClassEntry().apply {
+            slotKey = "mon_cs501_theory"
+            dayOfWeek = "Monday"
+            subjectName = "Advanced Algorithms"
+            startTime = "09:00 AM"
+            endTime = "10:30 AM"
+            creditHours = 3
+            classType = "Theory"
+            roomNumber = "C-201"
+          },
+          com.example.model.ScheduleSyncModels.SyncedClassEntry().apply {
+            slotKey = "mon_cs502_theory"
+            dayOfWeek = "Monday"
+            subjectName = "Operating Systems"
+            startTime = "11:00 AM"
+            endTime = "12:30 PM"
+            creditHours = 4
+            classType = "Theory"
+            roomNumber = roomForOs
+          }
+        ).apply {
+          if (includeDistributed) {
+            add(com.example.model.ScheduleSyncModels.SyncedClassEntry().apply {
+              slotKey = "tue_cs503_theory"
+              dayOfWeek = "Tuesday"
+              subjectName = "Distributed Systems"
+              startTime = "10:00 AM"
+              endTime = "11:30 AM"
+              creditHours = 3
+              classType = "Theory"
+              roomNumber = "B-104"
+            })
+          }
+        }
+      }
+
+      val envelope = com.example.util.ScheduleCryptoVerifier.createSignedEnvelope(
+        pkg, keyPair.private, pubB64, null
+      )
+      val envelopeJson = gson.toJson(envelope)
+      val packageSha = com.example.util.ScheduleCryptoVerifier.sha256Hex(
+        envelopeJson.toByteArray(java.nio.charset.StandardCharsets.UTF_8)
+      )
+
+      val manifest = com.example.model.ScheduleSyncModels.ScheduleIndexManifest().apply {
+        schemaVersion = 1
+        repoName = "Test Repo"
+        generatedAt = "2026-11-25T00:00:00Z"
+        sections = listOf(
+          com.example.model.ScheduleSyncModels.SectionIndexEntry().apply {
+            sectionId = "cu_cs_sem5_a"
+            institute = "COMSATS University"
+            department = "Computer Science"
+            semester = "5"
+            section = "A"
+            latestVersion = version
+            packagePath = "sections/cu_cs_sem5_a.zensched"
+            this.packageSha256 = packageSha
+          }
+        )
+      }
+      manifest.signature = com.example.util.ScheduleCryptoVerifier.signCanonical(
+        com.example.util.ScheduleCryptoVerifier.buildIndexCanonicalString(manifest),
+        keyPair.private
+      )
+      val indexJson = gson.toJson(manifest)
+      return indexJson to envelopeJson
+    }
+
+    // 1. V1.0 fetch & smart merge
+    val (indexV1, pkgV1) = buildSignedAssets("V1.0", "Lab 2", false)
+    val resultV1 = com.example.database.AppDatabase.databaseWriteExecutor.submit<com.example.util.SectionScheduleSyncManager.SyncCheckResult> {
+      com.example.util.SectionScheduleSyncManager.checkForScheduleUpdatesWithProfileSync(
+        context,
+        profile,
+        true
+      ) { url, _ ->
+        if (url.endsWith("index.json")) {
+          com.example.util.SectionScheduleSyncManager.HttpResponse(200, indexV1, "\"etag-v1\"")
+        } else {
+          com.example.util.SectionScheduleSyncManager.HttpResponse(200, pkgV1, "\"pkg-v1\"")
+        }
+      }
+    }.get()
+
+    assertEquals(com.example.util.SectionScheduleSyncManager.SyncOutcomeType.UPDATE_AVAILABLE, resultV1.outcome)
+    assertNotNull(resultV1.preview)
+    assertEquals(2, resultV1.preview.slotsToInsert.size)
+
+    com.example.database.AppDatabase.databaseWriteExecutor.submit {
+      com.example.util.SectionScheduleSyncManager.applyScheduleUpdateSync(context, resultV1.preview)
+    }.get()
+
+    val schedulesAfterV1 = com.example.database.AppDatabase.databaseWriteExecutor.submit<List<com.example.model.ClassSchedule>> {
+      db.classScheduleDao().allSchedulesSync
+    }.get()
+    assertEquals(3, schedulesAfterV1.size) // 1 manual + 2 synced
+    assertTrue(schedulesAfterV1.any { !it.isSynced && it.subjectName == "Personal Elective" })
+    assertTrue(schedulesAfterV1.any { it.isSynced && it.subjectName == "Operating Systems" && it.roomNumber == "Lab 2" })
+
+    // 2. Cooldown blocks automatic check within 6 hours (0 network calls)
+    var networkCalls = 0
+    val cooldownResult = com.example.database.AppDatabase.databaseWriteExecutor.submit<com.example.util.SectionScheduleSyncManager.SyncCheckResult> {
+      com.example.util.SectionScheduleSyncManager.checkForScheduleUpdatesWithProfileSync(
+        context,
+        profile,
+        false
+      ) { _, _ ->
+        networkCalls++
+        com.example.util.SectionScheduleSyncManager.HttpResponse(200, indexV1, "\"etag-v1\"")
+      }
+    }.get()
+    assertEquals(com.example.util.SectionScheduleSyncManager.SyncOutcomeType.COOLDOWN_ACTIVE, cooldownResult.outcome)
+    assertEquals(0, networkCalls)
+
+    // 3. After cooldown reset, ETag 304 Not Modified skips body download
+    com.example.util.ScheduleSyncPreferences.resetCooldownForProfileChange(context)
+    com.example.util.ScheduleSyncPreferences.setIndexETag(context, "\"etag-v1\"")
+    val notModifiedResult = com.example.database.AppDatabase.databaseWriteExecutor.submit<com.example.util.SectionScheduleSyncManager.SyncCheckResult> {
+      com.example.util.SectionScheduleSyncManager.checkForScheduleUpdatesWithProfileSync(
+        context,
+        profile,
+        false
+      ) { _, etag ->
+        assertEquals("\"etag-v1\"", etag)
+        com.example.util.SectionScheduleSyncManager.HttpResponse(304, null, "\"etag-v1\"")
+      }
+    }.get()
+    assertEquals(com.example.util.SectionScheduleSyncManager.SyncOutcomeType.NOT_MODIFIED_304, notModifiedResult.outcome)
+
+    // 4. Tampered public JSON fails cryptographic verification cleanly
+    val (indexV11, pkgV11) = buildSignedAssets("V1.1", "Lab 4", true)
+    val tamperedPkg = pkgV11.replace("V1.1", "V9.9")
+    val tamperResult = com.example.database.AppDatabase.databaseWriteExecutor.submit<com.example.util.SectionScheduleSyncManager.SyncCheckResult> {
+      com.example.util.SectionScheduleSyncManager.checkForScheduleUpdatesWithProfileSync(
+        context,
+        profile,
+        true
+      ) { url, _ ->
+        if (url.endsWith("index.json")) {
+          com.example.util.SectionScheduleSyncManager.HttpResponse(200, indexV11, "\"etag-v11\"")
+        } else {
+          com.example.util.SectionScheduleSyncManager.HttpResponse(200, tamperedPkg, "\"pkg-tampered\"")
+        }
+      }
+    }.get()
+    assertEquals(com.example.util.SectionScheduleSyncManager.SyncOutcomeType.VERIFICATION_FAILED, tamperResult.outcome)
+
+    // 5. Valid V1.1 smart diff merge updates OS room to Lab 4, adds Distributed Systems, preserves Personal Elective & AttendanceHistory
+    val resultV11 = com.example.database.AppDatabase.databaseWriteExecutor.submit<com.example.util.SectionScheduleSyncManager.SyncCheckResult> {
+      com.example.util.SectionScheduleSyncManager.checkForScheduleUpdatesWithProfileSync(
+        context,
+        profile,
+        true
+      ) { url, _ ->
+        if (url.endsWith("index.json")) {
+          com.example.util.SectionScheduleSyncManager.HttpResponse(200, indexV11, "\"etag-v11\"")
+        } else {
+          com.example.util.SectionScheduleSyncManager.HttpResponse(200, pkgV11, "\"pkg-v11\"")
+        }
+      }
+    }.get()
+    assertEquals(com.example.util.SectionScheduleSyncManager.SyncOutcomeType.UPDATE_AVAILABLE, resultV11.outcome)
+    assertEquals(1, resultV11.preview.slotsToInsert.size)
+    assertEquals(1, resultV11.preview.slotsToUpdate.size)
+    assertEquals(0, resultV11.preview.slotsToDelete.size)
+
+    com.example.database.AppDatabase.databaseWriteExecutor.submit {
+      com.example.util.SectionScheduleSyncManager.applyScheduleUpdateSync(context, resultV11.preview)
+    }.get()
+
+    val schedulesAfterV11 = com.example.database.AppDatabase.databaseWriteExecutor.submit<List<com.example.model.ClassSchedule>> {
+      db.classScheduleDao().allSchedulesSync
+    }.get()
+    val attendanceAfterV11 = com.example.database.AppDatabase.databaseWriteExecutor.submit<List<com.example.model.AttendanceHistory>> {
+      db.attendanceHistoryDao().allRecordsSync
+    }.get()
+
+    assertEquals(4, schedulesAfterV11.size) // 1 manual + 3 synced
+    assertTrue(schedulesAfterV11.any { !it.isSynced && it.subjectName == "Personal Elective" })
+    assertTrue(schedulesAfterV11.any { it.isSynced && it.subjectName == "Operating Systems" && it.roomNumber == "Lab 4" })
+    assertTrue(schedulesAfterV11.any { it.isSynced && it.subjectName == "Distributed Systems" })
+    assertEquals(1, attendanceAfterV11.size)
+
+    // 6. Verify ScheduleUpdateDialog renders diff counts and single-line actions cleanly
+    val activity = Robolectric.buildActivity(BackupActivity::class.java)
+      .create()
+      .start()
+      .resume()
+      .get()
+    ShadowLooper.idleMainLooper()
+
+    var confirmed = false
+    val updateDialog = com.example.util.ScheduleUpdateDialog.show(
+      activity,
+      resultV11.preview,
+      object : com.example.util.ScheduleUpdateDialog.Listener {
+        override fun onConfirmUpdate(preview: com.example.model.ScheduleSyncModels.ScheduleUpdatePreview) {
+          confirmed = true
+        }
+        override fun onSkipVersion(preview: com.example.model.ScheduleSyncModels.ScheduleUpdatePreview) {}
+      }
+    )
+    ShadowLooper.idleMainLooper()
+
+    assertEquals("Schedule Update", updateDialog.findViewById<TextView>(R.id.tv_sched_update_title).text.toString())
+    assertEquals("V1.0 → V1.1", updateDialog.findViewById<TextView>(R.id.tv_sched_update_version_pill).text.toString())
+    assertEquals("1", updateDialog.findViewById<TextView>(R.id.tv_sched_added_count).text.toString())
+    assertEquals("1", updateDialog.findViewById<TextView>(R.id.tv_sched_updated_count).text.toString())
+    assertEquals("0", updateDialog.findViewById<TextView>(R.id.tv_sched_removed_count).text.toString())
+    val btnApply = updateDialog.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_sched_apply)
+    assertEquals(1, btnApply.maxLines)
+    btnApply.performClick()
+    ShadowLooper.idleMainLooper()
+    assertTrue(confirmed)
+
+    // Verify BackupActivity contains new Section Schedule Sync controls
+    assertNotNull(activity.findViewById<MaterialSwitch>(R.id.switch_auto_schedule_sync))
+    assertNotNull(activity.findViewById<View>(R.id.btn_configure_schedule_repo))
+    assertNotNull(activity.findViewById<View>(R.id.btn_check_schedule_sync_now))
+  }
 }

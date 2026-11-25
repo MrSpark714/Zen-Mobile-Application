@@ -89,6 +89,10 @@ public class WeeklyScheduleAdapter extends RecyclerView.Adapter<WeeklyScheduleAd
             holder.tvTypeBadge.setTextColor(ContextCompat.getColor(context, R.color.type_theory_text));
         }
 
+        if (holder.tvSyncedBadge != null) {
+            holder.tvSyncedBadge.setVisibility(schedule.isSynced() ? View.VISIBLE : View.GONE);
+        }
+
         // Timing
         String timeStr = schedule.getStartTime();
         if (schedule.getEndTime() != null && !schedule.getEndTime().trim().isEmpty()) {
@@ -129,6 +133,7 @@ public class WeeklyScheduleAdapter extends RecyclerView.Adapter<WeeklyScheduleAd
         MaterialCardView cardView;
         TextView tvDayBadge;
         TextView tvTypeBadge;
+        TextView tvSyncedBadge;
         TextView tvSubjectName;
         TextView tvTime;
         TextView tvRoom;
@@ -141,6 +146,7 @@ public class WeeklyScheduleAdapter extends RecyclerView.Adapter<WeeklyScheduleAd
             cardView = itemView.findViewById(R.id.card_schedule_item);
             tvDayBadge = itemView.findViewById(R.id.tv_schedule_day_badge);
             tvTypeBadge = itemView.findViewById(R.id.tv_schedule_type_badge);
+            tvSyncedBadge = itemView.findViewById(R.id.tv_schedule_synced_badge);
             tvSubjectName = itemView.findViewById(R.id.tv_schedule_subject_name);
             tvTime = itemView.findViewById(R.id.tv_schedule_time);
             tvRoom = itemView.findViewById(R.id.tv_schedule_room);

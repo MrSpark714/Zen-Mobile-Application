@@ -67,8 +67,14 @@ public interface ClassScheduleDao {
             "ORDER BY start_time ASC")
     LiveData<List<ClassSchedule>> searchSchedules(String query);
 
+    @Query("SELECT * FROM class_schedules WHERE source = 'SYNCED' ORDER BY id ASC")
+    List<ClassSchedule> getSyncedSchedulesSync();
+
     @Query("DELETE FROM class_schedules WHERE id = :id")
     void deleteById(int id);
+
+    @Query("DELETE FROM class_schedules WHERE source = 'SYNCED'")
+    void deleteAllSyncedSchedules();
 
     @Query("DELETE FROM class_schedules")
     void deleteAllSchedules();

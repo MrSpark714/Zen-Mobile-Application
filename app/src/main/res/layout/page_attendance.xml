@@ -916,6 +916,26 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/btn_schedule_sync"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_pill_surface_outline"
+                    android:clickable="true"
+                    android:contentDescription="Sync section schedule from GitHub"
+                    android:focusable="true"
+                    android:fontFamily="@font/inter"
+                    android:includeFontPadding="false"
+                    android:paddingStart="11dp"
+                    android:paddingTop="6dp"
+                    android:paddingEnd="11dp"
+                    android:paddingBottom="6dp"
+                    android:text="Sync Repo"
+                    android:textColor="@color/zen_text_primary"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
                     android:id="@+id/btn_schedule_to_analytics"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

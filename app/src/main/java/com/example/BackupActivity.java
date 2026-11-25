@@ -29,9 +29,16 @@ import com.example.database.AppDatabase;
 import com.example.model.AttendanceHistory;
 import com.example.model.ClassSchedule;
 import com.example.model.Note;
+import com.example.model.ScheduleSyncModels.ScheduleUpdatePreview;
 import com.example.model.Task;
+import com.example.model.UserProfile;
 import com.example.model.ZenBackupPayload;
 import com.example.util.BackupHelper;
+import com.example.util.ScheduleCryptoVerifier;
+import com.example.util.ScheduleSyncPreferences;
+import com.example.util.ScheduleUpdateDialog;
+import com.example.util.SectionScheduleSyncManager;
+import com.example.util.SecureProfileStore;
 import com.example.util.ThemeHelper;
 import com.example.util.UpdateManager;
 import com.google.android.material.button.MaterialButton;
@@ -39,6 +46,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -94,6 +103,12 @@ public class BackupActivity extends AppCompatActivity {
     private MaterialSwitch switchAutoUpdate;
     private MaterialSwitch switchHapticFeedback;
 
+    // Section Schedule Sync UI
+    private MaterialSwitch switchAutoScheduleSync;
+    private TextView tvScheduleSyncStatus;
+    private MaterialButton btnConfigureScheduleRepo;
+    private MaterialButton btnCheckScheduleSyncNow;
+
     // Peer Collaboration UI
     private MaterialButton btnShareTimetable;
 
@@ -130,6 +145,7 @@ public class BackupActivity extends AppCompatActivity {
         setupListeners();
         selectBackupScope(ZenBackupPayload.TYPE_FULL, null);
         updateLastBackupLabel();
+        refreshScheduleSyncStatus();
         loadLocalDatabaseStats();
         runDatabaseIntegrityCheck(false);
 
@@ -181,6 +197,10 @@ public class BackupActivity extends AppCompatActivity {
 
         switchAutoUpdate = findViewById(R.id.switch_auto_update);
         switchHapticFeedback = findViewById(R.id.switch_haptic_feedback);
+        switchAutoScheduleSync = findViewById(R.id.switch_auto_schedule_sync);
+        tvScheduleSyncStatus = findViewById(R.id.tv_schedule_sync_status);
+        btnConfigureScheduleRepo = findViewById(R.id.btn_configure_schedule_repo);
+        btnCheckScheduleSyncNow = findViewById(R.id.btn_check_schedule_sync_now);
 
         btnDbIntegrityCheck = findViewById(R.id.btn_db_integrity_check);
         tvIntegrityStatus = findViewById(R.id.tv_integrity_status);
@@ -198,11 +218,17 @@ public class BackupActivity extends AppCompatActivity {
         if (btnShareTimetable != null) {
             ThemeHelper.applyAccentToPrimaryButton(btnShareTimetable, accentColor);
         }
+        if (btnCheckScheduleSyncNow != null) {
+            ThemeHelper.applyAccentToPrimaryButton(btnCheckScheduleSyncNow, accentColor);
+        }
         if (switchAutoUpdate != null) {
             ThemeHelper.applyAccentToSwitch(switchAutoUpdate, accentColor);
         }
         if (switchHapticFeedback != null) {
             ThemeHelper.applyAccentToSwitch(switchHapticFeedback, accentColor);
+        }
+        if (switchAutoScheduleSync != null) {
+            ThemeHelper.applyAccentToSwitch(switchAutoScheduleSync, accentColor);
         }
     }
 
@@ -254,6 +280,31 @@ public class BackupActivity extends AppCompatActivity {
                 if (isChecked) {
                     ThemeHelper.performHaptic(buttonView);
                 }
+            });
+        }
+
+        if (switchAutoScheduleSync != null) {
+            switchAutoScheduleSync.setChecked(ScheduleSyncPreferences.isAutoSyncEnabled(this));
+            switchAutoScheduleSync.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                ScheduleSyncPreferences.setAutoSyncEnabled(this, isChecked);
+                ThemeHelper.performHaptic(buttonView);
+                Toast.makeText(this,
+                        isChecked ? "Section schedule auto-sync enabled" : "Section schedule auto-sync paused",
+                        Toast.LENGTH_SHORT).show();
+            });
+        }
+
+        if (btnConfigureScheduleRepo != null) {
+            btnConfigureScheduleRepo.setOnClickListener(v -> {
+                ThemeHelper.performHaptic(v);
+                showConfigureScheduleRepoDialog();
+            });
+        }
+
+        if (btnCheckScheduleSyncNow != null) {
+            btnCheckScheduleSyncNow.setOnClickListener(v -> {
+                ThemeHelper.performHaptic(v);
+                triggerManualSectionScheduleCheck();
             });
         }
 
@@ -828,6 +879,134 @@ public class BackupActivity extends AppCompatActivity {
         if (targetUri != null) {
             handleOpenDocumentResult(targetUri);
         }
+    }
+
+    private void refreshScheduleSyncStatus() {
+        if (tvScheduleSyncStatus == null) return;
+        UserProfile profile = SecureProfileStore.loadProfile(this);
+        String appliedVersion = ScheduleSyncPreferences.getAppliedVersion(this);
+        String matchedLabel = ScheduleSyncPreferences.getMatchedSectionLabel(this);
+        String keyFp = ScheduleCryptoVerifier.getPublicKeyFingerprintShort(
+                ScheduleSyncPreferences.getEffectivePublicKey(this));
+
+        StringBuilder sb = new StringBuilder();
+        if (!SectionScheduleSyncManager.hasMatchableCohortProfile(profile)) {
+            sb.append("Profile incomplete: add University, Department, Semester, and Section in Profile to match.");
+        } else if (!matchedLabel.isEmpty()) {
+            sb.append("Matched: ").append(matchedLabel);
+            if (!appliedVersion.isEmpty()) {
+                sb.append(" • ").append(appliedVersion);
+            }
+        } else {
+            sb.append("Ready to match: ")
+                    .append(profile.getDepartment())
+                    .append(" • Sem ").append(profile.getCurrentSemester())
+                    .append(" • Sec ").append(profile.getCampusSection());
+        }
+        sb.append("\nVerification key: ").append(keyFp);
+        long lastCheck = ScheduleSyncPreferences.getLastCheckMillis(this);
+        if (lastCheck > 0L) {
+            CharSequence rel = DateUtils.getRelativeTimeSpanString(
+                    lastCheck, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS);
+            sb.append(" • Checked ").append(rel);
+        }
+        tvScheduleSyncStatus.setText(sb.toString());
+    }
+
+    private void showConfigureScheduleRepoDialog() {
+        Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_configure_schedule_repo);
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            window.setDimAmount(0.72f);
+        }
+
+        TextInputLayout tilUrl = dialog.findViewById(R.id.til_repo_base_url);
+        TextInputLayout tilKey = dialog.findViewById(R.id.til_repo_public_key);
+        TextInputLayout tilPass = dialog.findViewById(R.id.til_repo_passphrase);
+        TextInputEditText etUrl = dialog.findViewById(R.id.et_repo_base_url);
+        TextInputEditText etKey = dialog.findViewById(R.id.et_repo_public_key);
+        TextInputEditText etPass = dialog.findViewById(R.id.et_repo_passphrase);
+        MaterialButton btnCancel = dialog.findViewById(R.id.btn_repo_config_cancel);
+        MaterialButton btnSave = dialog.findViewById(R.id.btn_repo_config_save);
+
+        int accent = ThemeHelper.getAccentColor(this);
+        ThemeHelper.applyAccentToTextInputLayout(tilUrl, accent);
+        ThemeHelper.applyAccentToTextInputLayout(tilKey, accent);
+        ThemeHelper.applyAccentToTextInputLayout(tilPass, accent);
+        ThemeHelper.applyAccentToPrimaryButton(btnSave, accent);
+
+        etUrl.setText(ScheduleSyncPreferences.getRepoBaseUrl(this));
+        etKey.setText(ScheduleSyncPreferences.getEffectivePublicKey(this));
+        etPass.setText(ScheduleSyncPreferences.getOptionalPassphrase(this));
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        btnSave.setOnClickListener(v -> {
+            String rawUrl = etUrl.getText() != null ? etUrl.getText().toString().trim() : "";
+            String rawKey = etKey.getText() != null ? etKey.getText().toString().trim() : "";
+            String rawPass = etPass.getText() != null ? etPass.getText().toString().trim() : "";
+
+            if (!ScheduleSyncPreferences.setRepoBaseUrl(this, rawUrl)) {
+                tilUrl.setError("Must be a valid public HTTPS URL");
+                return;
+            }
+            tilUrl.setError(null);
+
+            if (!ScheduleSyncPreferences.setPublicKeyOverride(this, rawKey)) {
+                tilKey.setError("Invalid Base64 ECDSA P-256 public key");
+                return;
+            }
+            tilKey.setError(null);
+
+            ScheduleSyncPreferences.setOptionalPassphrase(this, rawPass);
+            refreshScheduleSyncStatus();
+            dialog.dismiss();
+            showSuccessSnackbar("Schedule repository configuration saved");
+        });
+
+        dialog.show();
+    }
+
+    private void triggerManualSectionScheduleCheck() {
+        showProgress(true);
+        SectionScheduleSyncManager.checkForScheduleUpdates(this, true, result -> {
+            if (isFinishing() || isDestroyed()) return;
+            showProgress(false);
+            refreshScheduleSyncStatus();
+            if (result.outcome == SectionScheduleSyncManager.SyncOutcomeType.UPDATE_AVAILABLE && result.preview != null) {
+                ScheduleUpdateDialog.show(this, result.preview, new ScheduleUpdateDialog.Listener() {
+                    @Override
+                    public void onConfirmUpdate(ScheduleUpdatePreview preview) {
+                        showProgress(true);
+                        SectionScheduleSyncManager.applyScheduleUpdateAsync(
+                                BackupActivity.this,
+                                preview,
+                                (success, summaryMessage) -> {
+                                    showProgress(false);
+                                    refreshScheduleSyncStatus();
+                                    loadLocalDatabaseStats();
+                                    if (success) {
+                                        showSuccessSnackbar(summaryMessage);
+                                    } else {
+                                        Toast.makeText(BackupActivity.this, summaryMessage, Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void onSkipVersion(ScheduleUpdatePreview preview) {
+                        ScheduleSyncPreferences.setSkippedVersion(BackupActivity.this, preview.toVersion);
+                        showSuccessSnackbar("Skipped schedule " + preview.toVersion);
+                    }
+                });
+            } else {
+                Toast.makeText(this, result.message, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void showProgress(boolean show) {

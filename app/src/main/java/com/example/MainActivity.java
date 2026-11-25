@@ -62,11 +62,15 @@ import com.example.model.AttendanceHistory;
 import com.example.model.ClassSchedule;
 import com.example.model.ClassWithTodayStatus;
 import com.example.model.Note;
+import com.example.model.ScheduleSyncModels.ScheduleUpdatePreview;
 import com.example.model.SubjectStats;
 import com.example.model.Task;
 import com.example.model.UserProfile;
 import com.example.util.DeleteConfirmationDialog;
 import com.example.util.NotificationHelper;
+import com.example.util.ScheduleSyncPreferences;
+import com.example.util.ScheduleUpdateDialog;
+import com.example.util.SectionScheduleSyncManager;
 import com.example.util.SecureProfileStore;
 import com.example.util.ThemeHelper;
 import com.example.util.UpdateManager;
@@ -75,6 +79,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.timepicker.MaterialTimePicker;
@@ -200,6 +205,7 @@ public class MainActivity extends AppCompatActivity implements
                     attendanceViewHolder.updateGreeting();
                     attendanceViewHolder.updateQuickOverview(currentSubjectStats, allDashboardTasks);
                 }
+                checkSectionScheduleUpdates(false);
             });
 
     @Override
@@ -252,6 +258,11 @@ public class MainActivity extends AppCompatActivity implements
         // Automated background check for in-app updates on app launch
         if (UpdateManager.isAutoUpdateEnabled(this)) {
             UpdateManager.checkForUpdates(this);
+        }
+
+        // Battery-friendly cold-launch check for section schedule updates (6h cooldown + HTTP 304 ETag)
+        if (ScheduleSyncPreferences.isAutoSyncEnabled(this)) {
+            checkSectionScheduleUpdates(false);
         }
 
         // Schedule nightly attendance auto-marker via WorkManager (runs around 11:55 PM daily)
@@ -1118,6 +1129,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // Weekly Schedule Sub-View
         ImageButton btnBackFromSchedule;
+        View btnScheduleSync;
         View btnScheduleToAnalytics;
         TextView filterDayAll, filterDayMon, filterDayTue, filterDayWed, filterDayThu, filterDayFri;
         RecyclerView rvWeeklySchedule;
@@ -1200,6 +1212,7 @@ public class MainActivity extends AppCompatActivity implements
             tvPriorityTaskDue = itemView.findViewById(R.id.tv_priority_task_due);
 
             btnBackFromSchedule = itemView.findViewById(R.id.btn_back_from_schedule);
+            btnScheduleSync = itemView.findViewById(R.id.btn_schedule_sync);
             btnScheduleToAnalytics = itemView.findViewById(R.id.btn_schedule_to_analytics);
             filterDayAll = itemView.findViewById(R.id.filter_day_all);
             filterDayMon = itemView.findViewById(R.id.filter_day_mon);
@@ -1257,6 +1270,12 @@ public class MainActivity extends AppCompatActivity implements
 
             // Sub-View Navigation Listeners
             btnBackFromSchedule.setOnClickListener(v -> switchSubTab(SUB_TAB_TODAY));
+            if (btnScheduleSync != null) {
+                btnScheduleSync.setOnClickListener(v -> {
+                    ThemeHelper.performHaptic(v);
+                    checkSectionScheduleUpdates(true);
+                });
+            }
             btnScheduleToAnalytics.setOnClickListener(v -> switchSubTab(SUB_TAB_ANALYTICS));
             if (btnAnalyticsToSchedule != null) {
                 btnAnalyticsToSchedule.setOnClickListener(v -> switchSubTab(SUB_TAB_TIMETABLE));
@@ -2541,5 +2560,59 @@ public class MainActivity extends AppCompatActivity implements
         if (imm != null) {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    private boolean isScheduleUpdateDialogShowing = false;
+
+    void checkSectionScheduleUpdates(boolean forceManual) {
+        if (forceManual) {
+            Toast.makeText(this, "Checking section schedule...", Toast.LENGTH_SHORT).show();
+        }
+        SectionScheduleSyncManager.checkForScheduleUpdates(this, forceManual, result -> {
+            if (isFinishing() || isDestroyed()) return;
+            if (result.outcome == SectionScheduleSyncManager.SyncOutcomeType.UPDATE_AVAILABLE
+                    && result.preview != null) {
+                if (isScheduleUpdateDialogShowing) return;
+                isScheduleUpdateDialogShowing = true;
+                android.app.Dialog dialog = ScheduleUpdateDialog.show(
+                        this,
+                        result.preview,
+                        new ScheduleUpdateDialog.Listener() {
+                            @Override
+                            public void onConfirmUpdate(ScheduleUpdatePreview preview) {
+                                SectionScheduleSyncManager.applyScheduleUpdateAsync(
+                                        MainActivity.this,
+                                        preview,
+                                        (success, summaryMessage) -> {
+                                            if (isFinishing() || isDestroyed()) return;
+                                            View root = findViewById(android.R.id.content);
+                                            if (success && root != null) {
+                                                Snackbar.make(root, summaryMessage, Snackbar.LENGTH_LONG)
+                                                        .setBackgroundTint(getColor(R.color.zen_surface))
+                                                        .setTextColor(getColor(R.color.zen_accent))
+                                                        .show();
+                                            } else {
+                                                Toast.makeText(MainActivity.this, summaryMessage, Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                );
+                            }
+
+                            @Override
+                            public void onSkipVersion(ScheduleUpdatePreview preview) {
+                                ScheduleSyncPreferences.setSkippedVersion(MainActivity.this, preview.toVersion);
+                                Toast.makeText(
+                                        MainActivity.this,
+                                        "Skipped schedule " + preview.toVersion,
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                            }
+                        }
+                );
+                dialog.setOnDismissListener(d -> isScheduleUpdateDialogShowing = false);
+            } else if (forceManual) {
+                Toast.makeText(this, result.message, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }
