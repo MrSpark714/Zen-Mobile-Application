@@ -669,4 +669,60 @@ class ExampleRobolectricTest {
     assertNotNull(activity.findViewById<View>(R.id.btn_configure_schedule_repo))
     assertNotNull(activity.findViewById<View>(R.id.btn_check_schedule_sync_now))
   }
+
+  @Test
+  fun `nfc iefr two-section index matches NFC and NFC iefr aliases for BS-CS 5th A and B`() {
+    val manifest = com.example.model.ScheduleSyncModels.ScheduleIndexManifest().apply {
+      schemaVersion = 1
+      sections = listOf(
+        com.example.model.ScheduleSyncModels.SectionIndexEntry().apply {
+          sectionId = "nfc_cs_sem5_a"
+          institute = "NFC IEFR"
+          instituteAliases = listOf("nfc", "nfc iefr", "nfc iefr fsd", "nfc fsd")
+          department = "Computer Science"
+          departmentAliases = listOf("cs", "bscs", "bs cs", "bs-cs", "comp sci")
+          semester = "5"
+          semesterAliases = listOf("5th", "sem 5", "semester 5", "5th semester")
+          section = "A"
+          sectionAliases = listOf("sec a", "section a", "5a")
+          latestVersion = "V1.0"
+          packagePath = "sections/nfc_cs_sem5_a.zensched"
+        },
+        com.example.model.ScheduleSyncModels.SectionIndexEntry().apply {
+          sectionId = "nfc_cs_sem5_b"
+          institute = "NFC IEFR"
+          instituteAliases = listOf("nfc", "nfc iefr", "nfc iefr fsd", "nfc fsd")
+          department = "Computer Science"
+          departmentAliases = listOf("cs", "bscs", "bs cs", "bs-cs", "comp sci")
+          semester = "5"
+          semesterAliases = listOf("5th", "sem 5", "semester 5", "5th semester")
+          section = "B"
+          sectionAliases = listOf("sec b", "section b", "5b")
+          latestVersion = "V1.0"
+          packagePath = "sections/nfc_cs_sem5_b.zensched"
+        }
+      )
+    }
+
+    val secAProfile = com.example.model.UserProfile().apply {
+      universityName = "NFC"
+      department = "BS-CS"
+      currentSemester = "5th"
+      campusSection = "A"
+    }
+    val secBProfile = com.example.model.UserProfile().apply {
+      universityName = "NFC iefr"
+      department = "CS"
+      currentSemester = "5th Semester"
+      campusSection = "Sec B"
+    }
+
+    val matchedA = com.example.util.SectionScheduleSyncManager.findMatchingSection(secAProfile, manifest)
+    val matchedB = com.example.util.SectionScheduleSyncManager.findMatchingSection(secBProfile, manifest)
+
+    assertNotNull(matchedA)
+    assertEquals("nfc_cs_sem5_a", matchedA!!.sectionId)
+    assertNotNull(matchedB)
+    assertEquals("nfc_cs_sem5_b", matchedB!!.sectionId)
+  }
 }

@@ -11,8 +11,12 @@ import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,12 +29,14 @@ import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Zero-dependency JDK CLI tool for university schedule maintainers to generate
- * ECDSA P-256 keypairs, encrypt & sign section schedules (.zensched), and sign index.json.
+ * ECDSA P-256 keypairs, encrypt & sign section schedules (.zensched), and build/sign index.json
+ * for one or multiple sections in a single command.
  *
  * Usage:
  *   javac ZenSchedulePublisher.java
- *   java ZenSchedulePublisher keygen ./keys
- *   java ZenSchedulePublisher package ./cs_sem5_a_raw.json ./sections/cs_sem5_a.zensched ./keys/private.key ./keys/public.key [optional_passphrase]
+ *   java ZenSchedulePublisher keygen ./offline_keys
+ *   java ZenSchedulePublisher publish-all ./nfc_cs_sem5 ./schedules ./offline_keys/private.key ./offline_keys/public.key
+ *   java ZenSchedulePublisher package ./raw.json ./schedules/sections/sec.zensched ./offline_keys/private.key ./offline_keys/public.key [passphrase]
  */
 public class ZenSchedulePublisher {
 
@@ -40,11 +46,12 @@ public class ZenSchedulePublisher {
             return;
         }
         switch (args[0]) {
-            case "keygen":
+            case "keygen": {
                 String outDir = args.length > 1 ? args[1] : ".";
                 generateKeyPair(new File(outDir));
                 break;
-            case "package":
+            }
+            case "package": {
                 if (args.length < 5) {
                     printUsage();
                     return;
@@ -52,8 +59,17 @@ public class ZenSchedulePublisher {
                 String passphrase = args.length >= 6 ? args[5] : "";
                 packageSection(new File(args[1]), new File(args[2]), new File(args[3]), new File(args[4]), passphrase);
                 break;
-            case "sign-canonical":
-                // Utility to sign pre-built canonical index string cleanly
+            }
+            case "publish-all": {
+                if (args.length < 5) {
+                    printUsage();
+                    return;
+                }
+                String passphrase = args.length >= 6 ? args[5] : "";
+                publishAllSections(new File(args[1]), new File(args[2]), new File(args[3]), new File(args[4]), passphrase);
+                break;
+            }
+            case "sign-canonical": {
                 if (args.length < 3) {
                     printUsage();
                     return;
@@ -61,6 +77,7 @@ public class ZenSchedulePublisher {
                 PrivateKey priv = readPrivateKey(new File(args[2]));
                 System.out.println(signCanonical(args[1], priv));
                 break;
+            }
             default:
                 printUsage();
         }
@@ -69,7 +86,9 @@ public class ZenSchedulePublisher {
     private static void printUsage() {
         System.out.println("ZEN Schedule Publisher CLI (Zero external dependencies)");
         System.out.println("  keygen <output_dir>");
+        System.out.println("  publish-all <raw_sections_dir> <out_schedules_dir> <private.key> <public.key> [passphrase]");
         System.out.println("  package <raw_section.json> <out_section.zensched> <private.key> <public.key> [passphrase]");
+        System.out.println("  sign-canonical <canonical_string> <private.key>");
     }
 
     private static void generateKeyPair(File dir) throws Exception {
@@ -92,7 +111,118 @@ public class ZenSchedulePublisher {
         System.out.println(pubB64);
     }
 
-    private static void packageSection(
+    private static void publishAllSections(
+            File rawDir,
+            File outSchedulesDir,
+            File privateKeyFile,
+            File publicKeyFile,
+            String passphrase) throws Exception {
+
+        if (!rawDir.isDirectory()) {
+            throw new IllegalArgumentException("Raw sections directory does not exist: " + rawDir);
+        }
+        File[] rawFiles = rawDir.listFiles((dir, name) -> name.toLowerCase(Locale.ROOT).endsWith(".json"));
+        if (rawFiles == null || rawFiles.length == 0) {
+            throw new IllegalArgumentException("No .json files found in: " + rawDir);
+        }
+        Arrays.sort(rawFiles, Comparator.comparing(File::getName));
+
+        File sectionsOutDir = new File(outSchedulesDir, "sections");
+        if (!sectionsOutDir.exists() && !sectionsOutDir.mkdirs()) {
+            throw new IllegalStateException("Could not create output sections directory: " + sectionsOutDir);
+        }
+
+        PrivateKey privateKey = readPrivateKey(privateKeyFile);
+        List<PublishedSectionMeta> published = new ArrayList<>();
+
+        for (File rawFile : rawFiles) {
+            String rawJson = Files.readString(rawFile.toPath(), StandardCharsets.UTF_8).trim();
+            String sectionId = extractJsonString(rawJson, "section_id");
+            String institute = extractJsonString(rawJson, "institute");
+            String department = extractJsonString(rawJson, "department");
+            String semester = extractJsonString(rawJson, "semester");
+            String section = extractJsonString(rawJson, "section");
+            String version = extractJsonString(rawJson, "version");
+
+            if (sectionId.isEmpty() || version.isEmpty() || institute.isEmpty()
+                    || department.isEmpty() || semester.isEmpty() || section.isEmpty()) {
+                throw new IllegalArgumentException("Missing required metadata fields in " + rawFile.getName());
+            }
+
+            String relPath = "sections/" + sectionId + ".zensched";
+            File outEnvelope = new File(outSchedulesDir, relPath);
+            String packageSha = packageSection(rawFile, outEnvelope, privateKeyFile, publicKeyFile, passphrase);
+
+            PublishedSectionMeta meta = new PublishedSectionMeta();
+            meta.sectionId = sectionId;
+            meta.institute = institute;
+            meta.instituteAliases = extractJsonStringArray(rawJson, "institute_aliases");
+            meta.department = department;
+            meta.departmentAliases = extractJsonStringArray(rawJson, "department_aliases");
+            meta.semester = semester;
+            meta.semesterAliases = extractJsonStringArray(rawJson, "semester_aliases");
+            meta.section = section;
+            meta.sectionAliases = extractJsonStringArray(rawJson, "section_aliases");
+            meta.latestVersion = version;
+            meta.packagePath = relPath;
+            meta.packageSha256 = packageSha;
+            published.add(meta);
+        }
+
+        String repoName = "University Cohort Schedules";
+        String generatedAt = Instant.now().toString();
+        StringBuilder canonicalSections = new StringBuilder();
+        StringBuilder sectionsJson = new StringBuilder();
+
+        for (int i = 0; i < published.size(); i++) {
+            PublishedSectionMeta m = published.get(i);
+            if (i > 0) {
+                canonicalSections.append(",");
+                sectionsJson.append(",\n");
+            }
+            canonicalSections.append(m.sectionId)
+                    .append(":")
+                    .append(m.latestVersion)
+                    .append(":")
+                    .append(m.packagePath)
+                    .append(":")
+                    .append(m.packageSha256.toLowerCase(Locale.ROOT));
+
+            sectionsJson.append("    {\n")
+                    .append("      \"section_id\": \"").append(escapeJson(m.sectionId)).append("\",\n")
+                    .append("      \"institute\": \"").append(escapeJson(m.institute)).append("\",\n")
+                    .append("      \"institute_aliases\": ").append(toJsonArray(m.instituteAliases)).append(",\n")
+                    .append("      \"department\": \"").append(escapeJson(m.department)).append("\",\n")
+                    .append("      \"department_aliases\": ").append(toJsonArray(m.departmentAliases)).append(",\n")
+                    .append("      \"semester\": \"").append(escapeJson(m.semester)).append("\",\n")
+                    .append("      \"semester_aliases\": ").append(toJsonArray(m.semesterAliases)).append(",\n")
+                    .append("      \"section\": \"").append(escapeJson(m.section)).append("\",\n")
+                    .append("      \"section_aliases\": ").append(toJsonArray(m.sectionAliases)).append(",\n")
+                    .append("      \"latest_version\": \"").append(escapeJson(m.latestVersion)).append("\",\n")
+                    .append("      \"package_path\": \"").append(escapeJson(m.packagePath)).append("\",\n")
+                    .append("      \"package_sha256\": \"").append(escapeJson(m.packageSha256)).append("\"\n")
+                    .append("    }");
+        }
+
+        String canonicalIndex = "ZEN-INDEX-V1|1|" + repoName + "|" + generatedAt + "|" + canonicalSections;
+        String indexSignature = signCanonical(canonicalIndex, privateKey);
+
+        String indexJson = "{\n"
+                + "  \"schema_version\": 1,\n"
+                + "  \"repo_name\": \"" + escapeJson(repoName) + "\",\n"
+                + "  \"generated_at\": \"" + escapeJson(generatedAt) + "\",\n"
+                + "  \"sections\": [\n"
+                + sectionsJson + "\n"
+                + "  ],\n"
+                + "  \"signature\": \"" + escapeJson(indexSignature) + "\"\n"
+                + "}\n";
+
+        File indexFile = new File(outSchedulesDir, "index.json");
+        Files.writeString(indexFile.toPath(), indexJson, StandardCharsets.UTF_8);
+        System.out.println("Published signed index with " + published.size() + " section(s): " + indexFile.getPath());
+    }
+
+    private static String packageSection(
             File rawJsonFile,
             File outEnvelopeFile,
             File privateKeyFile,
@@ -165,8 +295,10 @@ public class ZenSchedulePublisher {
         byte[] outBytes = outJson.getBytes(StandardCharsets.UTF_8);
         Files.write(outEnvelopeFile.toPath(), outBytes);
 
+        String packageSha = sha256Hex(outBytes);
         System.out.println("Created verified encrypted package: " + outEnvelopeFile.getPath());
-        System.out.println("package_sha256 (for index.json): " + sha256Hex(outBytes));
+        System.out.println("package_sha256: " + packageSha);
+        return packageSha;
     }
 
     private static PrivateKey readPrivateKey(File file) throws Exception {
@@ -197,7 +329,45 @@ public class ZenSchedulePublisher {
         return m.find() ? m.group(1).replace("\\\"", "\"") : "";
     }
 
+    private static List<String> extractJsonStringArray(String json, String field) {
+        List<String> result = new ArrayList<>();
+        Pattern p = Pattern.compile("\"" + Pattern.quote(field) + "\"\\s*:\\s*\\[(.*?)\\]", Pattern.DOTALL);
+        Matcher m = p.matcher(json);
+        if (!m.find()) return result;
+        String inner = m.group(1);
+        Matcher itemMatcher = Pattern.compile("\"((?:\\\\.|[^\"])*)\"").matcher(inner);
+        while (itemMatcher.find()) {
+            result.add(itemMatcher.group(1).replace("\\\"", "\""));
+        }
+        return result;
+    }
+
+    private static String toJsonArray(List<String> items) {
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < items.size(); i++) {
+            if (i > 0) sb.append(", ");
+            sb.append("\"").append(escapeJson(items.get(i))).append("\"");
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
     private static String escapeJson(String s) {
         return s == null ? "" : s.replace("\\", "\\\\").replace("\"", "\\\"");
+    }
+
+    private static class PublishedSectionMeta {
+        String sectionId;
+        String institute;
+        List<String> instituteAliases = new ArrayList<>();
+        String department;
+        List<String> departmentAliases = new ArrayList<>();
+        String semester;
+        List<String> semesterAliases = new ArrayList<>();
+        String section;
+        List<String> sectionAliases = new ArrayList<>();
+        String latestVersion;
+        String packagePath;
+        String packageSha256;
     }
 }

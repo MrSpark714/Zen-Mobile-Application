@@ -392,7 +392,7 @@ public final class SectionScheduleSyncManager {
                 .replaceAll("\\b(department|dept|of|faculty|school)\\b", " ")
                 .trim()
                 .replaceAll("\\s+", " ");
-        if (s.equals("computer science") || s.equals("comp sci") || s.equals("bscs")) return "cs";
+        if (s.equals("computer science") || s.equals("comp sci") || s.equals("bscs") || s.equals("bs cs")) return "cs";
         if (s.equals("software engineering") || s.equals("bsse")) return "se";
         if (s.equals("cyber security") || s.equals("cybersecurity")) return "cys";
         if (s.equals("artificial intelligence")) return "ai";
