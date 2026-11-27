@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Zen Dark Minimalist Palette -->
+    <color name="zen_background">#121212</color>
+    <color name="zen_surface_lowest">#161618</color>
+    <color name="zen_surface_low">#1C1B1B</color>
+    <color name="zen_surface">#1C1C1E</color>
+    <color name="surfaceDark">#1C1C1E</color>
+    <color name="zen_surface_variant">#27272A</color>
+    <color name="zen_surface_highlight">#2E2E32</color>
+    <color name="zen_border">#2E2E32</color>
+    <color name="zen_outline_variant">#3F3F46</color>
+
+    <!-- Primary & Neon-Lime Accent Colors -->
+    <color name="zen_primary">#BEF264</color>
+    <color name="zen_accent">#BEF264</color>
+    <color name="zen_accent_light">#D9F99D</color>
+    <color name="zen_accent_container">#233012</color>
+    <color name="zen_on_accent">#0F172A</color>
+    <color name="zen_on_accent_container">#ECFCCB</color>
+    <color name="zen_fab_bg">#BEF264</color>
+    <color name="zen_on_fab">#0F172A</color>
+    <color name="zen_accent_pill_border">#3F6212</color>
+
+    <!-- Secondary / Semantic Tones -->
+    <color name="zen_secondary">#38BDF8</color>
+    <color name="zen_secondary_dot">#38BDF8</color>
+    <color name="zen_tertiary_light">#C084FC</color>
+
+    <!-- Text and Icon Colors -->
+    <color name="zen_text_primary">#F4F4F5</color>
+    <color name="zen_text_secondary">#A1A1AA</color>
+    <color name="zen_text_tertiary">#8E8E93</color>
+    <color name="zen_text_completed">#71717A</color>
+
+    <!-- Functional / Status Colors -->
+    <color name="zen_divider">#27272A</color>
+    <color name="zen_danger">#F87171</color>
+    <color name="zen_error_container">#3B1219</color>
+    <color name="zen_on_error_container">#FECACA</color>
+    <color name="zen_error_border">#7F1D1D</color>
+    <color name="zen_chip_bg">#1C1C1E</color>
+    <color name="zen_nav_inactive">#8E8E93</color>
+
+    <!-- Attendance Tracker Specific Colors -->
+    <color name="status_present">#BEF264</color>
+    <color name="status_present_bg">#233012</color>
+    <color name="status_absent">#F87171</color>
+    <color name="status_absent_bg">#3B1219</color>
+    <color name="status_holiday">#38BDF8</color>
+    <color name="status_holiday_bg">#0C2D48</color>
+    <color name="status_warning">#FBBF24</color>
+
+    <color name="type_theory_text">#38BDF8</color>
+    <color name="type_theory_bg">#0C2D48</color>
+    <color name="type_lab_text">#C084FC</color>
+    <color name="type_lab_bg">#2E1065</color>
+</resources>

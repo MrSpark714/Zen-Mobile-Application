@@ -51,7 +51,7 @@
                         android:includeFontPadding="false"
                         android:letterSpacing="0.06"
                         android:text="SELECT DATE"
-                        android:textColor="@color/white"
+                        android:textColor="@color/zen_text_primary"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -100,7 +100,7 @@
                 android:layout_height="1dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="14dp"
-                android:background="#8027272A" />
+                android:background="@color/zen_divider" />
 
             <!-- Quick Presets -->
             <TextView
@@ -243,7 +243,7 @@
                         android:fontFamily="@font/inter"
                         android:gravity="center"
                         android:includeFontPadding="false"
-                        android:textColor="@color/white"
+                        android:textColor="@color/zen_text_primary"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         tools:text="November 2026" />
@@ -444,13 +444,13 @@
                     android:minHeight="48dp"
                     android:text="@string/cancel"
                     android:textAllCaps="false"
-                    android:textColor="#D4D4D8"
+                    android:textColor="@color/zen_text_primary"
                     android:textSize="14sp"
                     android:textStyle="bold"
-                    app:backgroundTint="#CC27272A"
+                    app:backgroundTint="@color/zen_surface_variant"
                     app:cornerRadius="100dp"
                     app:elevation="0dp"
-                    app:strokeColor="#663F3F46"
+                    app:strokeColor="@color/zen_border"
                     app:strokeWidth="1dp" />
 
                 <com.google.android.material.button.MaterialButton

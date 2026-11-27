@@ -1,66 +1,55 @@
 {
   "section_id": "nfc_cs_sem5_b",
   "institute": "NFC IEFR",
-  "institute_aliases": [
-    "nfc",
-    "nfc iefr",
-    "nfc iefr fsd",
-    "nfc fsd"
-  ],
+  "institute_aliases": ["nfc", "nfc iefr", "nfc iefr fsd", "nfc fsd"],
   "department": "Computer Science",
-  "department_aliases": [
-    "cs",
-    "bscs",
-    "bs cs",
-    "bs-cs",
-    "comp sci"
-  ],
+  "department_aliases": ["cs", "bscs", "bs cs", "bs-cs", "comp sci"],
   "semester": "5",
-  "semester_aliases": [
-    "5th",
-    "sem 5",
-    "semester 5",
-    "5th semester"
-  ],
+  "semester_aliases": ["5th", "sem 5", "semester 5", "5th semester"],
   "section": "B",
-  "section_aliases": [
-    "sec b",
-    "section b",
-    "5b",
-    "bs-cs 5th b"
-  ],
+  "section_aliases": ["sec b", "section b", "5b", "bs-cs 5th b"],
   "version": "V1.0",
-  "changelog": "NFC IEFR BS-CS 5th Semester Section B timetable synced from user backup.",
+  "changelog": "NFC IEFR BS-CS 5th Semester Section B core timetable (excluding electives).",
   "classes": [
     {
-      "slot_key": "mon_ca_theory",
+      "slot_key": "mon_ca_theory_1",
       "day_of_week": "Monday",
       "subject_name": "Computer Architecture",
       "start_time": "08:30 AM",
-      "end_time": "10:20 AM",
-      "credit_hours": 2,
+      "end_time": "09:20 AM",
+      "credit_hours": 3,
       "class_type": "Theory",
-      "room_number": "Room # A3"
+      "room_number": "A-R3"
+    },
+    {
+      "slot_key": "mon_ca_theory_2",
+      "day_of_week": "Monday",
+      "subject_name": "Computer Architecture",
+      "start_time": "09:20 AM",
+      "end_time": "10:10 AM",
+      "credit_hours": 3,
+      "class_type": "Theory",
+      "room_number": "A-R3"
     },
     {
       "slot_key": "mon_os_theory",
       "day_of_week": "Monday",
-      "subject_name": "Operating System",
+      "subject_name": "Operating Systems",
       "start_time": "11:50 AM",
       "end_time": "01:30 PM",
-      "credit_hours": 2,
+      "credit_hours": 3,
       "class_type": "Theory",
-      "room_number": "Room # A1"
+      "room_number": "A-R1"
     },
     {
       "slot_key": "mon_hci_theory",
       "day_of_week": "Monday",
-      "subject_name": "Introduction To Human Computer Interaction",
+      "subject_name": "Introduction to Human Computer Interaction",
       "start_time": "03:10 PM",
       "end_time": "04:00 PM",
-      "credit_hours": 1,
+      "credit_hours": 3,
       "class_type": "Theory",
-      "room_number": "Room # B9"
+      "room_number": "B-R9"
     },
     {
       "slot_key": "tue_psych_theory",
@@ -68,59 +57,39 @@
       "subject_name": "Psychology",
       "start_time": "08:30 AM",
       "end_time": "10:10 AM",
-      "credit_hours": 2,
+      "credit_hours": 3,
       "class_type": "Theory",
-      "room_number": "Room # A8"
-    },
-    {
-      "slot_key": "tue_cs_theory",
-      "day_of_week": "Tuesday",
-      "subject_name": "Cyber Security",
-      "start_time": "11:50 AM",
-      "end_time": "12:40 PM",
-      "credit_hours": 1,
-      "class_type": "Theory",
-      "room_number": "Room # 8"
+      "room_number": "A-R4"
     },
     {
       "slot_key": "wed_os_lab",
       "day_of_week": "Wednesday",
-      "subject_name": "Operating System Lab",
+      "subject_name": "Operating System (Lab)",
       "start_time": "08:30 AM",
       "end_time": "11:00 AM",
       "credit_hours": 1,
       "class_type": "Lab",
-      "room_number": "Lab # 2"
+      "room_number": "Lab-2"
     },
     {
-      "slot_key": "wed_cv_theory",
+      "slot_key": "wed_hci_theory_1",
       "day_of_week": "Wednesday",
-      "subject_name": "Computer Vision",
-      "start_time": "11:00 AM",
-      "end_time": "11:50 AM",
-      "credit_hours": 1,
+      "subject_name": "Introduction to Human Computer Interaction",
+      "start_time": "11:50 AM",
+      "end_time": "12:40 PM",
+      "credit_hours": 3,
       "class_type": "Theory",
-      "room_number": "Room # 4"
+      "room_number": "A-R8"
     },
     {
-      "slot_key": "wed_hci_theory",
+      "slot_key": "wed_hci_theory_2",
       "day_of_week": "Wednesday",
-      "subject_name": "Introduction To Human Computer Interaction",
+      "subject_name": "Introduction to Human Computer Interaction",
       "start_time": "12:40 PM",
-      "end_time": "02:20 PM",
-      "credit_hours": 2,
+      "end_time": "01:30 PM",
+      "credit_hours": 3,
       "class_type": "Theory",
-      "room_number": "Room # A8"
-    },
-    {
-      "slot_key": "thu_cv_theory",
-      "day_of_week": "Thursday",
-      "subject_name": "Computer Vision",
-      "start_time": "08:30 AM",
-      "end_time": "10:10 AM",
-      "credit_hours": 2,
-      "class_type": "Theory",
-      "room_number": "Room # 1"
+      "room_number": "A-R8"
     },
     {
       "slot_key": "thu_ca_theory",
@@ -128,19 +97,9 @@
       "subject_name": "Computer Architecture",
       "start_time": "11:00 AM",
       "end_time": "11:50 AM",
-      "credit_hours": 1,
+      "credit_hours": 3,
       "class_type": "Theory",
-      "room_number": "Room # A7"
-    },
-    {
-      "slot_key": "fri_cs_theory",
-      "day_of_week": "Friday",
-      "subject_name": "Cyber Security",
-      "start_time": "10:35 AM",
-      "end_time": "12:15 PM",
-      "credit_hours": 2,
-      "class_type": "Theory",
-      "room_number": "Room # C19"
+      "room_number": "A-R7"
     }
   ]
 }

@@ -7,10 +7,12 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,6 +80,14 @@ public class ZenSchedulePublisher {
                 System.out.println(signCanonical(args[1], priv));
                 break;
             }
+            case "verify": {
+                if (args.length < 3) {
+                    printUsage();
+                    return;
+                }
+                verifySchedulesDir(new File(args[1]), new File(args[2]));
+                break;
+            }
             default:
                 printUsage();
         }
@@ -87,6 +97,7 @@ public class ZenSchedulePublisher {
         System.out.println("ZEN Schedule Publisher CLI (Zero external dependencies)");
         System.out.println("  keygen <output_dir>");
         System.out.println("  publish-all <raw_sections_dir> <out_schedules_dir> <private.key> <public.key> [passphrase]");
+        System.out.println("  verify <schedules_dir> <public.key>");
         System.out.println("  package <raw_section.json> <out_section.zensched> <private.key> <public.key> [passphrase]");
         System.out.println("  sign-canonical <canonical_string> <private.key>");
     }
@@ -105,8 +116,10 @@ public class ZenSchedulePublisher {
         Files.writeString(new File(dir, "private.key").toPath(), privB64, StandardCharsets.UTF_8);
         Files.writeString(new File(dir, "public.key").toPath(), pubB64, StandardCharsets.UTF_8);
 
+        String pubFp = sha256Hex(pair.getPublic().getEncoded()).substring(0, 12).toUpperCase(Locale.US);
         System.out.println("Generated ECDSA P-256 keypair in " + dir.getAbsolutePath());
         System.out.println("KEEP private.key SECRET AND OFFLINE (never commit private.key to GitHub!).");
+        System.out.println("Public Key Fingerprint (compare with App Settings -> Verification key): " + pubFp);
         System.out.println("Public Key (Base64) to configure in ZEN app or ScheduleCryptoVerifier:");
         System.out.println(pubB64);
     }
@@ -219,7 +232,72 @@ public class ZenSchedulePublisher {
 
         File indexFile = new File(outSchedulesDir, "index.json");
         Files.writeString(indexFile.toPath(), indexJson, StandardCharsets.UTF_8);
+        String pubB64 = Files.readString(publicKeyFile.toPath(), StandardCharsets.UTF_8).replaceAll("\\s+", "");
+        String pubFp = sha256Hex(Base64.getDecoder().decode(pubB64)).substring(0, 12).toUpperCase(Locale.US);
         System.out.println("Published signed index with " + published.size() + " section(s): " + indexFile.getPath());
+        System.out.println("Expected App Verification key fingerprint: " + pubFp);
+    }
+
+    private static void verifySchedulesDir(File schedulesDir, File publicKeyFile) throws Exception {
+        File indexFile = new File(schedulesDir, "index.json");
+        if (!indexFile.isFile()) {
+            throw new IllegalArgumentException("index.json not found in " + schedulesDir.getAbsolutePath());
+        }
+        String pubB64 = Files.readString(publicKeyFile.toPath(), StandardCharsets.UTF_8).replaceAll("\\s+", "");
+        byte[] pubBytes = Base64.getDecoder().decode(pubB64);
+        PublicKey publicKey = KeyFactory.getInstance("EC").generatePublic(new X509EncodedKeySpec(pubBytes));
+        String pubFp = sha256Hex(pubBytes).substring(0, 12).toUpperCase(Locale.US);
+        System.out.println("Checking with public.key fingerprint: " + pubFp);
+
+        String indexJson = Files.readString(indexFile.toPath(), StandardCharsets.UTF_8);
+        String repoName = extractJsonString(indexJson, "repo_name");
+        String generatedAt = extractJsonString(indexJson, "generated_at");
+        String signature = extractJsonString(indexJson, "signature");
+
+        Matcher secMatcher = Pattern.compile("\\{(.*?)\\}", Pattern.DOTALL).matcher(
+                extractSectionsBlock(indexJson)
+        );
+        StringBuilder canonicalSections = new StringBuilder();
+        int count = 0;
+        while (secMatcher.find()) {
+            String block = secMatcher.group(1);
+            String sectionId = extractJsonString(block, "section_id");
+            String latestVersion = extractJsonString(block, "latest_version");
+            String packagePath = extractJsonString(block, "package_path");
+            String packageSha = extractJsonString(block, "package_sha256");
+            if (count > 0) canonicalSections.append(",");
+            canonicalSections.append(sectionId)
+                    .append(":").append(latestVersion)
+                    .append(":").append(packagePath)
+                    .append(":").append(packageSha.toLowerCase(Locale.ROOT));
+            count++;
+
+            File pkgFile = new File(schedulesDir, packagePath);
+            if (!pkgFile.isFile()) {
+                System.out.println("  [FAIL] Missing package file: " + pkgFile.getPath());
+            } else {
+                String actualSha = sha256Hex(Files.readAllBytes(pkgFile.toPath()));
+                boolean shaOk = actualSha.equalsIgnoreCase(packageSha);
+                System.out.println("  " + sectionId + " (" + latestVersion + "): file SHA-256 "
+                        + (shaOk ? "OK" : "MISMATCH"));
+            }
+        }
+
+        String canonicalIndex = "ZEN-INDEX-V1|1|" + repoName + "|" + generatedAt + "|" + canonicalSections;
+        Signature sig = Signature.getInstance("SHA256withECDSA");
+        sig.initVerify(publicKey);
+        sig.update(canonicalIndex.getBytes(StandardCharsets.UTF_8));
+        boolean indexValid = sig.verify(Base64.getDecoder().decode(signature.replaceAll("\\s+", "")));
+        System.out.println("index.json ECDSA signature: " + (indexValid ? "VALID" : "INVALID"));
+    }
+
+    private static String extractSectionsBlock(String json) {
+        int start = json.indexOf("\"sections\"");
+        if (start < 0) return "";
+        int open = json.indexOf('[', start);
+        int close = json.lastIndexOf(']');
+        if (open < 0 || close <= open) return "";
+        return json.substring(open + 1, close);
     }
 
     private static String packageSection(

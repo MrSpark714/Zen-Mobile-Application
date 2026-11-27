@@ -4,5 +4,5 @@
     <solid android:color="@color/zen_accent" />
     <stroke
         android:width="2dp"
-        android:color="#1B1B1F" />
+        android:color="@color/zen_surface" />
 </shape>

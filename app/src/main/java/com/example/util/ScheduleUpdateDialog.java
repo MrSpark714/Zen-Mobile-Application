@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import com.example.R;
 import com.example.model.ScheduleSyncModels.ScheduleUpdatePreview;
@@ -50,7 +51,7 @@ public final class ScheduleUpdateDialog {
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
             window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-            window.setDimAmount(0.72f);
+            window.setDimAmount(0.48f);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 try {
                     window.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
@@ -98,12 +99,14 @@ public final class ScheduleUpdateDialog {
         int updated = preview.slotsToUpdate.size();
         int removed = preview.slotsToDelete.size();
 
+        int primaryText = ContextCompat.getColor(activity, R.color.zen_text_primary);
+        int mutedText = ContextCompat.getColor(activity, R.color.zen_text_tertiary);
         tvAddedCount.setText(String.valueOf(added));
-        tvAddedCount.setTextColor(added > 0 ? Color.WHITE : Color.parseColor("#D4D4D8"));
+        tvAddedCount.setTextColor(added > 0 ? primaryText : mutedText);
         tvUpdatedCount.setText(String.valueOf(updated));
-        tvUpdatedCount.setTextColor(updated > 0 ? Color.WHITE : Color.parseColor("#D4D4D8"));
+        tvUpdatedCount.setTextColor(updated > 0 ? primaryText : mutedText);
         tvRemovedCount.setText(String.valueOf(removed));
-        tvRemovedCount.setTextColor(removed > 0 ? Color.WHITE : Color.parseColor("#D4D4D8"));
+        tvRemovedCount.setTextColor(removed > 0 ? primaryText : mutedText);
 
         diffContainer.removeAllViews();
         List<String> lines = preview.diffSummaryLines;
@@ -118,11 +121,11 @@ public final class ScheduleUpdateDialog {
                 tvLine.setMaxLines(1);
                 tvLine.setIncludeFontPadding(false);
                 if (line.startsWith("+")) {
-                    tvLine.setTextColor(Color.parseColor("#34D399"));
+                    tvLine.setTextColor(Color.parseColor("#059669"));
                 } else if (line.startsWith("~")) {
-                    tvLine.setTextColor(Color.parseColor("#FBBF24"));
+                    tvLine.setTextColor(Color.parseColor("#D97706"));
                 } else {
-                    tvLine.setTextColor(Color.parseColor("#FB7185"));
+                    tvLine.setTextColor(Color.parseColor("#E11D48"));
                 }
                 if (i > 0) {
                     LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -139,7 +142,7 @@ public final class ScheduleUpdateDialog {
                 TextView tvMore = new TextView(activity);
                 tvMore.setText(String.format(Locale.getDefault(), "+%d more schedule changes", lines.size() - maxShown));
                 tvMore.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f);
-                tvMore.setTextColor(Color.parseColor("#A1A1AA"));
+                tvMore.setTextColor(ContextCompat.getColor(activity, R.color.zen_text_secondary));
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT

@@ -224,7 +224,7 @@
             android:layout_height="20dp"
             android:layout_marginEnd="8dp"
             android:background="@drawable/bg_color_item"
-            android:backgroundTint="#B9F6CA"
+            android:backgroundTint="#16A34A"
             android:clickable="true"
             android:focusable="true" />
 
@@ -234,7 +234,7 @@
             android:layout_height="20dp"
             android:layout_marginEnd="8dp"
             android:background="@drawable/bg_color_item"
-            android:backgroundTint="#FFE082"
+            android:backgroundTint="#B45309"
             android:clickable="true"
             android:focusable="true" />
 
@@ -244,7 +244,7 @@
             android:layout_height="20dp"
             android:layout_marginEnd="8dp"
             android:background="@drawable/bg_color_item"
-            android:backgroundTint="#FF8A80"
+            android:backgroundTint="#DC2626"
             android:clickable="true"
             android:focusable="true" />
 
@@ -254,7 +254,7 @@
             android:layout_height="20dp"
             android:layout_marginEnd="8dp"
             android:background="@drawable/bg_color_item"
-            android:backgroundTint="#80D8FF"
+            android:backgroundTint="#0284C7"
             android:clickable="true"
             android:focusable="true" />
 
@@ -264,7 +264,7 @@
             android:layout_height="20dp"
             android:layout_marginEnd="8dp"
             android:background="@drawable/bg_color_item"
-            android:backgroundTint="#EA80FC"
+            android:backgroundTint="#7E22CE"
             android:clickable="true"
             android:focusable="true" />
 
@@ -273,7 +273,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:background="@drawable/bg_color_item"
-            android:backgroundTint="#F5F5F5"
+            android:backgroundTint="#52525B"
             android:clickable="true"
             android:focusable="true" />
     </LinearLayout>

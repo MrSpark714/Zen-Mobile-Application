@@ -839,6 +839,58 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
+                <!-- Preference 0: Dark Theme Toggle -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="12dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:text="Dark Theme"
+                            android:textColor="@color/zen_text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="@font/inter"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="2dp"
+                            android:text="Switch between Zen Light and Zen Dark appearance."
+                            android:textColor="@color/zen_text_secondary"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switch_dark_mode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:contentDescription="Toggle Dark Theme"
+                        android:saveEnabled="false" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginBottom="14dp"
+                    android:background="@color/zen_divider" />
+
                 <!-- Preference 1: Auto-Check GitHub Releases -->
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -1131,11 +1183,11 @@
                 android:id="@+id/card_cohort_sharing"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="#181F12"
+                app:cardBackgroundColor="@color/zen_surface"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="0dp"
-                app:strokeColor="@color/zen_outline_variant"
-                app:strokeWidth="1.5dp">
+                app:strokeColor="@color/zen_border"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -1452,7 +1504,7 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/inter"
                                 android:includeFontPadding="false"
-                                android:text="ZEN"
+                                android:text="ZEN Academic Offline"
                                 android:textColor="@color/zen_text_primary"
                                 android:textSize="13sp"
                                 android:textStyle="bold" />

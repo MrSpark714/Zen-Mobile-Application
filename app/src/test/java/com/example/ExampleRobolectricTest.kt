@@ -725,4 +725,105 @@ class ExampleRobolectricTest {
     assertNotNull(matchedB)
     assertEquals("nfc_cs_sem5_b", matchedB!!.sectionId)
   }
+
+  @Test
+  fun `zen light minimalist theme applies dual lime tokens to surfaces, FAB, and bottom navigation`() {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    assertEquals(android.graphics.Color.parseColor("#F8F9FA"), androidx.core.content.ContextCompat.getColor(context, R.color.zen_background))
+    assertEquals(android.graphics.Color.parseColor("#FFFFFF"), androidx.core.content.ContextCompat.getColor(context, R.color.zen_surface))
+    assertEquals(android.graphics.Color.parseColor("#4D7C0F"), androidx.core.content.ContextCompat.getColor(context, R.color.zen_accent))
+    assertEquals(android.graphics.Color.parseColor("#ECFCCB"), androidx.core.content.ContextCompat.getColor(context, R.color.zen_accent_container))
+    assertEquals(android.graphics.Color.parseColor("#1A2E05"), androidx.core.content.ContextCompat.getColor(context, R.color.zen_on_accent_container))
+    assertEquals(android.graphics.Color.parseColor("#BEF264"), androidx.core.content.ContextCompat.getColor(context, R.color.zen_fab_bg))
+    assertEquals(android.graphics.Color.parseColor("#0F172A"), androidx.core.content.ContextCompat.getColor(context, R.color.zen_on_fab))
+
+    context.getSharedPreferences("zen_prefs", Context.MODE_PRIVATE)
+      .edit()
+      .putBoolean(OnboardingActivity.PREF_KEY_MIGRATION, false)
+      .commit()
+    SecureProfileStore.markProfileSetupSeen(context)
+
+    val activity = Robolectric.buildActivity(MainActivity::class.java)
+      .create()
+      .start()
+      .resume()
+      .get()
+    ShadowLooper.idleMainLooper()
+
+    val fab = activity.findViewById<com.google.android.material.floatingactionbutton.FloatingActionButton>(R.id.fab_add)
+    assertNotNull(fab)
+    assertEquals(
+      androidx.core.content.ContextCompat.getColor(activity, R.color.zen_fab_bg),
+      fab.backgroundTintList?.defaultColor
+    )
+    assertEquals(
+      androidx.core.content.ContextCompat.getColor(activity, R.color.zen_on_fab),
+      fab.imageTintList?.defaultColor
+    )
+
+    val navAttendanceText = activity.findViewById<TextView>(R.id.tv_nav_attendance_text)
+    val navNotesText = activity.findViewById<TextView>(R.id.tv_nav_notes_text)
+    assertEquals(
+      androidx.core.content.ContextCompat.getColor(activity, R.color.zen_on_accent_container),
+      navAttendanceText.currentTextColor
+    )
+    assertEquals(
+      androidx.core.content.ContextCompat.getColor(activity, R.color.zen_nav_inactive),
+      navNotesText.currentTextColor
+    )
+    val pillBg = activity.findViewById<View>(R.id.pill_nav_attendance).background as? android.graphics.drawable.GradientDrawable
+    assertNotNull(pillBg)
+    assertEquals(
+      androidx.core.content.ContextCompat.getColor(activity, R.color.zen_accent_container),
+      pillBg?.color?.defaultColor
+    )
+  }
+
+  @Test
+  fun `theme toggle button in main header and switch in settings switch between light and dark modes`() {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    ThemeHelper.setDarkModeEnabled(context, false)
+    assertFalse(ThemeHelper.isDarkModeEnabled(context))
+    assertEquals(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO, androidx.appcompat.app.AppCompatDelegate.getDefaultNightMode())
+
+    context.getSharedPreferences("zen_prefs", Context.MODE_PRIVATE)
+      .edit()
+      .putBoolean(OnboardingActivity.PREF_KEY_MIGRATION, false)
+      .commit()
+    SecureProfileStore.markProfileSetupSeen(context)
+
+    val mainActivity = Robolectric.buildActivity(MainActivity::class.java)
+      .create()
+      .start()
+      .resume()
+      .get()
+    ShadowLooper.idleMainLooper()
+
+    val headerToggle = mainActivity.findViewById<View>(R.id.btn_header_theme_toggle)
+    assertNotNull(headerToggle)
+    assertEquals("Switch to Dark theme", headerToggle.contentDescription.toString())
+
+    assertTrue(headerToggle.performClick())
+    ShadowLooper.idleMainLooper()
+    assertTrue(ThemeHelper.isDarkModeEnabled(context))
+    assertEquals(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES, androidx.appcompat.app.AppCompatDelegate.getDefaultNightMode())
+    assertEquals("Switch to Light theme", headerToggle.contentDescription.toString())
+
+    // Verify BackupActivity switch reflects dark mode and can toggle back to light mode
+    val backupActivity = Robolectric.buildActivity(BackupActivity::class.java)
+      .create()
+      .start()
+      .resume()
+      .get()
+    ShadowLooper.idleMainLooper()
+
+    val darkSwitch = backupActivity.findViewById<MaterialSwitch>(R.id.switch_dark_mode)
+    assertNotNull(darkSwitch)
+    assertTrue(darkSwitch.isChecked)
+
+    darkSwitch.isChecked = false
+    ShadowLooper.idleMainLooper()
+    assertFalse(ThemeHelper.isDarkModeEnabled(context))
+    assertEquals(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO, androidx.appcompat.app.AppCompatDelegate.getDefaultNightMode())
+  }
 }

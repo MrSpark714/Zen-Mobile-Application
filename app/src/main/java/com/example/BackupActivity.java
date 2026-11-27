@@ -100,8 +100,10 @@ public class BackupActivity extends AppCompatActivity {
     private MaterialButton btnImportBackup;
 
     // Preferences & Security UI
+    private MaterialSwitch switchDarkMode;
     private MaterialSwitch switchAutoUpdate;
     private MaterialSwitch switchHapticFeedback;
+    private boolean isUpdatingDarkModeSwitch = false;
 
     // Section Schedule Sync UI
     private MaterialSwitch switchAutoScheduleSync;
@@ -137,6 +139,7 @@ public class BackupActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeHelper.applySavedThemeMode(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_backup);
 
@@ -151,6 +154,16 @@ public class BackupActivity extends AppCompatActivity {
 
         applyDynamicTheme(ThemeHelper.getAccentColor(this));
         handleIncomingIntent(getIntent());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (switchDarkMode != null) {
+            isUpdatingDarkModeSwitch = true;
+            switchDarkMode.setChecked(ThemeHelper.isDarkModeEnabled(this));
+            isUpdatingDarkModeSwitch = false;
+        }
     }
 
     @Override
@@ -195,6 +208,7 @@ public class BackupActivity extends AppCompatActivity {
         btnImportBackup = findViewById(R.id.btn_import_backup);
         btnShareTimetable = findViewById(R.id.btn_share_timetable);
 
+        switchDarkMode = findViewById(R.id.switch_dark_mode);
         switchAutoUpdate = findViewById(R.id.switch_auto_update);
         switchHapticFeedback = findViewById(R.id.switch_haptic_feedback);
         switchAutoScheduleSync = findViewById(R.id.switch_auto_schedule_sync);
@@ -220,6 +234,9 @@ public class BackupActivity extends AppCompatActivity {
         }
         if (btnCheckScheduleSyncNow != null) {
             ThemeHelper.applyAccentToPrimaryButton(btnCheckScheduleSyncNow, accentColor);
+        }
+        if (switchDarkMode != null) {
+            ThemeHelper.applyAccentToSwitch(switchDarkMode, accentColor);
         }
         if (switchAutoUpdate != null) {
             ThemeHelper.applyAccentToSwitch(switchAutoUpdate, accentColor);
@@ -259,6 +276,17 @@ public class BackupActivity extends AppCompatActivity {
             btnShareTimetable.setOnClickListener(v -> {
                 ThemeHelper.performHaptic(v);
                 startCohortShareFlow();
+            });
+        }
+
+        if (switchDarkMode != null) {
+            isUpdatingDarkModeSwitch = true;
+            switchDarkMode.setChecked(ThemeHelper.isDarkModeEnabled(this));
+            isUpdatingDarkModeSwitch = false;
+            switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isUpdatingDarkModeSwitch) return;
+                ThemeHelper.performHaptic(buttonView);
+                ThemeHelper.setDarkModeEnabled(this, isChecked);
             });
         }
 
@@ -713,7 +741,7 @@ public class BackupActivity extends AppCompatActivity {
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
             window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-            window.setDimAmount(0.72f);
+            window.setDimAmount(0.48f);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 try {
                     window.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
@@ -730,17 +758,20 @@ public class BackupActivity extends AppCompatActivity {
         MaterialButton btnCancel = dialog.findViewById(R.id.btn_restore_cancel);
         MaterialButton btnConfirm = dialog.findViewById(R.id.btn_restore_confirm);
 
+        int primaryText = getColor(R.color.zen_text_primary);
+        int mutedText = getColor(R.color.zen_text_tertiary);
+
         tvNotes.setText(String.valueOf(noteCount));
-        tvNotes.setTextColor(noteCount > 0 ? Color.WHITE : Color.parseColor("#D4D4D8"));
+        tvNotes.setTextColor(noteCount > 0 ? primaryText : mutedText);
 
         tvTasks.setText(String.valueOf(taskCount));
-        tvTasks.setTextColor(taskCount > 0 ? Color.WHITE : Color.parseColor("#D4D4D8"));
+        tvTasks.setTextColor(taskCount > 0 ? primaryText : mutedText);
 
         tvSchedules.setText(String.valueOf(scheduleCount));
-        tvSchedules.setTextColor(scheduleCount > 0 ? Color.WHITE : Color.parseColor("#D4D4D8"));
+        tvSchedules.setTextColor(scheduleCount > 0 ? primaryText : mutedText);
 
         tvAttendance.setText(String.valueOf(recordCount));
-        tvAttendance.setTextColor(recordCount > 0 ? Color.WHITE : Color.parseColor("#D4D4D8"));
+        tvAttendance.setTextColor(recordCount > 0 ? primaryText : mutedText);
 
         ThemeHelper.applyAccentToPrimaryButton(btnConfirm, ThemeHelper.getAccentColor(this));
 
@@ -922,7 +953,7 @@ public class BackupActivity extends AppCompatActivity {
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
             window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-            window.setDimAmount(0.72f);
+            window.setDimAmount(0.48f);
         }
 
         TextInputLayout tilUrl = dialog.findViewById(R.id.til_repo_base_url);

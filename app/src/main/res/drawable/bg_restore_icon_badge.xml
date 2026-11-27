@@ -3,10 +3,10 @@
     android:shape="rectangle">
     <gradient
         android:angle="315"
-        android:endColor="#0DBEF264"
-        android:startColor="#33BEF264" />
+        android:endColor="@color/zen_accent_container"
+        android:startColor="@color/zen_accent_container" />
     <corners android:radius="16dp" />
     <stroke
         android:width="1dp"
-        android:color="#4DBEF264" />
+        android:color="@color/zen_accent_pill_border" />
 </shape>

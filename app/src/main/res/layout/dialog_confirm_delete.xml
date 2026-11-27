@@ -44,7 +44,7 @@
                     android:layout_gravity="center"
                     android:contentDescription="Delete warning icon"
                     android:src="@drawable/ic_delete_forever"
-                    app:tint="#FF5252" />
+                    app:tint="@color/zen_danger" />
             </FrameLayout>
 
             <View
@@ -64,7 +64,7 @@
             android:gravity="center"
             android:includeFontPadding="false"
             android:letterSpacing="-0.01"
-            android:textColor="@color/white"
+            android:textColor="@color/zen_text_primary"
             android:textSize="20sp"
             android:textStyle="bold"
             tools:text="Delete Note?" />
@@ -81,7 +81,7 @@
             android:lineSpacingExtra="4dp"
             android:paddingStart="4dp"
             android:paddingEnd="4dp"
-            android:textColor="#A1A1AA"
+            android:textColor="@color/zen_text_secondary"
             android:textSize="13.5sp"
             tools:text="This note will be permanently removed from your local ZEN vault. This action cannot be undone." />
 
@@ -118,7 +118,7 @@
                     android:fontFamily="@font/inter"
                     android:includeFontPadding="false"
                     android:maxLines="1"
-                    android:textColor="#E4E4E7"
+                    android:textColor="@color/zen_text_primary"
                     android:textSize="12.5sp"
                     android:textStyle="bold"
                     tools:text="App Feature Improvements" />
@@ -136,7 +136,7 @@
                     android:paddingTop="3dp"
                     android:paddingEnd="8dp"
                     android:paddingBottom="3dp"
-                    android:textColor="#C4F135"
+                    android:textColor="@color/zen_accent"
                     android:textSize="10sp"
                     android:textStyle="bold"
                     android:visibility="gone"
@@ -157,7 +157,7 @@
                     android:layout_height="1dp"
                     android:layout_marginTop="9dp"
                     android:layout_marginBottom="9dp"
-                    android:background="#8027272A" />
+                    android:background="@color/zen_divider" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -174,7 +174,7 @@
                         android:fontFamily="@font/inter"
                         android:includeFontPadding="false"
                         android:maxLines="1"
-                        android:textColor="#A1A1AA"
+                        android:textColor="@color/zen_text_secondary"
                         android:textSize="11sp"
                         tools:text="3 checklist items" />
 
@@ -186,7 +186,7 @@
                         android:fontFamily="monospace"
                         android:includeFontPadding="false"
                         android:maxLines="1"
-                        android:textColor="#A1A1AA"
+                        android:textColor="@color/zen_text_secondary"
                         android:textSize="11sp"
                         tools:text="Oct 14, 2026" />
                 </LinearLayout>
@@ -213,13 +213,13 @@
                 android:minHeight="48dp"
                 android:text="@string/cancel"
                 android:textAllCaps="false"
-                android:textColor="#D4D4D8"
+                android:textColor="@color/zen_text_primary"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                app:backgroundTint="#CC27272A"
+                app:backgroundTint="@color/zen_surface_variant"
                 app:cornerRadius="100dp"
                 app:elevation="0dp"
-                app:strokeColor="#663F3F46"
+                app:strokeColor="@color/zen_border"
                 app:strokeWidth="1dp" />
 
             <com.google.android.material.button.MaterialButton
@@ -237,7 +237,7 @@
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                app:backgroundTint="#FF4747"
+                app:backgroundTint="@color/zen_danger"
                 app:cornerRadius="100dp"
                 app:elevation="0dp"
                 app:icon="@drawable/ic_delete"

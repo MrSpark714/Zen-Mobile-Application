@@ -80,7 +80,7 @@
                         android:includeFontPadding="false"
                         android:letterSpacing="-0.01"
                         android:text="Confirm Restore"
-                        android:textColor="@color/white"
+                        android:textColor="@color/zen_text_primary"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -106,7 +106,7 @@
                             android:fontFamily="@font/inter"
                             android:includeFontPadding="false"
                             android:text="Encrypted Backup Package"
-                            android:textColor="#A1A1AA"
+                            android:textColor="@color/zen_text_secondary"
                             android:textSize="12sp" />
                     </LinearLayout>
                 </LinearLayout>
@@ -123,7 +123,7 @@
                 android:includeFontPadding="false"
                 android:lineSpacingExtra="4dp"
                 android:text="Found in backup package. Items will be integrated seamlessly:"
-                android:textColor="#D4D4D8"
+                android:textColor="@color/zen_text_secondary"
                 android:textSize="12.5sp" />
 
             <!-- 2x2 Backup Inventory Grid -->
@@ -160,7 +160,7 @@
                                 android:layout_gravity="center"
                                 android:contentDescription="Notes"
                                 android:src="@drawable/ic_notes"
-                                app:tint="#FBBF24" />
+                                app:tint="#D97706" />
                         </FrameLayout>
 
                         <LinearLayout
@@ -177,7 +177,7 @@
                                 android:fontFamily="@font/inter"
                                 android:fontFeatureSettings="tnum"
                                 android:includeFontPadding="false"
-                                android:textColor="@color/white"
+                                android:textColor="@color/zen_text_primary"
                                 android:textSize="14sp"
                                 android:textStyle="bold"
                                 tools:text="4" />
@@ -191,7 +191,7 @@
                                 android:includeFontPadding="false"
                                 android:maxLines="1"
                                 android:text="Notes"
-                                android:textColor="#A1A1AA"
+                                android:textColor="@color/zen_text_secondary"
                                 android:textSize="11sp" />
                         </LinearLayout>
                     </LinearLayout>
@@ -218,7 +218,7 @@
                                 android:layout_gravity="center"
                                 android:contentDescription="Tasks"
                                 android:src="@drawable/ic_tasks"
-                                app:tint="#38BDF8" />
+                                app:tint="#0284C7" />
                         </FrameLayout>
 
                         <LinearLayout
@@ -235,7 +235,7 @@
                                 android:fontFamily="@font/inter"
                                 android:fontFeatureSettings="tnum"
                                 android:includeFontPadding="false"
-                                android:textColor="@color/white"
+                                android:textColor="@color/zen_text_primary"
                                 android:textSize="14sp"
                                 android:textStyle="bold"
                                 tools:text="0" />
@@ -249,7 +249,7 @@
                                 android:includeFontPadding="false"
                                 android:maxLines="1"
                                 android:text="Tasks"
-                                android:textColor="#A1A1AA"
+                                android:textColor="@color/zen_text_secondary"
                                 android:textSize="11sp" />
                         </LinearLayout>
                     </LinearLayout>
@@ -284,7 +284,7 @@
                                 android:layout_gravity="center"
                                 android:contentDescription="Schedules"
                                 android:src="@drawable/ic_calendar"
-                                app:tint="#34D399" />
+                                app:tint="#059669" />
                         </FrameLayout>
 
                         <LinearLayout
@@ -301,7 +301,7 @@
                                 android:fontFamily="@font/inter"
                                 android:fontFeatureSettings="tnum"
                                 android:includeFontPadding="false"
-                                android:textColor="@color/white"
+                                android:textColor="@color/zen_text_primary"
                                 android:textSize="14sp"
                                 android:textStyle="bold"
                                 tools:text="11" />
@@ -315,7 +315,7 @@
                                 android:includeFontPadding="false"
                                 android:maxLines="1"
                                 android:text="Schedules"
-                                android:textColor="#A1A1AA"
+                                android:textColor="@color/zen_text_secondary"
                                 android:textSize="11sp" />
                         </LinearLayout>
                     </LinearLayout>
@@ -342,7 +342,7 @@
                                 android:layout_gravity="center"
                                 android:contentDescription="Attendances"
                                 android:src="@drawable/ic_history"
-                                app:tint="#A78BFA" />
+                                app:tint="#7C3AED" />
                         </FrameLayout>
 
                         <LinearLayout
@@ -359,7 +359,7 @@
                                 android:fontFamily="@font/inter"
                                 android:fontFeatureSettings="tnum"
                                 android:includeFontPadding="false"
-                                android:textColor="@color/white"
+                                android:textColor="@color/zen_text_primary"
                                 android:textSize="14sp"
                                 android:textStyle="bold"
                                 tools:text="96" />
@@ -373,7 +373,7 @@
                                 android:includeFontPadding="false"
                                 android:maxLines="1"
                                 android:text="Attendances"
-                                android:textColor="#A1A1AA"
+                                android:textColor="@color/zen_text_secondary"
                                 android:textSize="11sp" />
                         </LinearLayout>
                     </LinearLayout>
@@ -388,7 +388,7 @@
                 android:fontFamily="@font/inter"
                 android:includeFontPadding="false"
                 android:text="Merge these items into your local database?"
-                android:textColor="#E4E4E7"
+                android:textColor="@color/zen_text_primary"
                 android:textSize="12.5sp"
                 android:textStyle="bold" />
 
@@ -419,7 +419,7 @@
                     android:fontFamily="@font/inter"
                     android:includeFontPadding="false"
                     android:text="Non-conflicting local items remain intact."
-                    android:textColor="#A1A1AA"
+                    android:textColor="@color/zen_text_secondary"
                     android:textSize="11sp" />
             </LinearLayout>
 
@@ -451,13 +451,13 @@
                     android:paddingBottom="0dp"
                     android:text="@string/cancel"
                     android:textAllCaps="false"
-                    android:textColor="#D4D4D8"
+                    android:textColor="@color/zen_text_primary"
                     android:textSize="12.5sp"
                     android:textStyle="bold"
-                    app:backgroundTint="#CC27272A"
+                    app:backgroundTint="@color/zen_surface_variant"
                     app:cornerRadius="12dp"
                     app:elevation="0dp"
-                    app:strokeColor="#0DFFFFFF"
+                    app:strokeColor="@color/zen_border"
                     app:strokeWidth="1dp" />
 
                 <com.google.android.material.button.MaterialButton
@@ -479,7 +479,7 @@
                     android:paddingBottom="0dp"
                     android:text="Restore &amp; Merge"
                     android:textAllCaps="false"
-                    android:textColor="#09090B"
+                    android:textColor="@color/zen_on_accent"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     app:backgroundTint="@color/zen_accent"
@@ -489,7 +489,7 @@
                     app:iconGravity="textStart"
                     app:iconPadding="5dp"
                     app:iconSize="16dp"
-                    app:iconTint="#09090B" />
+                    app:iconTint="@color/zen_on_accent" />
             </LinearLayout>
         </LinearLayout>
     </FrameLayout>

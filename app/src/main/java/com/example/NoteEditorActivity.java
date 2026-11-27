@@ -262,13 +262,13 @@ public class NoteEditorActivity extends AppCompatActivity {
         // Date Picker Tool (Popup Screen)
         btnInsertDate.setOnClickListener(v -> showPopupDatePickerDialog());
 
-        // Setup Color Chips
-        setupColorChip(R.id.color_mint, "#B9F6CA");
-        setupColorChip(R.id.color_gold, "#FFE082");
-        setupColorChip(R.id.color_coral, "#FF8A80");
-        setupColorChip(R.id.color_blue, "#80D8FF");
-        setupColorChip(R.id.color_lavender, "#EA80FC");
-        setupColorChip(R.id.color_white, "#F5F5F5");
+        // Setup Color Chips (Daylight AA-contrast hues)
+        setupColorChip(R.id.color_mint, "#16A34A");
+        setupColorChip(R.id.color_gold, "#B45309");
+        setupColorChip(R.id.color_coral, "#DC2626");
+        setupColorChip(R.id.color_blue, "#0284C7");
+        setupColorChip(R.id.color_lavender, "#7E22CE");
+        setupColorChip(R.id.color_white, "#52525B");
     }
 
     private void setupColorChip(int viewId, String hexColor) {
@@ -396,7 +396,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
             window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-            window.setDimAmount(0.72f);
+            window.setDimAmount(0.48f);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 try {
                     window.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
@@ -531,7 +531,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                         dayView.setTypeface(null, Typeface.NORMAL);
                     } else {
                         dayView.setBackground(null);
-                        dayView.setTextColor(Color.parseColor("#52554D"));
+                        dayView.setTextColor(Color.parseColor("#A1A1AA"));
                         dayView.setTypeface(null, Typeface.NORMAL);
                     }
 

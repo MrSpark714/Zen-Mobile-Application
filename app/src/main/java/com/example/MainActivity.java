@@ -44,6 +44,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.core.widget.NestedScrollView;
@@ -112,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements
         SubjectAnalyticsAdapter.OnSubjectClickListener {
 
     private static final String PREFS_ZEN = "zen_prefs";
+    private static final String KEY_SAVED_TAB = "saved_current_tab";
 
     public static final int TAB_NOTES = 0;
     public static final int TAB_TASKS = 1;
@@ -130,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements
     private TextView tvItemCountBadge;
     private View dotLocalPulse;
     private ObjectAnimator pulseAnimator;
+    private ImageButton btnHeaderThemeToggle;
     private View btnHeaderProfile;
     private TextView tvHeaderProfileInitial;
     private ImageView ivHeaderProfilePhoto;
@@ -210,10 +213,15 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeHelper.applySavedThemeMode(this);
         // Handle splash screen transition using AndroidX SplashScreen API
         SplashScreen.installSplashScreen(this);
 
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            currentTab = savedInstanceState.getInt(KEY_SAVED_TAB, TAB_ATTENDANCE);
+        }
 
         // Check if first-launch onboarding is required before inflating the main dashboard
         if (checkAndLaunchOnboarding()) {
@@ -449,6 +457,17 @@ public class MainActivity extends AppCompatActivity implements
             tvHeaderSubtitle.setOnClickListener(v -> handleEasterEggTap());
         }
 
+        btnHeaderThemeToggle = findViewById(R.id.btn_header_theme_toggle);
+        if (btnHeaderThemeToggle != null) {
+            updateThemeToggleButton();
+            btnHeaderThemeToggle.setOnClickListener(v -> {
+                ThemeHelper.performHaptic(v);
+                boolean nextDark = !ThemeHelper.isDarkModeEnabled(MainActivity.this);
+                ThemeHelper.setDarkModeEnabled(MainActivity.this, nextDark);
+                updateThemeToggleButton();
+            });
+        }
+
         View btnSettings = findViewById(R.id.btn_header_settings);
         if (btnSettings != null) {
             btnSettings.setOnClickListener(v -> {
@@ -470,6 +489,19 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         refreshProfileHeader();
+    }
+
+    private void updateThemeToggleButton() {
+        if (btnHeaderThemeToggle == null) return;
+        boolean darkMode = ThemeHelper.isDarkModeEnabled(this);
+        btnHeaderThemeToggle.setImageResource(darkMode ? R.drawable.ic_light_mode : R.drawable.ic_dark_mode);
+        btnHeaderThemeToggle.setContentDescription(darkMode ? "Switch to Light theme" : "Switch to Dark theme");
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(KEY_SAVED_TAB, currentTab);
     }
 
     private void refreshProfileHeader() {
@@ -499,6 +531,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+        updateThemeToggleButton();
         int storedAccent = ThemeHelper.getAccentColor(this);
         applyThemeAccent(storedAccent);
         refreshProfileHeader();
@@ -572,8 +605,8 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
-        viewPager.setCurrentItem(TAB_ATTENDANCE, false);
-        onTabChanged(TAB_ATTENDANCE);
+        viewPager.setCurrentItem(currentTab, false);
+        onTabChanged(currentTab);
     }
 
     private void setupNavigation() {
@@ -626,10 +659,9 @@ public class MainActivity extends AppCompatActivity implements
         pill.setScaleY(scale);
 
         boolean isActive = progress >= 0.5f;
-        int accentColor = ThemeHelper.getAccentColor(this);
-        int onAccentColor = ThemeHelper.getOnAccentColor(accentColor);
-        int inactiveColor = ContextCompat.getColor(this, R.color.zen_text_secondary);
-        updateTabItemVisuals(icon, text, isActive, onAccentColor, inactiveColor);
+        int activeColor = ContextCompat.getColor(this, R.color.zen_on_accent_container);
+        int inactiveColor = ContextCompat.getColor(this, R.color.zen_nav_inactive);
+        updateTabItemVisuals(icon, text, isActive, activeColor, inactiveColor);
     }
 
     private void updatePillStates(int activeTab, boolean animate) {
@@ -658,10 +690,9 @@ public class MainActivity extends AppCompatActivity implements
             pill.setScaleY(targetScale);
         }
 
-        int accentColor = ThemeHelper.getAccentColor(this);
-        int onAccentColor = ThemeHelper.getOnAccentColor(accentColor);
-        int inactiveColor = ContextCompat.getColor(this, R.color.zen_text_secondary);
-        updateTabItemVisuals(icon, text, isActive, onAccentColor, inactiveColor);
+        int activeColor = ContextCompat.getColor(this, R.color.zen_on_accent_container);
+        int inactiveColor = ContextCompat.getColor(this, R.color.zen_nav_inactive);
+        updateTabItemVisuals(icon, text, isActive, activeColor, inactiveColor);
     }
 
     private void onTabChanged(int tab) {
