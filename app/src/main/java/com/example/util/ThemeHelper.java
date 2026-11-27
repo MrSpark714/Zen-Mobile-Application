@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 
@@ -19,105 +18,62 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textfield.TextInputLayout;
 
 /**
- * ThemeHelper manages user-customizable appearance modes (Zen Light / Zen Dark)
- * in SharedPreferences and provides dynamic tinting utilities for Material Design 3 components.
+ * ThemeHelper manages user-customizable accent colors in SharedPreferences
+ * and provides dynamic tinting utilities for Material Design 3 components.
  */
 public class ThemeHelper {
 
     private static final String PREF_NAME = "zen_theme_preferences";
     private static final String KEY_SELECTED_ACCENT = "selected_accent_color";
-    private static final String KEY_DARK_MODE_ENABLED = "dark_mode_enabled";
 
-    // Default single accent colors (Zen Light Deep Olive / Zen Dark Neon Lime)
-    public static final String COLOR_MINT_DEFAULT = "#4D7C0F";
-    public static final String COLOR_DARK_ACCENT = "#BEF264";
+    // Default single accent color (Zen Dark Minimalist primary-container)
+    public static final String COLOR_MINT_DEFAULT = "#BEF264";
     public static final String COLOR_DEFAULT = COLOR_MINT_DEFAULT;
 
     public static final String[] PALETTE = {
             COLOR_DEFAULT
     };
 
-    public static boolean isDarkModeEnabled(Context context) {
-        if (context == null) return false;
-        return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-                .getBoolean(KEY_DARK_MODE_ENABLED, false);
-    }
-
-    public static void setDarkModeEnabled(Context context, boolean darkMode) {
-        if (context == null) return;
-        context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-                .edit()
-                .putBoolean(KEY_DARK_MODE_ENABLED, darkMode)
-                .commit();
-        applySavedThemeMode(context);
-    }
-
-    public static void applySavedThemeMode(Context context) {
-        boolean darkMode = isDarkModeEnabled(context);
-        int targetMode = darkMode ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO;
-        if (AppCompatDelegate.getDefaultNightMode() != targetMode) {
-            AppCompatDelegate.setDefaultNightMode(targetMode);
-        }
-    }
-
     /**
-     * Retrieves the active theme accent color as an integer.
+     * Retrieves the default accent color as an integer.
      */
     public static int getAccentColor(Context context) {
-        if (context != null) {
-            return ContextCompat.getColor(context, R.color.zen_accent);
-        }
         return Color.parseColor(COLOR_DEFAULT);
     }
 
     /**
-     * Retrieves the active accent color string (HEX).
+     * Retrieves the default accent color string (HEX).
      */
     public static String getAccentColorHex(Context context) {
-        return isDarkModeEnabled(context) ? COLOR_DARK_ACCENT : COLOR_DEFAULT;
+        return COLOR_DEFAULT;
     }
 
     /**
-     * No-op: the app uses theme-paired default accent colors.
+     * No-op: the app uses a single default accent color.
      */
     public static void setAccentColor(Context context, String hexColor) {
-        // App uses paired light/dark accent colors
+        // App has only one default accent color
     }
 
     /**
-     * Dynamically tints the Floating Action Button (FAB) background and icon using Zen Light FAB highlight tokens.
+     * Dynamically tints the Floating Action Button (FAB) background and icon.
      */
     public static void applyAccentToFab(FloatingActionButton fab, int accentColor) {
         if (fab == null) return;
-        int fabBg = ContextCompat.getColor(fab.getContext(), R.color.zen_fab_bg);
-        int onFab = ContextCompat.getColor(fab.getContext(), R.color.zen_on_fab);
-        fab.setBackgroundTintList(ColorStateList.valueOf(fabBg));
-        fab.setImageTintList(ColorStateList.valueOf(onFab));
+        fab.setBackgroundTintList(ColorStateList.valueOf(accentColor));
+        int onAccentColor = getOnAccentColor(accentColor);
+        fab.setImageTintList(ColorStateList.valueOf(onAccentColor));
     }
 
     /**
-     * Dynamically builds a rounded pill background for active navigation tabs
-     * (#ECFCCB in Zen Light, #BEF264 in Zen Dark).
+     * Dynamically builds a rounded pill background for active navigation tabs.
+     * Uses a full capsule radius (Apple-style continuous concentric curves).
      */
     public static GradientDrawable createActiveTabDrawable(int accentColor) {
         GradientDrawable drawable = new GradientDrawable();
         drawable.setShape(GradientDrawable.RECTANGLE);
         drawable.setCornerRadius(1000f); // Auto-clamps to half the height, giving a perfect capsule curve
-        int pillBg = (accentColor == Color.parseColor(COLOR_DARK_ACCENT))
-                ? Color.parseColor(COLOR_DARK_ACCENT)
-                : getAccentContainerColor(accentColor);
-        drawable.setColor(pillBg);
-        return drawable;
-    }
-
-    public static GradientDrawable createActiveTabDrawable(Context context, int accentColor) {
-        if (context == null) {
-            return createActiveTabDrawable(accentColor);
-        }
-        GradientDrawable drawable = new GradientDrawable();
-        drawable.setShape(GradientDrawable.RECTANGLE);
-        drawable.setCornerRadius(1000f);
-        drawable.setColor(ContextCompat.getColor(context, R.color.zen_nav_pill_bg));
+        drawable.setColor(accentColor);
         return drawable;
     }
 
@@ -127,28 +83,28 @@ public class ThemeHelper {
     public static void applyTabTheme(View tabView, ImageView tabIcon, TextView tabText, boolean isActive, int accentColor) {
         if (tabView == null) return;
         if (isActive) {
-            tabView.setBackground(createActiveTabDrawable(tabView.getContext(), accentColor));
-            int activeFg = ContextCompat.getColor(tabView.getContext(), R.color.zen_nav_pill_fg);
+            tabView.setBackground(createActiveTabDrawable(accentColor));
+            int onAccent = getOnAccentColor(accentColor);
             if (tabIcon != null) {
-                tabIcon.setColorFilter(activeFg);
+                tabIcon.setColorFilter(onAccent);
             }
             if (tabText != null) {
-                tabText.setTextColor(activeFg);
+                tabText.setTextColor(onAccent);
             }
         } else {
             tabView.setBackgroundResource(R.drawable.bg_nav_tab_inactive);
-            int inactiveColor = ContextCompat.getColor(tabView.getContext(), R.color.zen_nav_inactive);
+            int secondaryColor = ContextCompat.getColor(tabView.getContext(), R.color.zen_text_secondary);
             if (tabIcon != null) {
-                tabIcon.setColorFilter(inactiveColor);
+                tabIcon.setColorFilter(secondaryColor);
             }
             if (tabText != null) {
-                tabText.setTextColor(inactiveColor);
+                tabText.setTextColor(secondaryColor);
             }
         }
     }
 
     /**
-     * Dynamically tints a badge or counter with a soft lime container background and crisp accent text.
+     * Dynamically tints a badge or counter with a 15% opacity container background and solid text.
      */
     public static void applyAccentToBadge(TextView badgeView, int accentColor) {
         if (badgeView == null) return;
@@ -157,12 +113,15 @@ public class ThemeHelper {
         GradientDrawable bg = new GradientDrawable();
         bg.setShape(GradientDrawable.RECTANGLE);
         bg.setCornerRadius(20f);
-        bg.setColor(getAccentContainerColor(accentColor));
+        // Container background with low alpha
+        int alpha = 35; // ~14% opacity
+        int containerColor = Color.argb(alpha, Color.red(accentColor), Color.green(accentColor), Color.blue(accentColor));
+        bg.setColor(containerColor);
         badgeView.setBackground(bg);
     }
 
     /**
-     * Calculates contrasting text/icon color (dark #131F00 for bright accents, white for deep accents).
+     * Calculates contrasting text/icon color (dark #121212 for bright accents, white for very dark accents).
      */
     public static int getOnAccentColor(int color) {
         // Luminance calculation
@@ -171,16 +130,9 @@ public class ThemeHelper {
     }
 
     /**
-     * Generates the soft container color (#ECFCCB for light olive, #233012 for dark lime)
-     * for chips, badges, and nav pills.
+     * Generates a 14% opacity container color for secondary chips/cards from the accent color.
      */
     public static int getAccentContainerColor(int accentColor) {
-        if (accentColor == Color.parseColor(COLOR_MINT_DEFAULT)) {
-            return Color.parseColor("#ECFCCB");
-        }
-        if (accentColor == Color.parseColor(COLOR_DARK_ACCENT)) {
-            return Color.parseColor("#233012");
-        }
         return Color.argb(35, Color.red(accentColor), Color.green(accentColor), Color.blue(accentColor));
     }
 
@@ -212,29 +164,33 @@ public class ThemeHelper {
     }
 
     /**
-     * Dynamically styles a MaterialSwitch toggle button for both Zen Light and Zen Dark themes.
+     * Dynamically styles a MaterialSwitch toggle button:
+     * - When ON (Checked): The Dot (thumb) is solid Black (#121212) to strongly contrast and differ
+     *   from the bright accent track (Mint, Teal, Cyan, Sage, Lime). The Track is tinted with the active accent color.
+     * - When OFF (Unchecked): The Dot is muted gray (#8E8E93) and the Track is dark surface (#2A2A2A).
      */
     public static void applyAccentToSwitch(MaterialSwitch materialSwitch, int accentColor) {
         if (materialSwitch == null) return;
-        Context ctx = materialSwitch.getContext();
 
+        // Thumb ("Dot"): Black when ON, Muted Gray when OFF
         int[][] thumbStates = new int[][]{
                 new int[]{android.R.attr.state_checked},
                 new int[]{-android.R.attr.state_checked}
         };
         int[] thumbColors = new int[]{
-                ContextCompat.getColor(ctx, R.color.zen_on_accent),
-                ContextCompat.getColor(ctx, R.color.zen_text_tertiary)
+                Color.parseColor("#121212"), // Black dot when ON
+                Color.parseColor("#8E8E93")  // Muted gray dot when OFF
         };
         materialSwitch.setThumbTintList(new ColorStateList(thumbStates, thumbColors));
 
+        // Track (Capsule background): Accent color when ON, Dark surface when OFF
         int[][] trackStates = new int[][]{
                 new int[]{android.R.attr.state_checked},
                 new int[]{-android.R.attr.state_checked}
         };
         int[] trackColors = new int[]{
-                accentColor,
-                ContextCompat.getColor(ctx, R.color.zen_border)
+                accentColor,                 // Dynamic Accent track when ON
+                Color.parseColor("#2A2A2A")  // Dark surface track when OFF
         };
         materialSwitch.setTrackTintList(new ColorStateList(trackStates, trackColors));
         materialSwitch.setThumbIconTintList(null);

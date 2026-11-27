@@ -60,7 +60,7 @@ public final class DeleteConfirmationDialog {
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
             window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-            window.setDimAmount(0.48f);
+            window.setDimAmount(0.72f);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 try {
                     window.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
@@ -146,7 +146,7 @@ public final class DeleteConfirmationDialog {
                 itemPreview,
                 null,
                 R.drawable.bg_pill_preview_lime,
-                ContextCompat.getColor(context, R.color.zen_accent),
+                Color.parseColor("#C4F135"),
                 null,
                 null,
                 context.getString(R.string.delete),
@@ -173,7 +173,7 @@ public final class DeleteConfirmationDialog {
 
         String badge = null;
         int badgeBg = R.drawable.bg_pill_preview_lime;
-        int badgeColor = ContextCompat.getColor(context, R.color.zen_accent);
+        int badgeColor = Color.parseColor("#C4F135");
         if (important) {
             badge = "★ Important";
         } else if (note != null && !TextUtils.isEmpty(note.getTargetDate())) {
@@ -210,7 +210,7 @@ public final class DeleteConfirmationDialog {
         int badgeBg = task.isCompleted() ? R.drawable.bg_pill_surface_outline : R.drawable.bg_pill_preview_lime;
         int badgeColor = task.isCompleted()
                 ? ContextCompat.getColor(context, R.color.zen_text_secondary)
-                : ContextCompat.getColor(context, R.color.zen_accent);
+                : Color.parseColor("#C4F135");
 
         String metaLeft;
         if (task.hasTimeWindow()) {
@@ -314,7 +314,7 @@ public final class DeleteConfirmationDialog {
                 previewName,
                 "Encrypted",
                 R.drawable.bg_pill_preview_lime,
-                ContextCompat.getColor(context, R.color.zen_accent),
+                Color.parseColor("#C4F135"),
                 metaLeft,
                 metaRight,
                 context.getString(R.string.delete),

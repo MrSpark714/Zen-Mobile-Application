@@ -1430,9 +1430,9 @@
         android:contentDescription="Schedule Class"
         android:src="@drawable/ic_add"
         android:visibility="gone"
-        app:backgroundTint="@color/zen_fab_bg"
+        app:backgroundTint="@color/zen_accent"
         app:elevation="6dp"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.ZEN.Rounded2xl"
-        app:tint="@color/zen_on_fab" />
+        app:tint="@color/zen_on_accent" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

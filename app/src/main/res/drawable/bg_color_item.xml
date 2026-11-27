@@ -3,7 +3,7 @@
     android:shape="oval">
     <stroke
         android:width="2dp"
-        android:color="@color/zen_outline_variant" />
+        android:color="#40FFFFFF" />
     <size
         android:width="26dp"
         android:height="26dp" />

@@ -44,7 +44,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.core.widget.NestedScrollView;
@@ -113,7 +112,6 @@ public class MainActivity extends AppCompatActivity implements
         SubjectAnalyticsAdapter.OnSubjectClickListener {
 
     private static final String PREFS_ZEN = "zen_prefs";
-    private static final String KEY_SAVED_TAB = "saved_current_tab";
 
     public static final int TAB_NOTES = 0;
     public static final int TAB_TASKS = 1;
@@ -212,15 +210,10 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ThemeHelper.applySavedThemeMode(this);
         // Handle splash screen transition using AndroidX SplashScreen API
         SplashScreen.installSplashScreen(this);
 
         super.onCreate(savedInstanceState);
-
-        if (savedInstanceState != null) {
-            currentTab = savedInstanceState.getInt(KEY_SAVED_TAB, TAB_ATTENDANCE);
-        }
 
         // Check if first-launch onboarding is required before inflating the main dashboard
         if (checkAndLaunchOnboarding()) {
@@ -479,12 +472,6 @@ public class MainActivity extends AppCompatActivity implements
         refreshProfileHeader();
     }
 
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(KEY_SAVED_TAB, currentTab);
-    }
-
     private void refreshProfileHeader() {
         currentUserProfile = SecureProfileStore.loadProfile(this);
         currentAvatarBitmap = SecureProfileStore.loadAvatarBitmap(this);
@@ -585,15 +572,15 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
-        viewPager.setCurrentItem(currentTab, false);
-        onTabChanged(currentTab);
+        viewPager.setCurrentItem(TAB_ATTENDANCE, false);
+        onTabChanged(TAB_ATTENDANCE);
     }
 
     private void setupNavigation() {
         int accentColor = ThemeHelper.getAccentColor(this);
-        if (pillNavNotes != null) pillNavNotes.setBackground(ThemeHelper.createActiveTabDrawable(this, accentColor));
-        if (pillNavTasks != null) pillNavTasks.setBackground(ThemeHelper.createActiveTabDrawable(this, accentColor));
-        if (pillNavAttendance != null) pillNavAttendance.setBackground(ThemeHelper.createActiveTabDrawable(this, accentColor));
+        if (pillNavNotes != null) pillNavNotes.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
+        if (pillNavTasks != null) pillNavTasks.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
+        if (pillNavAttendance != null) pillNavAttendance.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
 
         btnNavNotes.setOnClickListener(v -> selectTabDirectly(TAB_NOTES));
         btnNavTasks.setOnClickListener(v -> selectTabDirectly(TAB_TASKS));
@@ -639,9 +626,10 @@ public class MainActivity extends AppCompatActivity implements
         pill.setScaleY(scale);
 
         boolean isActive = progress >= 0.5f;
-        int activeColor = ContextCompat.getColor(this, R.color.zen_nav_pill_fg);
-        int inactiveColor = ContextCompat.getColor(this, R.color.zen_nav_inactive);
-        updateTabItemVisuals(icon, text, isActive, activeColor, inactiveColor);
+        int accentColor = ThemeHelper.getAccentColor(this);
+        int onAccentColor = ThemeHelper.getOnAccentColor(accentColor);
+        int inactiveColor = ContextCompat.getColor(this, R.color.zen_text_secondary);
+        updateTabItemVisuals(icon, text, isActive, onAccentColor, inactiveColor);
     }
 
     private void updatePillStates(int activeTab, boolean animate) {
@@ -670,9 +658,10 @@ public class MainActivity extends AppCompatActivity implements
             pill.setScaleY(targetScale);
         }
 
-        int activeColor = ContextCompat.getColor(this, R.color.zen_nav_pill_fg);
-        int inactiveColor = ContextCompat.getColor(this, R.color.zen_nav_inactive);
-        updateTabItemVisuals(icon, text, isActive, activeColor, inactiveColor);
+        int accentColor = ThemeHelper.getAccentColor(this);
+        int onAccentColor = ThemeHelper.getOnAccentColor(accentColor);
+        int inactiveColor = ContextCompat.getColor(this, R.color.zen_text_secondary);
+        updateTabItemVisuals(icon, text, isActive, onAccentColor, inactiveColor);
     }
 
     private void onTabChanged(int tab) {
@@ -739,13 +728,13 @@ public class MainActivity extends AppCompatActivity implements
         ThemeHelper.applyAccentToBadge(tvItemCountBadge, accentColor);
 
         if (pillNavNotes != null) {
-            pillNavNotes.setBackground(ThemeHelper.createActiveTabDrawable(this, accentColor));
+            pillNavNotes.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
         }
         if (pillNavTasks != null) {
-            pillNavTasks.setBackground(ThemeHelper.createActiveTabDrawable(this, accentColor));
+            pillNavTasks.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
         }
         if (pillNavAttendance != null) {
-            pillNavAttendance.setBackground(ThemeHelper.createActiveTabDrawable(this, accentColor));
+            pillNavAttendance.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
         }
 
         updatePillStates(currentTab, false);
