@@ -55,7 +55,7 @@ public final class ScheduleCryptoVerifier {
      * and either embed the public key here for class builds or set it in Configure Repo.
      * Private signing keys must NEVER be included inside the Android application.
      */
-    public static final String DEFAULT_PUBLIC_KEY_SPKI_BASE64 = "";
+    public static final String DEFAULT_PUBLIC_KEY_SPKI_BASE64 = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE8K/cvMnY68FBdT3+zAuHMGFQaXel9oX6SxiBR+LW/ge0aR1EcJrg19uy2+BG1QdOub/vKDFSyZetAEui5ZNtmA==";
 
     private static final String EC_ALGORITHM = "EC";
     private static final String SIGNATURE_ALGORITHM = "SHA256withECDSA";
