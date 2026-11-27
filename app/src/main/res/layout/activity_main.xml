@@ -93,7 +93,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Right: Count Badge (Notes/Tasks) + Theme Toggle + Settings Gear + Profile Circle -->
+            <!-- Right: Count Badge (Notes/Tasks) + Settings Gear + Profile Circle -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -104,32 +104,21 @@
                     android:id="@+id/tv_item_count_badge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="2dp"
+                    android:layout_marginEnd="6dp"
                     android:background="@drawable/bg_badge"
                     android:fontFamily="@font/inter"
                     android:gravity="center"
                     android:includeFontPadding="false"
                     android:letterSpacing="0.04"
-                    android:paddingStart="8dp"
+                    android:paddingStart="10dp"
                     android:paddingTop="4dp"
-                    android:paddingEnd="8dp"
+                    android:paddingEnd="10dp"
                     android:paddingBottom="4dp"
                     android:text="0 notes"
                     android:textColor="@color/zen_accent"
                     android:textSize="11sp"
                     android:textStyle="bold"
                     android:visibility="gone" />
-
-                <ImageButton
-                    android:id="@+id/btn_header_theme_toggle"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Switch to Dark theme"
-                    android:padding="13dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_dark_mode"
-                    app:tint="@color/zen_text_secondary" />
 
                 <ImageButton
                     android:id="@+id/btn_header_settings"
@@ -375,7 +364,7 @@
                         android:layout_height="18dp"
                         android:contentDescription="Classes"
                         android:src="@drawable/ic_school"
-                        app:tint="@color/zen_on_accent_container" />
+                        app:tint="@color/zen_nav_pill_fg" />
 
                     <TextView
                         android:id="@+id/tv_nav_attendance_text"
@@ -387,7 +376,7 @@
                         android:includeFontPadding="false"
                         android:letterSpacing="0.08"
                         android:text="CLASSES"
-                        android:textColor="@color/zen_on_accent_container"
+                        android:textColor="@color/zen_nav_pill_fg"
                         android:textSize="12sp" />
                 </LinearLayout>
             </FrameLayout>

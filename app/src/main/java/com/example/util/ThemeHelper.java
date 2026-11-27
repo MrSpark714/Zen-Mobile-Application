@@ -97,13 +97,27 @@ public class ThemeHelper {
 
     /**
      * Dynamically builds a rounded pill background for active navigation tabs
-     * using the soft primary-container tint (#ECFCCB for default olive accent).
+     * (#ECFCCB in Zen Light, #BEF264 in Zen Dark).
      */
     public static GradientDrawable createActiveTabDrawable(int accentColor) {
         GradientDrawable drawable = new GradientDrawable();
         drawable.setShape(GradientDrawable.RECTANGLE);
         drawable.setCornerRadius(1000f); // Auto-clamps to half the height, giving a perfect capsule curve
-        drawable.setColor(getAccentContainerColor(accentColor));
+        int pillBg = (accentColor == Color.parseColor(COLOR_DARK_ACCENT))
+                ? Color.parseColor(COLOR_DARK_ACCENT)
+                : getAccentContainerColor(accentColor);
+        drawable.setColor(pillBg);
+        return drawable;
+    }
+
+    public static GradientDrawable createActiveTabDrawable(Context context, int accentColor) {
+        if (context == null) {
+            return createActiveTabDrawable(accentColor);
+        }
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setShape(GradientDrawable.RECTANGLE);
+        drawable.setCornerRadius(1000f);
+        drawable.setColor(ContextCompat.getColor(context, R.color.zen_nav_pill_bg));
         return drawable;
     }
 
@@ -113,8 +127,8 @@ public class ThemeHelper {
     public static void applyTabTheme(View tabView, ImageView tabIcon, TextView tabText, boolean isActive, int accentColor) {
         if (tabView == null) return;
         if (isActive) {
-            tabView.setBackground(createActiveTabDrawable(accentColor));
-            int activeFg = ContextCompat.getColor(tabView.getContext(), R.color.zen_on_accent_container);
+            tabView.setBackground(createActiveTabDrawable(tabView.getContext(), accentColor));
+            int activeFg = ContextCompat.getColor(tabView.getContext(), R.color.zen_nav_pill_fg);
             if (tabIcon != null) {
                 tabIcon.setColorFilter(activeFg);
             }

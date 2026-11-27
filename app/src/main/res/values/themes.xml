@@ -69,7 +69,7 @@
     </style>
 
     <style name="Widget.ZEN.BottomNavIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
-        <item name="android:color">@color/zen_accent_container</item>
+        <item name="android:color">@color/zen_nav_pill_bg</item>
     </style>
 
     <!-- Custom Material 3 DatePicker Theme Overlay matching ZEN Light palette -->

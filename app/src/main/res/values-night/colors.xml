@@ -21,6 +21,8 @@
     <color name="zen_fab_bg">#BEF264</color>
     <color name="zen_on_fab">#0F172A</color>
     <color name="zen_accent_pill_border">#3F6212</color>
+    <color name="zen_nav_pill_bg">#BEF264</color>
+    <color name="zen_nav_pill_fg">#0F172A</color>
 
     <!-- Secondary / Semantic Tones -->
     <color name="zen_secondary">#38BDF8</color>

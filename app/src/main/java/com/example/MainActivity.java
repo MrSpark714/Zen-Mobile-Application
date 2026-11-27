@@ -132,7 +132,6 @@ public class MainActivity extends AppCompatActivity implements
     private TextView tvItemCountBadge;
     private View dotLocalPulse;
     private ObjectAnimator pulseAnimator;
-    private ImageButton btnHeaderThemeToggle;
     private View btnHeaderProfile;
     private TextView tvHeaderProfileInitial;
     private ImageView ivHeaderProfilePhoto;
@@ -457,17 +456,6 @@ public class MainActivity extends AppCompatActivity implements
             tvHeaderSubtitle.setOnClickListener(v -> handleEasterEggTap());
         }
 
-        btnHeaderThemeToggle = findViewById(R.id.btn_header_theme_toggle);
-        if (btnHeaderThemeToggle != null) {
-            updateThemeToggleButton();
-            btnHeaderThemeToggle.setOnClickListener(v -> {
-                ThemeHelper.performHaptic(v);
-                boolean nextDark = !ThemeHelper.isDarkModeEnabled(MainActivity.this);
-                ThemeHelper.setDarkModeEnabled(MainActivity.this, nextDark);
-                updateThemeToggleButton();
-            });
-        }
-
         View btnSettings = findViewById(R.id.btn_header_settings);
         if (btnSettings != null) {
             btnSettings.setOnClickListener(v -> {
@@ -489,13 +477,6 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         refreshProfileHeader();
-    }
-
-    private void updateThemeToggleButton() {
-        if (btnHeaderThemeToggle == null) return;
-        boolean darkMode = ThemeHelper.isDarkModeEnabled(this);
-        btnHeaderThemeToggle.setImageResource(darkMode ? R.drawable.ic_light_mode : R.drawable.ic_dark_mode);
-        btnHeaderThemeToggle.setContentDescription(darkMode ? "Switch to Light theme" : "Switch to Dark theme");
     }
 
     @Override
@@ -531,7 +512,6 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        updateThemeToggleButton();
         int storedAccent = ThemeHelper.getAccentColor(this);
         applyThemeAccent(storedAccent);
         refreshProfileHeader();
@@ -611,9 +591,9 @@ public class MainActivity extends AppCompatActivity implements
 
     private void setupNavigation() {
         int accentColor = ThemeHelper.getAccentColor(this);
-        if (pillNavNotes != null) pillNavNotes.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
-        if (pillNavTasks != null) pillNavTasks.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
-        if (pillNavAttendance != null) pillNavAttendance.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
+        if (pillNavNotes != null) pillNavNotes.setBackground(ThemeHelper.createActiveTabDrawable(this, accentColor));
+        if (pillNavTasks != null) pillNavTasks.setBackground(ThemeHelper.createActiveTabDrawable(this, accentColor));
+        if (pillNavAttendance != null) pillNavAttendance.setBackground(ThemeHelper.createActiveTabDrawable(this, accentColor));
 
         btnNavNotes.setOnClickListener(v -> selectTabDirectly(TAB_NOTES));
         btnNavTasks.setOnClickListener(v -> selectTabDirectly(TAB_TASKS));
@@ -659,7 +639,7 @@ public class MainActivity extends AppCompatActivity implements
         pill.setScaleY(scale);
 
         boolean isActive = progress >= 0.5f;
-        int activeColor = ContextCompat.getColor(this, R.color.zen_on_accent_container);
+        int activeColor = ContextCompat.getColor(this, R.color.zen_nav_pill_fg);
         int inactiveColor = ContextCompat.getColor(this, R.color.zen_nav_inactive);
         updateTabItemVisuals(icon, text, isActive, activeColor, inactiveColor);
     }
@@ -690,7 +670,7 @@ public class MainActivity extends AppCompatActivity implements
             pill.setScaleY(targetScale);
         }
 
-        int activeColor = ContextCompat.getColor(this, R.color.zen_on_accent_container);
+        int activeColor = ContextCompat.getColor(this, R.color.zen_nav_pill_fg);
         int inactiveColor = ContextCompat.getColor(this, R.color.zen_nav_inactive);
         updateTabItemVisuals(icon, text, isActive, activeColor, inactiveColor);
     }
@@ -759,13 +739,13 @@ public class MainActivity extends AppCompatActivity implements
         ThemeHelper.applyAccentToBadge(tvItemCountBadge, accentColor);
 
         if (pillNavNotes != null) {
-            pillNavNotes.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
+            pillNavNotes.setBackground(ThemeHelper.createActiveTabDrawable(this, accentColor));
         }
         if (pillNavTasks != null) {
-            pillNavTasks.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
+            pillNavTasks.setBackground(ThemeHelper.createActiveTabDrawable(this, accentColor));
         }
         if (pillNavAttendance != null) {
-            pillNavAttendance.setBackground(ThemeHelper.createActiveTabDrawable(accentColor));
+            pillNavAttendance.setBackground(ThemeHelper.createActiveTabDrawable(this, accentColor));
         }
 
         updatePillStates(currentTab, false);

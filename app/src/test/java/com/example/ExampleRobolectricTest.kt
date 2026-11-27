@@ -780,7 +780,7 @@ class ExampleRobolectricTest {
   }
 
   @Test
-  fun `theme toggle button in main header and switch in settings switch between light and dark modes`() {
+  fun `theme toggle is only in settings and dark theme uses BEF264 for active nav pill`() {
     val context = ApplicationProvider.getApplicationContext<Context>()
     ThemeHelper.setDarkModeEnabled(context, false)
     assertFalse(ThemeHelper.isDarkModeEnabled(context))
@@ -792,24 +792,17 @@ class ExampleRobolectricTest {
       .commit()
     SecureProfileStore.markProfileSetupSeen(context)
 
-    val mainActivity = Robolectric.buildActivity(MainActivity::class.java)
+    // Verify MainActivity no longer has a header theme toggle button
+    val lightMain = Robolectric.buildActivity(MainActivity::class.java)
       .create()
       .start()
       .resume()
       .get()
     ShadowLooper.idleMainLooper()
+    val removedHeaderToggleId = context.resources.getIdentifier("btn_header_theme_toggle", "id", context.packageName)
+    assertEquals(0, removedHeaderToggleId)
 
-    val headerToggle = mainActivity.findViewById<View>(R.id.btn_header_theme_toggle)
-    assertNotNull(headerToggle)
-    assertEquals("Switch to Dark theme", headerToggle.contentDescription.toString())
-
-    assertTrue(headerToggle.performClick())
-    ShadowLooper.idleMainLooper()
-    assertTrue(ThemeHelper.isDarkModeEnabled(context))
-    assertEquals(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES, androidx.appcompat.app.AppCompatDelegate.getDefaultNightMode())
-    assertEquals("Switch to Light theme", headerToggle.contentDescription.toString())
-
-    // Verify BackupActivity switch reflects dark mode and can toggle back to light mode
+    // Toggle Dark Theme from Settings (BackupActivity)
     val backupActivity = Robolectric.buildActivity(BackupActivity::class.java)
       .create()
       .start()
@@ -819,8 +812,30 @@ class ExampleRobolectricTest {
 
     val darkSwitch = backupActivity.findViewById<MaterialSwitch>(R.id.switch_dark_mode)
     assertNotNull(darkSwitch)
-    assertTrue(darkSwitch.isChecked)
+    assertFalse(darkSwitch.isChecked)
 
+    darkSwitch.isChecked = true
+    ShadowLooper.idleMainLooper()
+    assertTrue(ThemeHelper.isDarkModeEnabled(context))
+    assertEquals(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES, androidx.appcompat.app.AppCompatDelegate.getDefaultNightMode())
+
+    // Verify active navigation pill uses #BEF264 background and #0F172A text in dark theme
+    val darkMain = Robolectric.buildActivity(MainActivity::class.java)
+      .create()
+      .start()
+      .resume()
+      .get()
+    ShadowLooper.idleMainLooper()
+
+    val darkPillBg = darkMain.findViewById<View>(R.id.pill_nav_attendance).background as? android.graphics.drawable.GradientDrawable
+    assertNotNull(darkPillBg)
+    assertEquals(android.graphics.Color.parseColor("#BEF264"), darkPillBg?.color?.defaultColor)
+    assertEquals(
+      android.graphics.Color.parseColor("#0F172A"),
+      darkMain.findViewById<TextView>(R.id.tv_nav_attendance_text).currentTextColor
+    )
+
+    // Toggle back to Light Theme cleanly
     darkSwitch.isChecked = false
     ShadowLooper.idleMainLooper()
     assertFalse(ThemeHelper.isDarkModeEnabled(context))
