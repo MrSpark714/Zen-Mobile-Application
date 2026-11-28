@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "repo_name": "University Cohort Schedules",
+  "generated_at": "2026-11-28T04:56:21.927678600Z",
+  "sections": [
+    {
+      "section_id": "nfc_cs_sem5_a",
+      "institute": "NFC IEFR",
+      "institute_aliases": ["nfc", "nfc iefr", "nfc iefr fsd", "nfc fsd"],
+      "department": "Computer Science",
+      "department_aliases": ["cs", "bscs", "bs cs", "bs-cs", "comp sci"],
+      "semester": "5",
+      "semester_aliases": ["5th", "sem 5", "semester 5", "5th semester"],
+      "section": "A",
+      "section_aliases": ["sec a", "section a", "5a", "bs-cs 5th a"],
+      "latest_version": "V1.0",
+      "package_path": "sections/nfc_cs_sem5_a.zensched",
+      "package_sha256": "a3b7abf5791723aee67d78fa5bf6b0dd4f80cbdf0e2c64d4f910145341e90f20"
+    },
+    {
+      "section_id": "nfc_cs_sem5_b",
+      "institute": "NFC IEFR",
+      "institute_aliases": ["nfc", "nfc iefr", "nfc iefr fsd", "nfc fsd"],
+      "department": "Computer Science",
+      "department_aliases": ["cs", "bscs", "bs cs", "bs-cs", "comp sci"],
+      "semester": "5",
+      "semester_aliases": ["5th", "sem 5", "semester 5", "5th semester"],
+      "section": "B",
+      "section_aliases": ["sec b", "section b", "5b", "bs-cs 5th b"],
+      "latest_version": "V1.0",
+      "package_path": "sections/nfc_cs_sem5_b.zensched",
+      "package_sha256": "cded1942e36ecfdf2e3465ebfc3c4cc2a085e930f20d6ec471406983f1885d4c"
+    }
+  ],
+  "signature": "MEQCIACR8vYYEQ6HnrG0I5qtDbAw2nA1J4L3pKr2lKztgHvHAiB4mkcHLyladd2OnzcLup24Cpg1hK7mrICHgAIqC6fehA=="
+}
