@@ -1452,7 +1452,7 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/inter"
                                 android:includeFontPadding="false"
-                                android:text="ZEN Academic Offline"
+                                android:text="ZEN"
                                 android:textColor="@color/zen_text_primary"
                                 android:textSize="13sp"
                                 android:textStyle="bold" />
